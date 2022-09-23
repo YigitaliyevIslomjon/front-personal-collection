@@ -1,7 +1,10 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
-import AdminPanel from "./pages/AdminPanel/AdminPanel";
+import SignIn from "./pages/SignIn/SignIn";
+import SignUp from "./pages/SignUp/SignUp";
+import AdminLayout from "./adminComponents/AdminLayout/AdminLayout";
+import User from "./pages/User/User";
 
 function App() {
   return (
@@ -10,10 +13,10 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<div>salom</div>} />
         </Route>
-        <Route path="/login" element={<div>salom</div>} />
-        <Route path="/sign-up" element={<div>salom</div>} />
-        <Route path="/admin">
-          <Route index element={<AdminPanel />} />
+        <Route path="/login" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<User />} />
         </Route>
       </Routes>
     </div>
