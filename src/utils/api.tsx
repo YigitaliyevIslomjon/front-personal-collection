@@ -3,12 +3,17 @@ import axios from "axios";
 const api = axios.create({
   baseURL: "http://localhost:4000/api/",
 });
-export default api;
 
 // Add a request interceptor
-axios.interceptors.request.use(
-  function (config) {
+api.interceptors.request.use(
+  async (config) => {
     // Do something before request is sent
+    let access_token = localStorage.getItem("access_token");
+    config.headers = {
+      authorization: `Bearer ${access_token}`,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    };
     return config;
   },
   function (error) {
@@ -17,7 +22,7 @@ axios.interceptors.request.use(
   }
 );
 // Add a response interceptor
-axios.interceptors.response.use(
+api.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
@@ -29,3 +34,5 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export default api;

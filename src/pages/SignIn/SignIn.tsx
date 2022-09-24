@@ -11,8 +11,10 @@ import Typography from "@mui/material/Typography";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useForm, Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../../utils/api";
 
-type SignFormValues = {
+type SignInFormValues = {
   email: string;
   password: string;
 };
@@ -21,10 +23,27 @@ function SignIn() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<SignFormValues>();
+  } = useForm<SignInFormValues>();
 
-  const onFinish = (data: SignFormValues) => {
+  const navigate = useNavigate();
+
+  const signInUser = (body: SignInFormValues) => {
+    api
+      .post("/user/login", body)
+      .then((res) => {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem("access_token", res.data.token);
+        if (!res.data.user.status) {
+          navigate("/admin");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const submitSignInForm = (data: SignInFormValues) => {
     console.log("salom", data);
+    signInUser(data);
   };
 
   return (
@@ -38,7 +57,7 @@ function SignIn() {
         </Typography>
         <Box
           component="form"
-          onSubmit={handleSubmit(onFinish)}
+          onSubmit={handleSubmit(submitSignInForm)}
           noValidate
           sx={{ mt: 1 }}
         >
@@ -77,10 +96,10 @@ function SignIn() {
             )}
           />
 
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             type="submit"
             fullWidth
@@ -89,14 +108,17 @@ function SignIn() {
           >
             Sign In
           </Button>
-          {/* <Grid container>
+          <Grid container>
             <Grid item xs>
-              <Link to="#">Forgot password?</Link>
+              Don't have an account ?
             </Grid>
             <Grid item>
-              <Link to="#">{"Don't have an account? Sign Up"}</Link>
+              <Link to="/sign-up" className="no-underline">
+                {" "}
+                Sign Up
+              </Link>
             </Grid>
-          </Grid> */}
+          </Grid>
         </Box>
       </Box>
     </div>

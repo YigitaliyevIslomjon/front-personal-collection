@@ -5,14 +5,16 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-
 import { useForm, Controller } from "react-hook-form";
+import api from "../../utils/api";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type SignUpFormValues = {
   email: string;
   password: string;
-  first_name: string;
-  last_name: string;
+  name: string;
+  confirm_password?: string;
 };
 
 function SignUp() {
@@ -21,14 +23,28 @@ function SignUp() {
     control,
     formState: { errors },
   } = useForm<SignUpFormValues>();
+  const [password, setPassword] = useState<string>("");
+  const navigate = useNavigate();
 
-  const onFinish = (data: SignUpFormValues) => {
-    console.log(data);
+  const createUserApi = (body: SignUpFormValues) => {
+    api
+      .post("/user", body)
+      .then((res) => {
+        navigate("/sign-in");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const submitSignUpForm = (data: SignUpFormValues) => {
+    delete data.confirm_password;
+    createUserApi(data);
   };
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <Box sx={{ maxWidth: "350px" }} className="flex flex-col items-center">
+      <Box sx={{ maxWidth: "400px" }} className="flex flex-col items-center">
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
@@ -37,46 +53,29 @@ function SignUp() {
         </Typography>
         <Box
           component="form"
-          onSubmit={handleSubmit(onFinish)}
+          onSubmit={handleSubmit(submitSignUpForm)}
           noValidate
           sx={{ mt: 3 }}
         >
-          <Grid container columnSpacing={2} rowSpacing={4}>
-            <Grid item xs={6}>
+          <Grid container columnSpacing={2} rowSpacing={2}>
+            <Grid item xs={12}>
               <Controller
                 control={control}
-                name="first_name"
+                name="name"
                 rules={{ required: "First name is required" }}
                 render={({ field: { onChange } }) => (
                   <TextField
                     onChange={onChange}
                     required
                     fullWidth
-                    helperText={errors.first_name && errors.first_name.message}
-                    label="First name"
-                    error={errors.first_name ? true : false}
+                    helperText={errors.name && errors.name.message}
+                    label="Name"
+                    error={errors.name ? true : false}
                   />
                 )}
               />
             </Grid>{" "}
-            <Grid item xs={6}>
-              <Controller
-                control={control}
-                name="last_name"
-                rules={{ required: "Last name is required" }}
-                render={({ field: { onChange } }) => (
-                  <TextField
-                    onChange={onChange}
-                    required
-                    fullWidth
-                    helperText={errors.last_name && errors.last_name.message}
-                    label="Last name"
-                    error={errors.last_name ? true : false}
-                  />
-                )}
-              />
-            </Grid>{" "}
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Controller
                 control={control}
                 name="email"
@@ -93,14 +92,17 @@ function SignUp() {
                 )}
               />
             </Grid>{" "}
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Controller
                 control={control}
                 name="password"
                 rules={{ required: "Password is required" }}
                 render={({ field: { onChange } }) => (
                   <TextField
-                    onChange={onChange}
+                    onChange={(e) => {
+                      onChange(e);
+                      setPassword(e.target.value);
+                    }}
                     required
                     fullWidth
                     helperText={errors.password && errors.password.message}
@@ -110,6 +112,30 @@ function SignUp() {
                 )}
               />
             </Grid>
+            <Grid item xs={12}>
+              <Controller
+                control={control}
+                name="confirm_password"
+                rules={{
+                  validate: (value) => {
+                    console.log("value", password);
+                    return value === password || "The passwords do not match";
+                  },
+                }}
+                render={({ field: { onChange } }) => (
+                  <TextField
+                    onChange={onChange}
+                    required
+                    fullWidth
+                    helperText={
+                      errors.confirm_password && errors.confirm_password.message
+                    }
+                    label="Confirm password"
+                    error={errors.confirm_password ? true : false}
+                  />
+                )}
+              />
+            </Grid>{" "}
           </Grid>
 
           <Button
