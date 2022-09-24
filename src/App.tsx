@@ -13,7 +13,7 @@ function App() {
     if (!localStorage.getItem("access_token")) {
       navigate("/sign-in");
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="App">
