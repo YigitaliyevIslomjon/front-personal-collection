@@ -2,8 +2,6 @@ import React from "react";
 import {
   Avatar,
   Button,
-  Checkbox,
-  FormControlLabel,
   Grid,
   Box,
 } from "@mui/material";
