@@ -8,7 +8,6 @@ import User from "./pages/User/User";
 
 function App() {
   const navigate = useNavigate();
-  // const navigate = useNavigate();
 
   useEffect(() => {
     if (!localStorage.getItem("access_token")) {
