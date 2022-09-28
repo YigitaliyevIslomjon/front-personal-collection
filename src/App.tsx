@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import SignIn from "./pages/SignIn/SignIn";
@@ -7,7 +7,8 @@ import AdminLayout from "./adminComponents/AdminLayout/AdminLayout";
 import User from "./pages/User/User";
 
 function App() {
-  const navigate: (value: string) => void = useCallback(() => useNavigate, []);
+  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     if (!localStorage.getItem("access_token")) {
@@ -15,7 +16,8 @@ function App() {
     } else {
       navigate("/admin/user");
     }
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="App">
