@@ -74,6 +74,13 @@ function User() {
     },
   ];
 
+  const validUser = (data: { message: string; isValidUser: boolean }) => {
+    if (data.isValidUser) {
+      navigate("/sign-in");
+      localStorage.removeItem("user");
+      localStorage.removeItem("access_token");
+    }
+  };
   const getUserTableData = (pageNumber: any, pageSize: any) => {
     setUserTableLoading(true);
     api
@@ -94,9 +101,7 @@ function User() {
       .put("user/block", { userIdList })
       .then((res) => {
         getUserTableData(1, 10);
-        if (res.data.isValidUser) {
-          navigate("/sign-in");
-        }
+        validUser(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -124,9 +129,7 @@ function User() {
       .delete("user", { data: { userIdList } })
       .then((res) => {
         getUserTableData(1, 10);
-        if (res.data.isValidUser) {
-          navigate("/sign-in");
-        }
+        validUser(res.data);
       })
       .catch((err) => {
         console.log(err);
