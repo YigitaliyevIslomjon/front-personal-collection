@@ -32,7 +32,7 @@ function SignUp() {
   const createUserApi = (body: SignUpFormValues) => {
     setLoadingButton(true);
     api
-      .post("/user", body)
+      .post("/user/sign-up", body)
       .then((res) => {
         navigate("/sign-in");
       })
