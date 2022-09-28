@@ -123,8 +123,10 @@ function User() {
     api
       .delete("user", { data: { userIdList } })
       .then((res) => {
-        console.log(res);
         getUserTableData(1, 10);
+        if (res.data.isValidUser) {
+          navigate("/sign-in");
+        }
       })
       .catch((err) => {
         console.log(err);
