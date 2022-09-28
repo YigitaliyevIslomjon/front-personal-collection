@@ -8,6 +8,7 @@ import User from "./pages/User/User";
 
 function App() {
   const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     if (!localStorage.getItem("access_token")) {
@@ -15,6 +16,7 @@ function App() {
     } else {
       navigate("/admin/user");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

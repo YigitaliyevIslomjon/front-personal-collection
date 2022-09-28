@@ -124,7 +124,7 @@ function User() {
       .delete("user", { data: { userIdList } })
       .then((res) => {
         console.log(res);
-        getUserTableData(1, 10  );
+        getUserTableData(1, 10);
       })
       .catch((err) => {
         console.log(err);
