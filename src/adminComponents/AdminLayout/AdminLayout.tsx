@@ -1,22 +1,39 @@
 import React from "react";
 import {
   AppBar,
+  Avatar,
   Box,
-  Button,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
   Toolbar,
   Typography,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import { Dashboard, People } from "@mui/icons-material";
+import { People } from "@mui/icons-material";
+import Menu from "@mui/material/Menu";
 
 function AdminLayout() {
+  const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const handleMenuClose = () => {
+    navigate("/sign-in");
+    setIsMenuOpen(false);
+    localStorage.removeItem("user");
+    localStorage.removeItem("access_token");
+  };
+
+  const handleOpenUserMenu = () => {
+    setIsMenuOpen(true);
+  };
+
   const drawerWidth = 240;
   const drawer = (
     <div id="menu">
@@ -25,40 +42,51 @@ function AdminLayout() {
       </Toolbar>
       <Divider />
       <List>
-        {[
-          { title: "Dashboard", icon: <Dashboard />, link: "dashboard" },
-          { title: "Users", icon: <People />, link: "users" },
-        ].map((text, index) => (
-          <NavLink className="no-underline" key={index} to={text.link}>
-            <ListItem key={text.title} disablePadding>
-              <ListItemButton>
-                {/* <ListItemIcon>{text.icon}</ListItemIcon>
-                <ListItemText primary={text.title} /> */}
-              </ListItemButton>
-            </ListItem>
-          </NavLink>
-        ))}
+        {[{ title: "Users", icon: <People />, link: "user" }].map(
+          (text, index) => (
+            <NavLink className="no-underline" key={index} to={text.link}>
+              <ListItem key={text.title} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>{text.icon}</ListItemIcon>
+                  <ListItemText primary={text.title} />
+                </ListItemButton>
+              </ListItem>
+            </NavLink>
+          )
+        )}
       </List>
     </div>
   );
 
   return (
     <Box className="flex">
-      <AppBar position="fixed">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            News
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <Toolbar className="flex justify-end gap-x-2">
+          <Typography variant="h6">
+            {JSON.parse(localStorage.getItem("user") || "{}").name}
           </Typography>
-          <Button color="inherit">Login</Button>
+          <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+            <Avatar alt="" src="/static/images/avatar/2.jpg" />
+          </IconButton>
+          <Menu
+            sx={{ mt: "45px" }}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={isMenuOpen}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       <Box

@@ -12,19 +12,23 @@ function App() {
   useEffect(() => {
     if (!localStorage.getItem("access_token")) {
       navigate("/sign-in");
+    } else {
+      navigate("/admin/user");
     }
-  }, [navigate]);
+  }, []);
 
   return (
     <div className="App">
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<div>salom</div>} />
+          <Route path="*" element={<div>Not found</div>} />
         </Route>
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<User />} />
+          <Route path="user" element={<User />} />
+          <Route path="*" element={<div>Not found</div>} />
         </Route>
       </Routes>
     </div>

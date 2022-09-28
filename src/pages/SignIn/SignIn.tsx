@@ -1,42 +1,47 @@
-import React from "react";
-import {
-  Avatar,
-  Button,
-  Grid,
-  Box,
-} from "@mui/material";
+import React, { useState } from "react";
+import { Avatar, Grid, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useForm, Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
+import { ToastContainer, toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 type SignInFormValues = {
   email: string;
   password: string;
 };
+
 function SignIn() {
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<SignInFormValues>();
-
+  const [loadingButton, setLoadingButton] = useState<boolean>(false);
+  const notify = (message: string) => toast(message);
   const navigate = useNavigate();
 
   const signInUser = (body: SignInFormValues) => {
+    setLoadingButton(true);
     api
       .post("/user/login", body)
       .then((res) => {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         localStorage.setItem("access_token", res.data.token);
         if (!res.data.user.status) {
-          navigate("/admin");
+          navigate("/admin/user");
+        } else {
+          notify("user is blocked");
         }
       })
       .catch((err) => {
-        console.log(err);
+        notify(err.response.data.error);
+      })
+      .finally(() => {
+        setLoadingButton(false);
       });
   };
   const submitSignInForm = (data: SignInFormValues) => {
@@ -62,7 +67,12 @@ function SignIn() {
           <Controller
             control={control}
             name="email"
-            rules={{ required: "Email is required" }}
+            rules={{
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "invalid email address",
+              },
+            }}
             render={({ field: { onChange } }) => (
               <TextField
                 onChange={onChange}
@@ -93,19 +103,20 @@ function SignIn() {
               />
             )}
           />
-
           {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           /> */}
-          <Button
+          <LoadingButton
             type="submit"
-            fullWidth
+            loading={loadingButton}
+            loadingPosition="start"
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            fullWidth
           >
             Sign In
-          </Button>
+          </LoadingButton>
           <Grid container>
             <Grid item xs>
               Don't have an account ?
@@ -119,6 +130,7 @@ function SignIn() {
           </Grid>
         </Box>
       </Box>
+      <ToastContainer />
     </div>
   );
 }

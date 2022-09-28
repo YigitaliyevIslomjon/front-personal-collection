@@ -1,5 +1,5 @@
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
+
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -7,7 +7,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { useForm, Controller } from "react-hook-form";
 import api from "../../utils/api";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 type SignUpFormValues = {
@@ -23,17 +25,22 @@ function SignUp() {
     control,
     formState: { errors },
   } = useForm<SignUpFormValues>();
+  const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
-
+  const notify = (message: string) => toast(message);
   const createUserApi = (body: SignUpFormValues) => {
+    setLoadingButton(true);
     api
       .post("/user", body)
       .then((res) => {
         navigate("/sign-in");
       })
       .catch((err) => {
-        console.log(err);
+        notify(err.response.data.error);
+      })
+      .finally(() => {
+        setLoadingButton(false);
       });
   };
 
@@ -79,7 +86,12 @@ function SignUp() {
               <Controller
                 control={control}
                 name="email"
-                rules={{ required: "Email is required" }}
+                rules={{
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "invalid email address",
+                  },
+                }}
                 render={({ field: { onChange } }) => (
                   <TextField
                     onChange={onChange}
@@ -137,17 +149,19 @@ function SignUp() {
               />
             </Grid>{" "}
           </Grid>
-
-          <Button
+          <LoadingButton
             type="submit"
-            fullWidth
+            loading={loadingButton}
+            loadingPosition="start"
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            fullWidth
           >
             Sign Up
-          </Button>
+          </LoadingButton>
         </Box>
       </Box>
+      <ToastContainer />
     </div>
   );
 }
