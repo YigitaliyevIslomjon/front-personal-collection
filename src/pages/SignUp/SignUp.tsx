@@ -50,8 +50,19 @@ function SignUp() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <Box sx={{ maxWidth: "400px" }} className="flex flex-col items-center">
+    <div className="flex justify-center items-center">
+      <Box
+        sx={{
+          padding: "40px 25px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          borderRadius: "4px",
+          maxWidth: "410px",
+          background: "white",
+        }}
+        className="flex flex-col items-center"
+      >
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
@@ -72,6 +83,7 @@ function SignUp() {
                 rules={{ required: "First name is required" }}
                 render={({ field: { onChange } }) => (
                   <TextField
+                    size="small"
                     onChange={onChange}
                     required
                     fullWidth
@@ -94,6 +106,7 @@ function SignUp() {
                 }}
                 render={({ field: { onChange } }) => (
                   <TextField
+                    size="small"
                     onChange={onChange}
                     required
                     fullWidth
@@ -111,6 +124,7 @@ function SignUp() {
                 rules={{ required: "Password is required" }}
                 render={({ field: { onChange } }) => (
                   <TextField
+                    size="small"
                     onChange={(e) => {
                       onChange(e);
                       setPassword(e.target.value);
@@ -136,6 +150,7 @@ function SignUp() {
                 }}
                 render={({ field: { onChange } }) => (
                   <TextField
+                    size="small"
                     onChange={onChange}
                     required
                     fullWidth

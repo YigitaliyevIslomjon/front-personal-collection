@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
+import "./SignIn.scss";
 
 type SignInFormValues = {
   email: string;
@@ -50,8 +51,19 @@ function SignIn() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <Box sx={{ maxWidth: "350px" }} className="flex flex-col items-center">
+    <div className="flex justify-center items-center h-full">
+      <Box
+        sx={{
+          padding: "40px 25px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          borderRadius: "4px",
+          maxWidth: "400px",
+          background: "white",
+        }}
+        className="flex flex-col items-center"
+      >
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
@@ -75,6 +87,7 @@ function SignIn() {
             }}
             render={({ field: { onChange } }) => (
               <TextField
+                size="small"
                 onChange={onChange}
                 margin="normal"
                 fullWidth
@@ -92,6 +105,7 @@ function SignIn() {
             rules={{ required: "Password is required" }}
             render={({ field: { onChange } }) => (
               <TextField
+                size="small"
                 onChange={onChange}
                 margin="normal"
                 required
@@ -122,7 +136,7 @@ function SignIn() {
               Don't have an account ?
             </Grid>
             <Grid item>
-              <Link to="/sign-up" className="no-underline">
+              <Link to="/sign/up" className="no-underline">
                 {" "}
                 Sign Up
               </Link>
