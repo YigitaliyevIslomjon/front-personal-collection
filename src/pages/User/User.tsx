@@ -74,6 +74,13 @@ function User() {
     },
   ];
 
+  const validUser = (data: { message: string; isValidUser: boolean }) => {
+    if (data.isValidUser) {
+      navigate("/sign-in");
+      localStorage.removeItem("user");
+      localStorage.removeItem("access_token");
+    }
+  };
   const getUserTableData = (pageNumber: any, pageSize: any) => {
     setUserTableLoading(true);
     api
@@ -94,9 +101,7 @@ function User() {
       .put("user/block", { userIdList })
       .then((res) => {
         getUserTableData(1, 10);
-        if (res.data.isValidUser) {
-          navigate("/sign-in");
-        }
+        validUser(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -123,8 +128,8 @@ function User() {
     api
       .delete("user", { data: { userIdList } })
       .then((res) => {
-        console.log(res);
-        getUserTableData(1, 10  );
+        getUserTableData(1, 10);
+        validUser(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -135,7 +140,7 @@ function User() {
       });
   };
 
-  const sweetAlert = (data: () => void) => {
+  const sweetAlert = (data: () => void, message: string) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -143,7 +148,7 @@ function User() {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: `Yes, ${message} it!`,
     }).then((result) => {
       if (result.isConfirmed) {
         data();
@@ -152,13 +157,13 @@ function User() {
   };
 
   const unblockUserLoogin = () => {
-    sweetAlert(unblockUserApi);
+    sweetAlert(unblockUserApi, "unblock");
   };
   const blockUserLogin = () => {
-    sweetAlert(blockUserApi);
+    sweetAlert(blockUserApi, "block");
   };
   const deleteSelectUser = () => {
-    sweetAlert(deleteUserApi);
+    sweetAlert(deleteUserApi, "delete");
   };
 
   const selectUserIdList = (data: GridSelectionModel) => {
