@@ -13,7 +13,7 @@ function App() {
     if (!localStorage.getItem("access_token")) {
       navigate("/sign-in");
     } else {
-      navigate("/admin/user");
+      navigate("/");
     }
   }, []);
 
