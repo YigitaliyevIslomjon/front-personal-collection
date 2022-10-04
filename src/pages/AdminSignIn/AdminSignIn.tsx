@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, Grid, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -8,21 +8,19 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
-import "./SignIn.scss";
+import "./AdminSignIn.scss";
 
 type SignInFormValues = {
   email: string;
   password: string;
 };
 
-function SignIn() {
+function AdminSignIn() {
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<SignInFormValues>();
-
-
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const notify = (message: string) => toast(message);
   const navigate = useNavigate();
@@ -30,12 +28,11 @@ function SignIn() {
   const signInUser = (body: SignInFormValues) => {
     setLoadingButton(true);
     api
-      .post("/user/login", body)
+      .post("/user/login/admin", body)
       .then((res) => {
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        localStorage.setItem("access_token", res.data.token);
+        localStorage.setItem("admin_token", res.data.token);
         if (!res.data.user.status) {
-          navigate("/");
+          navigate("/admin");
         } else {
           notify("user is blocked");
         }
@@ -50,6 +47,14 @@ function SignIn() {
   const submitSignInForm = (data: SignInFormValues) => {
     signInUser(data);
   };
+
+  useEffect(() => {
+    if (localStorage.getItem("admin_token")) {
+      navigate("/admin");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex justify-center items-center h-full">
@@ -69,7 +74,7 @@ function SignIn() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Admin Panel
         </Typography>
         <Box
           component="form"
@@ -150,4 +155,4 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+export default AdminSignIn;

@@ -2,8 +2,8 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL:
-    window.location.port === "4000"
-      ? "https://localhost:4000"
+    window.location.port === "3000"
+      ? "http://localhost:4000/api/"
       : "https://user-managment-front.herokuapp.com/api/",
 });
 

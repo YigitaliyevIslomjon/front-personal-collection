@@ -7,6 +7,10 @@ import AdminLayout from "./adminComponents/AdminLayout/AdminLayout";
 import User from "./pages/User/User";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AuthLayout from "./components/AuthLayout/AuthLayout";
+import AdminSignIn from "./pages/AdminSignIn/AdminSignIn";
+import { Home } from "@mui/icons-material";
+import Collection from "./pages/Collection/Collection";
+import Item from "./pages/Item/Item";
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
@@ -31,14 +35,14 @@ function App() {
           MuiInputLabel: {
             defaultProps: {
               sx: {
-                fontSize: "15px",
+                // fontSize: "15px",
               },
             },
           },
           MuiOutlinedInput: {
             defaultProps: {
               sx: {
-                fontSize: "15px",
+                // fontSize: "15px",
               },
             },
           },
@@ -60,13 +64,18 @@ function App() {
         <ThemeProvider theme={theme}>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<div>salom</div>} />
+              <Route index element={<Home />} />
+              <Route path="item" element={<Item />} />
+              <Route path="item" element={<Item />} />
+              <Route path="collection" element={<Collection />} />
               <Route path="*" element={<div>Not fo und</div>} />
             </Route>
             <Route path="/sign" element={<AuthLayout />}>
               <Route path="in" element={<SignIn />} />
               <Route path="up" element={<SignUp />} />
+              <Route path="in/admin" element={<AdminSignIn />} />
             </Route>
+
             <Route path="/admin" element={<AdminLayout />}>
               <Route path="user" element={<User />} />
               <Route path="*" element={<div>Not found</div>} />

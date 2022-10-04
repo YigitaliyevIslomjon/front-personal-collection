@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
   GridSelectionModel,
   GridValidRowModel,
 } from "@mui/x-data-grid";
-import DeleteIcon from "@mui/icons-material/Delete";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal from "sweetalert2";
 import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import EditUserDialog from "../../adminComponents/User/EditUserDialog";
 
 type userTableType = {
   name: String;
@@ -23,13 +25,23 @@ type userTableType = {
 
 function User() {
   const [userTableData, setUserTableData] = useState<userTableType>([]);
-  const [userIdList, setUserIdList] = useState<GridSelectionModel>([]);
+  const [editUserDialogVisible, setEditUserDialogVisible] =
+    useState<boolean>(false);
+
   const [userTableLoading, setUserTableLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+
   const userTableColumn: GridColDef[] = [
     {
-      field: "name",
+      field: "user_name",
       headerName: "Name",
+      minWidth: 150,
+      flex: 1,
+      sortable: false,
+    },
+    {
+      field: "role",
+      headerName: "Role",
       minWidth: 150,
       flex: 1,
       sortable: false,
@@ -72,15 +84,30 @@ function User() {
         <div>{moment(params.row.sign_up_at).format("DD-MM-YYYY HH:mm")}</div>
       ),
     },
+    {
+      field: "edit",
+      headerName: "Tools",
+      flex: 1,
+      sortable: false,
+      renderCell: () => {
+        return (
+          <div className="flex justify-center items-center">
+            <IconButton onClick={editUser} color="primary" component="label">
+              <EditIcon className="cursor-pointer" />
+            </IconButton>
+            <IconButton onClick={() => {}} color="warning" component="label">
+              <DeleteIcon className="cursor-pointer" />
+            </IconButton>
+          </div>
+        );
+      },
+    },
   ];
 
-  const validUser = (data: { message: string; isValidUser: boolean }) => {
-    if (data.isValidUser) {
-      navigate("/sign-in");
-      localStorage.removeItem("user");
-      localStorage.removeItem("access_token");
-    }
-  };
+  function editUser() {
+    setEditUserDialogVisible(true);
+  }
+
   const getUserTableData = (pageNumber: any, pageSize: any) => {
     setUserTableLoading(true);
     api
@@ -93,50 +120,6 @@ function User() {
       })
       .finally(() => {
         setUserTableLoading(false);
-      });
-  };
-
-  const blockUserApi = () => {
-    api
-      .put("user/block", { userIdList })
-      .then((res) => {
-        getUserTableData(1, 10);
-        validUser(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setUserIdList([]);
-      });
-  };
-  const unblockUserApi = () => {
-    api
-      .put("user/unblock", { userIdList })
-      .then((res) => {
-        getUserTableData(1, 10);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setUserIdList([]);
-      });
-  };
-
-  const deleteUserApi = () => {
-    api
-      .delete("user", { data: { userIdList } })
-      .then((res) => {
-        getUserTableData(1, 10);
-        validUser(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setUserTableLoading(false);
-        setUserIdList([]);
       });
   };
 
@@ -156,35 +139,9 @@ function User() {
     });
   };
 
-  const unblockUserLoogin = () => {
-    sweetAlert(unblockUserApi, "unblock");
-  };
-  const blockUserLogin = () => {
-    sweetAlert(blockUserApi, "block");
-  };
-  const deleteSelectUser = () => {
-    sweetAlert(deleteUserApi, "delete");
-  };
-
-  const selectUserIdList = (data: GridSelectionModel) => {
-    setUserIdList(data);
-  };
-
   useEffect(() => {
     getUserTableData(1, 10);
   }, []);
-
-  const toolBarContent = () => {
-    return (
-      <div className="flex justify-end my-3 pr-5 gap-x-2 items-center">
-        <Button onClick={blockUserLogin} variant={"contained"} className="">
-          Block
-        </Button>
-        <LockOpenIcon onClick={unblockUserLoogin} className="cursor-pointer" />
-        <DeleteIcon onClick={deleteSelectUser} className="cursor-pointer" />
-      </div>
-    );
-  };
 
   return (
     <div>
@@ -195,17 +152,16 @@ function User() {
           pageSize={5}
           loading={userTableLoading}
           rowsPerPageOptions={[5]}
-          checkboxSelection
-          disableSelectionOnClick
-          onSelectionModelChange={selectUserIdList}
-          selectionModel={userIdList}
-          components={{
-            Toolbar: toolBarContent,
-          }}
           getRowId={(row: GridValidRowModel) => row._id}
           experimentalFeatures={{ newEditingApi: true }}
         />
       </Box>
+      {editUserDialogVisible ? (
+        <EditUserDialog
+          setVisible={setEditUserDialogVisible}
+          visible={editUserDialogVisible}
+        />
+      ) : null}
     </div>
   );
 }

@@ -28,7 +28,7 @@ import { ColorModeContext } from "../../App";
 import { useTheme } from "@mui/material/styles";
 import Brightness3Icon from "@mui/icons-material/Brightness3";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -72,8 +72,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const pages = ["Personal", "Items", "Collections"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = [
+  { title: "Personal", link: "/personal" },
+  { title: "Items", link: "/item" },
+  { title: "Collections", link: "/collection" },
+];
+
+const settings = [
+  { title: "Admin panel", link: "sign/in/admin" },
+  { title: "Logout", link: "/sign/in" },
+];
 
 function Navbar() {
   const theme = useTheme();
@@ -202,13 +210,9 @@ function Navbar() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
-              <Button
-                size="small"
-                key={page}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
+              <NavLink to={page.link} key={page.title}>
+                {page.title}
+              </NavLink>
             ))}
           </Box>
           <Link to={"/sign/in"} className="no-underline">
@@ -246,7 +250,7 @@ function Navbar() {
             )}
           </IconButton>
           <Typography variant="h6">
-            {JSON.parse(localStorage.getItem("user") || "{}").name}
+            {JSON.parse(localStorage.getItem("user") || "{}").user_name}
           </Typography>
           <Box>
             <Tooltip title="Open settings">
@@ -265,8 +269,10 @@ function Navbar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting.title} onClick={handleCloseUserMenu}>
+                  <Link className="no-underline" to={setting.link}>
+                    {setting.title}
+                  </Link>
                 </MenuItem>
               ))}
             </Menu>

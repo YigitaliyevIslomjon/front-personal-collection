@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 type SignUpFormValues = {
   email: string;
   password: string;
-  name: string;
+  user_name: string;
   confirm_password?: string;
 };
 
@@ -34,7 +34,9 @@ function SignUp() {
     api
       .post("/user/sign-up", body)
       .then((res) => {
-        navigate("/sign-in");
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem("access_token", res.data.token);
+        navigate("/");
       })
       .catch((err) => {
         notify(err.response.data.error);
@@ -79,17 +81,17 @@ function SignUp() {
             <Grid item xs={12}>
               <Controller
                 control={control}
-                name="name"
-                rules={{ required: "First name is required" }}
+                name="user_name"
+                rules={{ required: "name is required" }}
                 render={({ field: { onChange } }) => (
                   <TextField
                     size="small"
                     onChange={onChange}
                     required
                     fullWidth
-                    helperText={errors.name && errors.name.message}
-                    label="Name"
-                    error={errors.name ? true : false}
+                    helperText={errors.user_name && errors.user_name.message}
+                    label="name"
+                    error={errors.user_name ? true : false}
                   />
                 )}
               />

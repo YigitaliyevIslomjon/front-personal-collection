@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   AppBar,
   Avatar,
@@ -24,10 +24,9 @@ function AdminLayout() {
   const navigate = useNavigate();
 
   const handleMenuClose = () => {
-    navigate("/sign-in");
+    navigate("/");
     setIsMenuOpen(false);
-    localStorage.removeItem("user");
-    localStorage.removeItem("access_token");
+    localStorage.removeItem("admin_token");
   };
 
   const handleOpenUserMenu = () => {
@@ -58,6 +57,12 @@ function AdminLayout() {
     </div>
   );
 
+  useEffect(() => {
+    if (!localStorage.getItem("admin_token")) {
+      navigate("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Box className="flex">
       <AppBar
@@ -66,7 +71,7 @@ function AdminLayout() {
       >
         <Toolbar className="flex justify-end gap-x-2">
           <Typography variant="h6">
-            {JSON.parse(localStorage.getItem("user") || "{}").name}
+            {JSON.parse(localStorage.getItem("user") || "{}").user_name}
           </Typography>
           <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
             <Avatar alt="" src="/static/images/avatar/2.jpg" />

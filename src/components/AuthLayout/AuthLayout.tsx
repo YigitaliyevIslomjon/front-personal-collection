@@ -18,6 +18,8 @@ function AuthLayout() {
     setAge(event.target.value as string);
   };
 
+
+
   return (
     <Box sx={{ flexGrow: 1 }} className="h-screen authLayout">
       <AppBar position="fixed">
