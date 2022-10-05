@@ -6,8 +6,7 @@ function Layout() {
   return (
     <div>
       <Navbar />
-
-      <div className="bg-white p-2">
+      <div className="py-5 px-7">
         <div className="">
           <Outlet />
         </div>

@@ -30,7 +30,9 @@ function AdminSignIn() {
     api
       .post("/user/login/admin", body)
       .then((res) => {
+        localStorage.setItem("access_token", res.data.token);
         localStorage.setItem("admin_token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         if (!res.data.user.status) {
           navigate("/admin");
         } else {

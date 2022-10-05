@@ -25,7 +25,7 @@ export type FormField = {
   view?: boolean;
 };
 
-type DialogProp = {
+type ModalProp = {
   setVisible: (value: boolean) => void;
   visible: boolean;
 };
@@ -35,7 +35,7 @@ type RoleType = {
   title: string;
 }[];
 
-function EditUserDialog({ setVisible, visible }: DialogProp) {
+function CreateItemModal({ setVisible, visible }: ModalProp) {
   const {
     handleSubmit,
     control,
@@ -218,4 +218,4 @@ function EditUserDialog({ setVisible, visible }: DialogProp) {
   );
 }
 
-export default EditUserDialog;
+export default CreateItemModal;

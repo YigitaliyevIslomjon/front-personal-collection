@@ -26,7 +26,9 @@ function AdminLayout() {
   const handleMenuClose = () => {
     navigate("/");
     setIsMenuOpen(false);
+    localStorage.removeItem("access_token");
     localStorage.removeItem("admin_token");
+    localStorage.removeItem("user");
   };
 
   const handleOpenUserMenu = () => {

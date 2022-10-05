@@ -9,28 +9,50 @@ import {
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal from "sweetalert2";
 import api from "../../utils/api";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import moment from "moment";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import EditUserDialog from "../../adminComponents/User/EditUserDialog";
+import EditUserModal from "../../adminComponents/User/EditUserModal";
 
-type userTableType = {
-  name: String;
-  email: String;
-  status: String;
-  signIn_at: Date;
-  signUp_at: Date;
+export type UserTableType = {
+  user_name: string;
+  email: string;
+  status: string;
+  role: string;
+  created_at: Date;
+  updated_at: Date;
+  permissions: {
+    block: boolean;
+    view: boolean;
+  }[];
 }[];
 
+export type UserTableRowType = {
+  user_name: string;
+  email: string;
+  status: string;
+  role: string;
+  created_at: Date;
+  updated_at: Date;
+  _id: string;
+  permissions: {
+    block: boolean;
+    view: boolean;
+  }[];
+};
+
 function User() {
-  const [userTableData, setUserTableData] = useState<userTableType>([]);
-  const [editUserDialogVisible, setEditUserDialogVisible] =
+  const navigate = useNavigate();
+  const [userTableData, setUserTableData] = useState<UserTableType>([]);
+  const [editUserModalVisible, setEditUserModalVisible] =
     useState<boolean>(false);
 
-  const [userTableLoading, setUserTableLoading] = useState<boolean>(false);
-  const navigate = useNavigate();
+  const [userTableRowData, setUserTableRowData] = useState(
+    {} as UserTableRowType
+  );
 
+  const [userTableLoading, setUserTableLoading] = useState<boolean>(false);
   const userTableColumn: GridColDef[] = [
     {
       field: "user_name",
@@ -55,47 +77,39 @@ function User() {
       sortable: false,
     },
     {
-      field: "status",
-      headerName: "Status",
-      minWidth: 150,
-
-      flex: 1,
-      sortable: false,
-    },
-    {
-      field: "sign_in_at",
-      headerName: "Last login time",
-      description: "This column has a value getter and is not sortable.",
+      field: "permissions",
+      headerName: "Permissions",
       minWidth: 150,
       flex: 1,
       sortable: false,
-      renderCell: (params: any) => (
-        <div>{moment(params.row.sign_in_at).format("DD-MM-YYYY HH:mm")}</div>
-      ),
-    },
-    {
-      field: "sign_up_at",
-      headerName: "Registration time",
-      description: "This column has a value getter and is not sortable.",
-      minWidth: 150,
-      flex: 1,
-      sortable: false,
-      renderCell: (params: any) => (
-        <div>{moment(params.row.sign_up_at).format("DD-MM-YYYY HH:mm")}</div>
-      ),
+      renderCell: (params) => {
+        return (
+          <div>
+            <div>{params.row.permissions[1].view}</div>
+          </div>
+        );
+      },
     },
     {
       field: "edit",
       headerName: "Tools",
       flex: 1,
       sortable: false,
-      renderCell: () => {
+      renderCell: (params) => {
         return (
           <div className="flex justify-center items-center">
-            <IconButton onClick={editUser} color="primary" component="label">
+            <IconButton
+              onClick={() => editUserTableRow(params.row)}
+              color="primary"
+              component="label"
+            >
               <EditIcon className="cursor-pointer" />
             </IconButton>
-            <IconButton onClick={() => {}} color="warning" component="label">
+            <IconButton
+              onClick={() => delteUserTableRow(params.row)}
+              color="warning"
+              component="label"
+            >
               <DeleteIcon className="cursor-pointer" />
             </IconButton>
           </div>
@@ -104,8 +118,41 @@ function User() {
     },
   ];
 
-  function editUser() {
-    setEditUserDialogVisible(true);
+  function editUserTableRow(data: UserTableRowType) {
+    setEditUserModalVisible(true);
+    setUserTableRowData(data);
+  }
+
+  function delteUserTableRow(data: UserTableRowType) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: `Yes, delete it!`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteUserApi(data);
+      }
+    });
+  }
+
+  function deleteUserApi(data: UserTableRowType) {
+    api
+      .delete(`/user/${data._id}`)
+      .then((res) => {
+        if (res.data.isInValidUser) {
+          navigate("/sign/in/admin");
+          localStorage.removeItem("admin_token");
+          localStorage.removeItem("admin_user");
+        }
+        getUserTableData(1, 10);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   const getUserTableData = (pageNumber: any, pageSize: any) => {
@@ -121,22 +168,6 @@ function User() {
       .finally(() => {
         setUserTableLoading(false);
       });
-  };
-
-  const sweetAlert = (data: () => void, message: string) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: `Yes, ${message} it!`,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        data();
-      }
-    });
   };
 
   useEffect(() => {
@@ -156,10 +187,12 @@ function User() {
           experimentalFeatures={{ newEditingApi: true }}
         />
       </Box>
-      {editUserDialogVisible ? (
-        <EditUserDialog
-          setVisible={setEditUserDialogVisible}
-          visible={editUserDialogVisible}
+      {editUserModalVisible ? (
+        <EditUserModal
+          getUserTableData={getUserTableData}
+          userTableRowData={userTableRowData}
+          setVisible={setEditUserModalVisible}
+          visible={editUserModalVisible}
         />
       ) : null}
     </div>
