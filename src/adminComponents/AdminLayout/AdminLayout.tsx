@@ -43,18 +43,19 @@ function AdminLayout() {
       </Toolbar>
       <Divider />
       <List>
-        {[{ title: "Users", icon: <People />, link: "user" }].map(
-          (text, index) => (
-            <NavLink className="no-underline" key={index} to={text.link}>
-              <ListItem key={text.title} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>{text.icon}</ListItemIcon>
-                  <ListItemText primary={text.title} />
-                </ListItemButton>
-              </ListItem>
-            </NavLink>
-          )
-        )}
+        {[
+          { title: "Users", icon: <People />, link: "user" },
+          { title: "Collection", icon: <People />, link: "collection" },
+        ].map((text, index) => (
+          <NavLink className="no-underline" key={index} to={text.link}>
+            <ListItem key={text.title} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>{text.icon}</ListItemIcon>
+                <ListItemText primary={text.title} />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+        ))}
       </List>
     </div>
   );

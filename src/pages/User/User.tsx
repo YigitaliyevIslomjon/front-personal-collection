@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, IconButton } from "@mui/material";
-import {
-  DataGrid,
-  GridColDef,
-  GridSelectionModel,
-  GridValidRowModel,
-} from "@mui/x-data-grid";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
+import { DataGrid, GridColDef, GridValidRowModel } from "@mui/x-data-grid";
+
 import Swal from "sweetalert2";
 import api from "../../utils/api";
-import { Navigate, useNavigate } from "react-router-dom";
-import moment from "moment";
+import { useNavigate } from "react-router-dom";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EditUserModal from "../../adminComponents/User/EditUserModal";

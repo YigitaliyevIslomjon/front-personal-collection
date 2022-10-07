@@ -17,13 +17,16 @@ import { Box } from "@mui/system";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import api from "../../utils/api";
 import ReactMarkdown from "react-markdown";
-// import remarkGfm from "remark-gfm";
 import "./CreateCollectionModal.scss";
+import { imgURlToFile } from "./ConvertImgURltoFile";
 
 export type FieldError = {
   collection_name: string;
   description: string;
-  topic_id: string;
+  topic_id: {
+    topic_name: string;
+    _id: string;
+  };
   img: string;
   file?: any;
   mark_down: boolean;
@@ -31,20 +34,39 @@ export type FieldError = {
 type ModalProp = {
   setVisible: (value: boolean) => void;
   visible: boolean;
+  collection: {
+    collection_name: string;
+    description: string;
+    mark_down: boolean;
+    path: string;
+    topic_id: {
+      topic_name: string;
+      _id: string;
+    };
+    user_id: {
+      user_name: string;
+      _id: string;
+    };
+    _id: string;
+  };
 };
 type TopicListType = {
   topic_name: string;
   _id: string;
 }[];
-function CreateCollectionModal({ setVisible, visible }: ModalProp) {
+
+function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<FieldError>();
+
   const [markDownContent, setMarkDownContent] = useState<string>("");
   const [markDown, setMarkDown] = useState<boolean>(false);
   const [topicList, setTopicList] = useState([] as TopicListType);
+  const [images, setImages] = useState<any>([]);
+
   const handleClose = () => {
     setVisible(false);
   };
@@ -58,9 +80,9 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
       .catch((err) => {});
   };
 
-  const createColleactionApi = (body: any) => {
+  const editColleactionApi = (body: any) => {
     api
-      .post("collection", body)
+      .put(`collection/${collection._id}`, body)
       .then((res) => {
         setVisible(false);
       })
@@ -70,28 +92,25 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
   };
 
   const onSubmit = (data: any) => {
-    data.img = data.img[0].file;
+    data.img = images[0].file;
+    data.topic_id = data.topic_id._id;
     let form_data = new FormData();
 
     for (let key in data) {
       form_data.append(key, data[key]);
     }
-    createColleactionApi(form_data);
+    editColleactionApi(form_data);
   };
 
-  const [images, setImages] = React.useState([]);
-
-  const onChangeImg = (
-    imageList: ImageListType,
-    addUpdateIndex: number[] | undefined
-  ) => {
-    console.log(imageList);
+  const onChangeImg = (imageList: ImageListType) => {
     setImages(imageList as never[]);
   };
 
   useEffect(() => {
+    imgURlToFile(collection.path, setImages);
     getTopisList();
   }, []);
+
   return (
     <Dialog
       onClose={() => {
@@ -125,12 +144,14 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                 <Controller
                   control={control}
                   name="collection_name"
+                  defaultValue={collection.collection_name}
                   rules={{ required: "name is required" }}
-                  render={({ field: { onChange } }) => (
+                  render={({ field: { onChange, value } }) => (
                     <TextField
                       required
                       size="small"
                       fullWidth
+                      value={value}
                       onChange={onChange}
                       label="Name"
                       variant="outlined"
@@ -147,12 +168,14 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                 <Controller
                   control={control}
                   name="topic_id"
+                  defaultValue={collection.topic_id}
                   rules={{ required: "topic is required" }}
-                  render={({ field: { onChange } }) => (
+                  render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       fullWidth
+                      value={value}
                       onChange={(e, value) => {
-                        onChange(value?._id);
+                        onChange(value);
                       }}
                       size="small"
                       getOptionLabel={(option) => option.topic_name}
@@ -175,13 +198,17 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                 <Controller
                   control={control}
                   name="img"
-                  rules={{ required: "image is required" }}
-                  render={({ field: { onChange } }) => (
+                  rules={
+                    images.length === 0
+                      ? { required: "image is required" }
+                      : { required: false }
+                  }
+                  render={({ field: { onChange, value } }) => (
                     <ImageUploading
                       multiple
                       value={images}
                       onChange={(e, b) => {
-                        onChangeImg(e, b);
+                        onChangeImg(e);
                         onChange(e);
                       }}
                       maxNumber={1}
@@ -249,7 +276,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                 <Controller
                   control={control}
                   name="mark_down"
-                  defaultValue={false}
+                  defaultValue={collection.mark_down}
                   render={({ field: { onChange, value } }) => (
                     <FormControlLabel
                       control={
@@ -268,10 +295,12 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                 <Controller
                   control={control}
                   name="description"
-                  render={({ field: { onChange } }) => (
+                  defaultValue={collection.description}
+                  render={({ field: { onChange, value } }) => (
                     <TextField
                       size="small"
                       fullWidth
+                      value={value}
                       multiline
                       rows={4}
                       maxRows={8}
@@ -311,4 +340,4 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
   );
 }
 
-export default CreateCollectionModal;
+export default EditCollectionModal;
