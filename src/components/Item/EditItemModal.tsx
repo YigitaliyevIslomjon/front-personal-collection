@@ -7,8 +7,6 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-  FormControlLabel,
-  Checkbox,
   FormHelperText,
   Chip,
 } from "@mui/material";
@@ -17,47 +15,64 @@ import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import api from "../../utils/api";
-import ReactMarkdown from "react-markdown";
+import { ItemDataType } from "../../pages/ViewItem/ViewItem";
+import { imgURlToFile } from "../Collection/ConvertImgURltoFile";
 
 export type FormTypes = {
-  tags: string[];
+  collection_id: {
+    collection_name: string;
+    _id: string;
+  };
+  item_name: string;
+  tags: any[];
   img: string;
-  // collection_id: {
-  //   collection_name: String;
-  //   _id: String;
-  // };
+  int_field: { [key: string]: string }[];
+  str_field: { [key: string]: string }[];
+  textare_field: { [key: string]: string }[];
+  checkbox_field: { [key: string]: string }[];
+  date_field: { [key: string]: string }[];
+};
 
-  [key: string]:
-    | {
-        [name: string]: string;
-      }[]
-    | string
-    | string[];
+type ItemExtraFieldListType = {
+  int_field: { [key: string]: string }[];
+  str_field: { [key: string]: string }[];
+  textare_field: { [key: string]: string }[];
+  checkbox_field: { [key: string]: string }[];
+  date_field: { [key: string]: string }[];
 };
 
 type ModalProp = {
   setVisible: (value: boolean) => void;
   visible: boolean;
+  itemData: ItemDataType;
+  itemExtraFieldList: ItemExtraFieldListType;
 };
 type CollectionListType = {
   collection_name: string;
   _id: string;
 }[];
 
-function CreateItemModal({ setVisible, visible }: ModalProp) {
+function EditItemModal({
+  setVisible,
+  visible,
+  itemData,
+  itemExtraFieldList,
+}: ModalProp) {
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<FormTypes>();
 
-  const [images, setImages] = React.useState([]);
+  const [images, setImages] = useState<any>([]);
   const [tagList, setTagList] = useState([]);
   const [collectionList, setCollectionList] = useState(
     [] as CollectionListType
   );
 
-  const [itemExtraFields, setItemExtraFields] = useState([] as any);
+  const [itemExtraFields, setItemExtraFields] = useState(
+    {} as ItemExtraFieldListType
+  );
 
   const handleClose = () => {
     setVisible(false);
@@ -89,11 +104,11 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
   };
 
   const getTagListApi = () => {
-    console.log("salom");
     api
       .get("tag/list")
       .then((res) => {
         let tagList = res.data.map((item: any) => item.tag_name);
+
         setTagList(tagList);
       })
       .catch((err) => {});
@@ -107,20 +122,16 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
     api
       .get(`item-extra-field/${value!._id}`)
       .then((res) => {
-        let newData: any = [];
-        Object.entries(res.data).forEach((field) => {
-          newData.push([[field[0]], field[1]]);
-        });
-        console.log(newData);
-        setItemExtraFields(newData);
+        setItemExtraFields(res.data);
       })
       .catch((err) => {});
   };
 
   const onSubmit = (data: any) => {
-    data.img = data.img[0].file;
+    data.img = images[0].file;
     data.collection_id = data.collection_id._id;
     let form_data = new FormData();
+    console.log("onSubmit", data);
     for (let key in data) {
       if (key !== "img") {
         form_data.append(key, JSON.stringify(data[key]));
@@ -143,8 +154,20 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
   useEffect(() => {
     getCollectionsList();
     getTagListApi();
+    setItemExtraFields(itemExtraFieldList);
+    imgURlToFile(itemData.path, setImages);
   }, []);
 
+  const [data, setData] = useState<any>([]);
+
+  useEffect(() => {
+    setData(itemData.tags);
+  }, []);
+
+  if (Object.keys(itemExtraFields).length === 0) {
+    return <div>...loading</div>;
+  }
+  console.log(itemExtraFields);
   return (
     <Dialog
       onClose={() => {
@@ -179,10 +202,12 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                   control={control}
                   name="item_name"
                   rules={{ required: "name is required" }}
-                  render={({ field: { onChange } }) => (
+                  defaultValue={itemData.item_name}
+                  render={({ field: { onChange, value } }) => (
                     <TextField
-                      required
                       size="small"
+                      required
+                      value={value}
                       fullWidth
                       onChange={onChange}
                       label="Name"
@@ -198,13 +223,15 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                 <Controller
                   control={control}
                   name="collection_id"
+                  defaultValue={itemData.collection_id}
                   rules={{ required: "collection is required" }}
-                  render={({ field: { onChange } }) => (
+                  render={({ field: { onChange, value } }) => (
                     <Autocomplete
+                      value={value}
                       fullWidth
-                      onChange={(e, value) => {
-                        onChange(value);
-                        getItemExtraField(value);
+                      onChange={(e, val) => {
+                        onChange(val);
+                        getItemExtraField(val);
                       }}
                       size="small"
                       getOptionLabel={(option) => option.collection_name}
@@ -227,7 +254,11 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                 <Controller
                   control={control}
                   name="img"
-                  rules={{ required: "image is required" }}
+                  rules={
+                    images.length === 0
+                      ? { required: "image is required" }
+                      : { required: false }
+                  }
                   render={({ field: { onChange } }) => (
                     <ImageUploading
                       multiple
@@ -242,6 +273,9 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                         imageList,
                         onImageUpload,
                         onImageRemoveAll,
+                        onImageUpdate,
+                        onImageRemove,
+                        isDragging,
                         dragProps,
                       }) => (
                         <div className="flex flex-col gap-y-2 items-start">
@@ -293,27 +327,31 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                   )}
                 />
               </Grid>
-              <Grid xs={6} className="flex flex-col gap-y-2">
+              <Grid xs={6} className="flex flex-cols gap-y-2">
                 <Controller
                   control={control}
                   name="tags"
-                  render={({ field: { onChange } }) => (
+                  defaultValue={itemData?.tags}
+                  render={({ field: { onChange, value } }) => (
                     <Autocomplete
+                      value={value}
                       multiple
                       size="small"
-                      id="tags-filled"
                       onChange={(e, value) => {
                         onChange(value);
                       }}
                       options={tagList}
                       renderTags={(value: readonly string[], getTagProps) =>
-                        value.map((option: string, index: number) => (
-                          <Chip
-                            variant="outlined"
-                            label={option}
-                            {...getTagProps({ index })}
-                          />
-                        ))
+                        value.map((option: string, index: number) => {
+                          console.log(option, index);
+                          return (
+                            <Chip
+                              variant="outlined"
+                              label={option}
+                              {...getTagProps({ index })}
+                            />
+                          );
+                        })
                       }
                       renderInput={(params) => (
                         <TextField
@@ -328,33 +366,119 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                   )}
                 />
               </Grid>
-
-              {itemExtraFields.map((itemExtraField: any) => {
-                return itemExtraField[1].map((itemfield: any, index: any) => {
-                  return (
-                    <Grid xs={6}>
-                      <Controller
-                        control={control}
-                        rules={{ required: `${itemfield.name} is required` }}
-                        name={`${itemExtraField[0]}.${index}.name`}
-                        render={({ field: { onChange } }) => (
-                          <TextField
-                            fullWidth
-                            size="small"
-                            onChange={onChange}
-                            label={`${itemfield.name}`}
-                            variant="outlined"
-                            // error={!!errors.itemExtraField[0]?.[index]?.name}
-                            // helperText={
-                            //   errors.itemExtraField[0]?.[index]?.name && errors.itemExtraField[0]?.[index]?.name.message
-                            // }
-                          />
-                        )}
+              {itemExtraFields?.int_field.map((item, index) => (
+                <Grid xs={6}>
+                  <Controller
+                    control={control}
+                    name={`int_field.${index}.${item.name}`}
+                    rules={{ required: `${item.name} is required` }}
+                    render={({ field: { onChange } }) => (
+                      <TextField
+                        size="small"
+                        fullWidth
+                        onChange={onChange}
+                        label={item.name}
+                        variant="outlined"
+                        error={!!errors.int_field?.[index]?.[item.name]}
+                        helperText={
+                          errors.int_field?.[index]?.[item.name] &&
+                          errors.int_field?.[index]?.[item.name]?.message
+                        }
                       />
-                    </Grid>
-                  );
-                });
-              })}
+                    )}
+                  />
+                </Grid>
+              ))}
+              {itemExtraFields?.str_field.map((item: any, index: any) => (
+                <Grid xs={6}>
+                  <Controller
+                    control={control}
+                    name={`str_field.${index}.${item.name}`}
+                    rules={{ required: `${item.name} is required` }}
+                    render={({ field: { onChange } }) => (
+                      <TextField
+                        size="small"
+                        fullWidth
+                        onChange={onChange}
+                        label={item.name}
+                        variant="outlined"
+                        error={!!errors.str_field?.[index]?.[item.name]}
+                        helperText={
+                          errors.str_field?.[index]?.[item.name] &&
+                          errors.str_field?.[index]?.[item.name]?.message
+                        }
+                      />
+                    )}
+                  />
+                </Grid>
+              ))}
+              {itemExtraFields?.textare_field.map((item: any, index: any) => (
+                <Grid xs={6}>
+                  <Controller
+                    control={control}
+                    name={`textare_field.${index}.${item.name}`}
+                    rules={{ required: `${item.name} is required` }}
+                    render={({ field: { onChange } }) => (
+                      <TextField
+                        size="small"
+                        fullWidth
+                        name="count"
+                        onChange={onChange}
+                        label={item.name}
+                        variant="outlined"
+                        helperText={
+                          errors.textare_field?.[index]?.[item.name] &&
+                          errors.textare_field?.[index]?.[item.name]?.message
+                        }
+                      />
+                    )}
+                  />
+                </Grid>
+              ))}
+              {itemExtraFields?.checkbox_field.map((item: any, index: any) => (
+                <Grid xs={6}>
+                  <Controller
+                    control={control}
+                    name={`checkbox_field.${index}.${item.name}`}
+                    rules={{ required: `${item.name} is required` }}
+                    render={({ field: { onChange } }) => (
+                      <TextField
+                        size="small"
+                        fullWidth
+                        onChange={onChange}
+                        label={item.name}
+                        variant="outlined"
+                        helperText={
+                          errors.checkbox_field?.[index]?.[item.name] &&
+                          errors.checkbox_field?.[index]?.[item.name]?.message
+                        }
+                      />
+                    )}
+                  />
+                </Grid>
+              ))}
+              {itemExtraFields?.date_field.map((item: any, index: any) => (
+                <Grid xs={6}>
+                  <Controller
+                    control={control}
+                    name={`date_field.${index}.${item.name}`}
+                    rules={{ required: `${item.name} is required` }}
+                    render={({ field: { onChange } }) => (
+                      <TextField
+                        size="small"
+                        fullWidth
+                        onChange={onChange}
+                        label={item.name}
+                        variant="outlined"
+                        helperText={
+                          errors.date_field?.[index]?.[item.name] &&
+                          errors.date_field?.[index]?.[item.name]?.message
+                        }
+                      />
+                    )}
+                  />
+                </Grid>
+              ))}
             </Grid>
           </Box>
         </Box>
@@ -371,4 +495,4 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
   );
 }
 
-export default CreateItemModal;
+export default EditItemModal;
