@@ -8,12 +8,12 @@ import User from "./pages/User/User";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AuthLayout from "./components/AuthLayout/AuthLayout";
 import AdminSignIn from "./pages/AdminSignIn/AdminSignIn";
-import { Home } from "@mui/icons-material";
 import Collection from "./pages/Collection/Collection";
 import Item from "./pages/Item/Item";
 import AdminCollection from "./pages/AdminCollection/AdminCollection";
 import ViewCollection from "./pages/ViewCollection/ViewCollection";
 import ViewItem from "./pages/ViewItem/ViewItem";
+import Home from "./pages/Home/Home";
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 

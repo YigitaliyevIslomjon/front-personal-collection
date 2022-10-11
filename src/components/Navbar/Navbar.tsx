@@ -29,6 +29,7 @@ import { useTheme } from "@mui/material/styles";
 import Brightness3Icon from "@mui/icons-material/Brightness3";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { Link, NavLink } from "react-router-dom";
+import api from "../../utils/api";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -105,6 +106,16 @@ function Navbar() {
     setMobileOpen(false);
   };
 
+  const fullTextSeatch = (e: string) => {
+    api
+      .post("search", { search: e, url: window.location.pathname })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   const drawerWidth = 240;
 
   return (
@@ -238,6 +249,9 @@ function Navbar() {
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
+              onChange={(e) => {
+                fullTextSeatch(e.target.value);
+              }}
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
             />

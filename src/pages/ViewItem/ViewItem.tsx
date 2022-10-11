@@ -1,9 +1,10 @@
 import { Box, Button, IconButton, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import EditItemModal from "../../components/Item/EditItemModal";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import { Controller, useForm } from "react-hook-form";
+import io from "socket.io-client";
 
 import api from "../../utils/api";
 export type ItemDataType = {
@@ -22,6 +23,8 @@ type CommentFormType = {
   text: string;
 };
 function ViewItem() {
+  const socket = useMemo(() => io("http://localhost:4000"), []);
+
   const {
     handleSubmit,
     control,
@@ -83,10 +86,11 @@ function ViewItem() {
 
   const submitComment = (data: any) => {
     console.log(data);
-    // api
-    //   .post("comment")
-    //   .then((res) => {})
-    //   .catch((err) => {});
+    data.item_id = id;
+    api
+      .post("comment", data)
+      .then((res) => {})
+      .catch((err) => {});
   };
 
   useEffect(() => {
@@ -94,11 +98,29 @@ function ViewItem() {
     getLikeCountApi();
   }, []);
 
+  const [comment, setComment] = useState<any>([]);
+
+  useEffect(() => {
+    localStorage.setItem("comment", JSON.stringify(comment));
+  });
+
+  useEffect(() => {
+    socket.on("send-comment", (data) => {
+      let commentCopy: any = JSON.parse(
+        localStorage.getItem("comment") || "{}"
+      );
+      setComment([data, ...commentCopy]);
+    });
+
+    return () => {
+      socket.off("disconnect");
+    };
+  }, []);
+
   return (
     <div>
       <img alt="rasm" src={itemData?.path} />
-      <div>{itemData?.item_name}</div>
-
+      <div>{itemData?.item_name}</div>s
       <Button variant="contained" onClick={edititemData}>
         edit
       </Button>
@@ -141,8 +163,10 @@ function ViewItem() {
         <Button type="submit" form={"comment_form"}>
           submit
         </Button>
+        {comment.map((item: any) => {
+          return <div key={item._id}>{item.text}</div>;
+        })}
       </div>
-
       {editItemModalVisible ? (
         <EditItemModal
           itemData={itemData}

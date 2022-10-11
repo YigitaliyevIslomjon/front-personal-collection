@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Avatar,
@@ -20,7 +20,7 @@ import { People } from "@mui/icons-material";
 import Menu from "@mui/material/Menu";
 
 function AdminLayout() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleMenuClose = () => {

@@ -11,15 +11,15 @@ import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
 import api from "../../utils/api";
 
-type FormField = {
+export type TopicFormField = {
   topic_name: string;
 };
 
-interface ModalProp {
+type ModalProp = {
   setVisible: (value: boolean) => void;
   visible: boolean;
   getTopicTableData: (a: number, b: number) => void;
-}
+};
 
 function CreateCollectTopicModal({
   setVisible,
@@ -30,12 +30,13 @@ function CreateCollectTopicModal({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FormField>();
+  } = useForm<TopicFormField>();
 
-  const handleClose = () => {
+  const colseModal = () => {
     setVisible(false);
   };
-  const createTopicApi = (body: FormField) => {
+
+  const createTopicApi = (body: TopicFormField) => {
     api
       .post("/topic", body)
       .then((res) => {
@@ -46,16 +47,15 @@ function CreateCollectTopicModal({
         console.log(err);
       });
   };
-  const submitTopicForm = (data: FormField) => {
+
+  const submitTopicForm = (data: TopicFormField) => {
     createTopicApi(data);
   };
 
   return (
-    <Dialog onClose={handleClose} open={visible} fullWidth maxWidth="sm">
-      <DialogTitle id="alert-dialog-title">
-        Create Collecation Topic
-      </DialogTitle>
-      <DialogContent id="alert-dialog-description">
+    <Dialog onClose={colseModal} open={visible} fullWidth maxWidth="sm">
+      <DialogTitle>Create Collecation Topic</DialogTitle>
+      <DialogContent>
         <Box
           id="createTopic"
           component={"form"}
@@ -80,7 +80,7 @@ function CreateCollectTopicModal({
         </Box>
       </DialogContent>
       <DialogActions className="flex gap-x-1 pr-6 pb-3">
-        <Button variant="contained" type="button" onClick={handleClose}>
+        <Button variant="contained" type="button" onClick={colseModal}>
           Cancel
         </Button>
         <Button variant="outlined" type="submit" form="createTopic" autoFocus>

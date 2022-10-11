@@ -44,7 +44,6 @@ function Item() {
     api
       .get("item/list")
       .then((res) => {
-        console.log(res.data);
         setItemList(res.data);
       })
       .catch((err) => {

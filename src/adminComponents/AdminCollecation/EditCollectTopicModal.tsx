@@ -11,17 +11,14 @@ import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
 import api from "../../utils/api";
 import { TopicTableRowType } from "../../pages/AdminCollection/AdminCollection";
+import { TopicFormField } from "./CreateCollectTopicModal";
 
-type FormField = {
-  topic_name: string;
-};
-
-interface ModalProp {
+type ModalProp = {
   setVisible: (value: boolean) => void;
   visible: boolean;
   topicTableRowData: TopicTableRowType;
   getTopicTableData: (a: number, b: number) => void;
-}
+};
 
 function EditCollectTopicModal({
   setVisible,
@@ -33,12 +30,13 @@ function EditCollectTopicModal({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FormField>();
+  } = useForm<TopicFormField>();
 
-  const handleClose = () => {
+  const coloseModal = () => {
     setVisible(false);
   };
-  const updateTopicApi = (body: FormField) => {
+
+  const updateTopicApi = (body: TopicFormField) => {
     api
       .put(`topic/${topicTableRowData._id}`, body)
       .then((res) => {
@@ -49,14 +47,15 @@ function EditCollectTopicModal({
         console.log(err);
       });
   };
-  const submitTopicForm = (data: FormField) => {
+
+  const submitTopicForm = (data: TopicFormField) => {
     updateTopicApi(data);
   };
 
   return (
-    <Dialog onClose={handleClose} open={visible} fullWidth maxWidth="sm">
-      <DialogTitle id="alert-dialog-title">Edit collecation topic</DialogTitle>
-      <DialogContent id="alert-dialog-description">
+    <Dialog onClose={coloseModal} open={visible} fullWidth maxWidth="sm">
+      <DialogTitle>Edit collecation topic</DialogTitle>
+      <DialogContent>
         <Box
           id="createTopic"
           component={"form"}
@@ -83,7 +82,7 @@ function EditCollectTopicModal({
         </Box>
       </DialogContent>
       <DialogActions className="flex gap-x-1 pr-6 pb-3">
-        <Button variant="contained" type="button" onClick={handleClose}>
+        <Button variant="contained" type="button" onClick={coloseModal}>
           Cancel
         </Button>
         <Button variant="outlined" type="submit" form="createTopic" autoFocus>
