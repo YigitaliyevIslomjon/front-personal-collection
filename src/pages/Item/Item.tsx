@@ -13,21 +13,15 @@ import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import api from "../../utils/api";
 import { Link } from "react-router-dom";
 import CreateItemModal from "../../components/Item/CreateItemModal";
+import ItemCard from "../../components/ItemCard/ItemCard";
 
 type itemListType = {
   item_name: string;
-  description: string;
-  mark_down: boolean;
+  collection_name: string;
+  user_name: string;
+  id: string;
   path: string;
-  topic_id: {
-    topic_name: string;
-    _id: string;
-  };
-  user_id: {
-    user_name: string;
-    _id: string;
-  };
-  _id: string;
+  tags: string[];
 }[];
 
 function Item() {
@@ -40,11 +34,20 @@ function Item() {
 
   const [itemList, setItemList] = useState<itemListType | []>([]);
 
-  const getitemListApi = () => {
+  const getItemListApi = (pageSize: number, pageNumber: number) => {
     api
-      .get("item/list")
+      .get("item/list", { params: { pageNumber, pageSize } })
       .then((res) => {
-        setItemList(res.data);
+        setItemList(
+          res.data.map((item: any) => ({
+            item_name: item?.item_name,
+            collection_name: item.collection_id?.collection_name,
+            user_name: item.user_id?.user_name,
+            id: item._id,
+            path: item.path,
+            tags: item.tags.map((item: any) => item?.tag_name),
+          }))
+        );
       })
       .catch((err) => {
         console.log(err);
@@ -52,8 +55,10 @@ function Item() {
   };
 
   useEffect(() => {
-    getitemListApi();
+    getItemListApi(10, 1);
   }, []);
+  console.log(itemList);
+
   return (
     <Box>
       <Box className="flex justify-end mb-5">
@@ -61,61 +66,10 @@ function Item() {
           Create Item
         </Button>
       </Box>
-      <Grid container>
+      <Grid container spacing={3}>
         {itemList.map((item, index) => (
           <Grid xs={3}>
-            <div
-              key={item._id}
-              className="border-2 border-solid border-indigo-100 rounded p-2"
-            >
-              <Link to={item._id}>
-                <Card>
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      height="160"
-                      image={item.path}
-                      alt="green iguana"
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        Lizard
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Lizards are a widespread group of squamate reptiles,
-                        with over 6,000 species, ranging across all continents
-                        except Antarctica
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => {
-                        // setItemFieldVisible(true);
-                        // setitemId(item._id);
-                      }}
-                    >
-                      item field
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        // setEditCreitemDioVisible(true);
-                      }}
-                      size="small"
-                      color="success"
-                      variant="contained"
-                    >
-                      edit
-                    </Button>
-                    <Button size="small" color="warning" variant="contained">
-                      delete
-                    </Button>{" "}
-                  </CardActions>
-                </Card>
-              </Link>
-            </div>
+            <ItemCard data={item} />
           </Grid>
         ))}
       </Grid>

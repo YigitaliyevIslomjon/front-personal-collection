@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo, createContext } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import React, { useState, useMemo, createContext } from "react";
+import { Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import SignIn from "./pages/SignIn/SignIn";
 import SignUp from "./pages/SignUp/SignUp";
@@ -18,15 +18,6 @@ import Home from "./pages/Home/Home";
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function App() {
-  // const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (!localStorage.getItem("access_token")) {
-  //     navigate("/sign-in");
-  //   } else {
-  //     navigate("/");
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
   const [mode, setMode] = useState<"light" | "dark">("light");
   const theme = useMemo(
     () =>
@@ -34,20 +25,9 @@ function App() {
         palette: {
           mode,
         },
-        components: {
-          MuiInputLabel: {
-            defaultProps: {
-              sx: {
-                // fontSize: "15px",
-              },
-            },
-          },
-          MuiOutlinedInput: {
-            defaultProps: {
-              sx: {
-                // fontSize: "15px",
-              },
-            },
+        typography: {
+          button: {
+            textTransform: "capitalize",
           },
         },
       }),
@@ -61,6 +41,7 @@ function App() {
     }),
     []
   );
+
   return (
     <div className="App">
       <ColorModeContext.Provider value={colorMode}>
@@ -69,9 +50,9 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="item" element={<Item />} />
-              <Route path="item/:id" element={<ViewItem />} />
+              <Route path="item-view/:id" element={<ViewItem />} />
               <Route path="collection" element={<Collection />} />
-              <Route path="collection/:id" element={<ViewCollection />} />
+              <Route path="collection-view/:id" element={<ViewCollection />} />
               <Route path="*" element={<div>Not fo und</div>} />
             </Route>
             <Route path="/sign" element={<AuthLayout />}>

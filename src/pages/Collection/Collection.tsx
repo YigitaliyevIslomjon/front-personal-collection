@@ -1,33 +1,18 @@
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Card,
-  Button,
-  CardActionArea,
-  CardActions,
-  Typography,
-  CardContent,
-  CardMedia,
-} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import CreateCollectionModal from "../../components/Collection/СreateCollectionModal";
 import api from "../../utils/api";
-import { Link } from "react-router-dom";
+
+import CollectionCard from "../../components/CollectionCard/CollectionCard";
 
 type CollectionListType = {
   collection_name: string;
-  description: string;
-  mark_down: boolean;
+  user_name: string;
+  id: string;
   path: string;
-  topic_id: {
-    topic_name: string;
-    _id: string;
-  };
-  user_id: {
-    user_name: string;
-    _id: string;
-  };
-  _id: string;
+  item_count: number;
+  topic_name: string;
 }[];
 
 function Collection() {
@@ -45,8 +30,16 @@ function Collection() {
     api
       .get("collection/list")
       .then((res) => {
-        console.log(res.data);
-        setCollectionList(res.data);
+        setCollectionList(
+          res.data.map((item: any, index: any) => ({
+            collection_name: item.collection_name,
+            user_name: item.user_id.user_name,
+            id: item._id,
+            path: item.path,
+            item_count: item.item_count,
+            topic_name: item.topic_id.topic_name,
+          }))
+        );
       })
       .catch((err) => {
         console.log(err);
@@ -64,61 +57,10 @@ function Collection() {
           Create Collection
         </Button>
       </Box>
-      <Grid container>
+      <Grid container spacing={3}>
         {collectionList.map((item, index) => (
           <Grid xs={3}>
-            <div
-              key={item._id}
-              className="border-2 border-solid border-indigo-100 rounded p-2"
-            >
-              <Link to={item._id}>
-                <Card>
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      height="160"
-                      image={item.path}
-                      alt="green iguana"
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        Lizard
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Lizards are a widespread group of squamate reptiles,
-                        with over 6,000 species, ranging across all continents
-                        except Antarctica
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => {
-                        // setItemFieldVisible(true);
-                        // setcollectionId(item._id);
-                      }}
-                    >
-                      item field
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        // setEditCrecollectionDioVisible(true);
-                      }}
-                      size="small"
-                      color="success"
-                      variant="contained"
-                    >
-                      edit
-                    </Button>
-                    <Button size="small" color="warning" variant="contained">
-                      delete
-                    </Button>{" "}
-                  </CardActions>
-                </Card>
-              </Link>
-            </div>
+            <CollectionCard data={item} />
           </Grid>
         ))}
       </Grid>

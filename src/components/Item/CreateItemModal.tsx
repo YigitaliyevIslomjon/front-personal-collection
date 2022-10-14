@@ -52,7 +52,6 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
   const {
     handleSubmit,
     control,
-    resetField,
     reset,
     formState: { errors },
   } = useForm<ItemFormTypes>();
@@ -89,7 +88,7 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
     api
       .post("item", body)
       .then((res) => {
-        // setVisible(false);
+        setVisible(false);
       })
       .catch((err) => {
         console.log(err);

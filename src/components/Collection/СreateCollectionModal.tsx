@@ -9,22 +9,24 @@ import {
   TextField,
   FormControlLabel,
   Checkbox,
-  FormHelperText,
+  Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
-import ImageUploading, { ImageListType } from "react-images-uploading";
 import api from "../../utils/api";
 import ReactMarkdown from "react-markdown";
-// import remarkGfm from "remark-gfm";
 import "./CreateCollectionModal.scss";
+import UploadImage from "./UploadImage";
 
-export type FieldError = {
+export type CollectionFormFieldType = {
   collection_name: string;
   description: string;
   topic_id: string;
-  img: string;
+  img: {
+    dataUrl: string;
+    file: any[];
+  }[];
   file?: any;
   mark_down: boolean;
 };
@@ -36,20 +38,24 @@ type TopicListType = {
   topic_name: string;
   _id: string;
 }[];
+
 function CreateCollectionModal({ setVisible, visible }: ModalProp) {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FieldError>();
+  } = useForm<CollectionFormFieldType>();
+
   const [markDownContent, setMarkDownContent] = useState<string>("");
   const [markDown, setMarkDown] = useState<boolean>(false);
   const [topicList, setTopicList] = useState([] as TopicListType);
-  const handleClose = () => {
+  const [images, setImages] = React.useState([]);
+
+  const closeModal = () => {
     setVisible(false);
   };
 
-  const getTopisList = () => {
+  const getTopisListApi = () => {
     api
       .get("topic")
       .then((res) => {
@@ -58,6 +64,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
       .catch((err) => {});
   };
 
+  //  becouse of tsx problem , given any type
   const createColleactionApi = (body: any) => {
     api
       .post("collection", body)
@@ -69,6 +76,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
       });
   };
 
+  //  becouse of tsx problem , given any type
   const onSubmit = (data: any) => {
     data.img = data.img[0].file;
     let form_data = new FormData();
@@ -79,27 +87,16 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
     createColleactionApi(form_data);
   };
 
-  const [images, setImages] = React.useState([]);
-
-  const onChangeImg = (
-    imageList: ImageListType,
-    addUpdateIndex: number[] | undefined
-  ) => {
-    console.log(imageList);
-    setImages(imageList as never[]);
-  };
-
   useEffect(() => {
-    getTopisList();
+    getTopisListApi();
   }, []);
+
   return (
     <Dialog
       onClose={() => {
         setVisible(false);
       }}
       open={visible}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
       fullWidth
       maxWidth="lg"
       PaperProps={{
@@ -128,7 +125,6 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                   rules={{ required: "name is required" }}
                   render={({ field: { onChange } }) => (
                     <TextField
-                      required
                       size="small"
                       fullWidth
                       onChange={onChange}
@@ -177,70 +173,12 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                   name="img"
                   rules={{ required: "image is required" }}
                   render={({ field: { onChange } }) => (
-                    <ImageUploading
-                      multiple
-                      value={images}
-                      onChange={(e, b) => {
-                        onChangeImg(e, b);
-                        onChange(e);
-                      }}
-                      maxNumber={1}
-                    >
-                      {({
-                        imageList,
-                        onImageUpload,
-                        onImageRemoveAll,
-                        onImageUpdate,
-                        onImageRemove,
-                        isDragging,
-                        dragProps,
-                      }) => (
-                        <div className="flex flex-col gap-y-2 items-start">
-                          <div
-                            style={{
-                              width: "290px",
-                              height: "220px",
-                            }}
-                            className="uplaod_img"
-                          >
-                            {imageList.map((image, index) => (
-                              <img
-                                src={image.dataURL}
-                                alt=""
-                                className="object-cover"
-                                width="100%"
-                                height="100%"
-                              />
-                            ))}
-                          </div>
-                          <FormHelperText className="text-red-500">
-                            {errors.img && errors.img.message}
-                          </FormHelperText>
-
-                          <Button
-                            className="button_width"
-                            variant="contained"
-                            onClick={() => {
-                              if (imageList.length < 1) {
-                                onImageUpload();
-                              }
-                            }}
-                            {...dragProps}
-                          >
-                            upload image
-                          </Button>
-                          {imageList.length > 0 ? (
-                            <Button
-                              className="button_width"
-                              variant={"outlined"}
-                              onClick={onImageRemoveAll}
-                            >
-                              remove image
-                            </Button>
-                          ) : null}
-                        </div>
-                      )}
-                    </ImageUploading>
+                    <UploadImage
+                      onChange={onChange}
+                      setImages={setImages}
+                      images={images}
+                      errors={errors}
+                    />
                   )}
                 />
               </Grid>
@@ -268,6 +206,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                 <Controller
                   control={control}
                   name="description"
+                  rules={{ required: "description is required" }}
                   render={({ field: { onChange } }) => (
                     <TextField
                       size="small"
@@ -290,9 +229,11 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                 />
 
                 {markDown ? (
-                  <ReactMarkdown className="border border-solid border-indigo-600 rounded-md px-3 py-2">
-                    {markDownContent}
-                  </ReactMarkdown>
+                  <Typography variant="body1" component="h2">
+                    <ReactMarkdown className="border border-solid border-indigo-600 rounded-md px-3 py-2">
+                      {markDownContent}
+                    </ReactMarkdown>
+                  </Typography>
                 ) : null}
               </Grid>
             </Grid>
@@ -300,7 +241,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
         </Box>
       </DialogContent>
       <DialogActions className="flex gap-x-1 pr-6 pb-3">
-        <Button variant="contained" type="button" onClick={handleClose}>
+        <Button variant="contained" type="button" onClick={closeModal}>
           Cancel
         </Button>
         <Button variant="outlined" type="submit" form="countField" autoFocus>

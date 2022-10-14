@@ -30,6 +30,14 @@ import Brightness3Icon from "@mui/icons-material/Brightness3";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { Link, NavLink } from "react-router-dom";
 import api from "../../utils/api";
+import { useDispatch } from "react-redux";
+import {
+  setSerachCollectionList,
+  setSerachCommentList,
+  setSerachItemList,
+} from "../../store/slice/searchSlice";
+
+import "./Navbar.scss";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -74,6 +82,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const pages = [
+  { title: "Home", link: "/" },
   { title: "Personal", link: "/personal" },
   { title: "Items", link: "/item" },
   { title: "Collections", link: "/collection" },
@@ -85,6 +94,7 @@ const settings = [
 ];
 
 function Navbar() {
+  const dispatch = useDispatch();
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
 
@@ -106,52 +116,61 @@ function Navbar() {
     setMobileOpen(false);
   };
 
-  const fullTextSeatch = (e: string) => {
+  const fullTextSearch = (e: string) => {
     api
       .post("search", { search: e, url: window.location.pathname })
       .then((res) => {
         console.log(res.data);
+        dispatch(
+          setSerachCollectionList(
+            res.data.collection.map((item: any, index: any) => ({
+              collection_name: item.collection_name,
+              user_name: item.user_id.user_name,
+              id: item._id,
+              path: item.path,
+              item_count: item.item_count,
+              topic_name: item.topic_id.topic_name,
+            }))
+          )
+        );
+        dispatch(
+          setSerachItemList(
+            res.data.item.map((item: any) => ({
+              item_name: item.item_name,
+              collection_name: item.collection_id.collection_name,
+              user_name: item.user_id.user_name,
+              id: item._id,
+              path: item.path,
+              tags: item.tags.map((item: any) => item.tag_name),
+            }))
+          )
+        );
+        dispatch(
+          setSerachCommentList(
+            res.data.comment.map((item: any) => ({
+              item_name: item.item_id.item_name,
+              item_id: item.item_id._id,
+              text: item.text,
+              user_name: item.user_id.user_name,
+            }))
+          )
+        );
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
   const drawerWidth = 240;
 
   return (
     <div>
       <AppBar position="fixed" className="px-6">
         <Toolbar className="flex gap-x-1">
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleDrawerOpen}
-              color="inherit"
-            >
+            <IconButton size="large" onClick={handleDrawerOpen} color="inherit">
               <MenuIcon />
             </IconButton>
-
             <Drawer
               anchor={"left"}
               sx={{
@@ -171,28 +190,13 @@ function Navbar() {
                 </div>
                 <Divider />
                 <List>
-                  {["Inbox", "Starred", "Send email", "Drafts"].map(
-                    (text, index) => (
-                      <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                          <ListItemIcon>
-                            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                          </ListItemIcon>
-                          <ListItemText primary={text} />
-                        </ListItemButton>
-                      </ListItem>
-                    )
-                  )}
-                </List>
-                <Divider />
-                <List>
-                  {["All mail", "Trash", "Spam"].map((text, index) => (
-                    <ListItem key={text} disablePadding>
+                  {pages.map((item, index) => (
+                    <ListItem key={item.title} disablePadding>
                       <ListItemButton>
                         <ListItemIcon>
                           {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                         </ListItemIcon>
-                        <ListItemText primary={text} />
+                        <ListItemText primary={item.title} />
                       </ListItemButton>
                     </ListItem>
                   ))}
@@ -200,36 +204,17 @@ function Navbar() {
               </Box>
             </Drawer>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <NavLink to={page.link} key={page.title}>
-                {page.title}
+          {/* <img src={logo} alt="ram" /> */}
+          <Box className="xs:hidden md:flex gap-x-4">
+            {pages.map((page, index) => (
+              <NavLink to={page.link} key={index} className="no-underline">
+                <Button className="text-base text-white">{page.title}</Button>
               </NavLink>
             ))}
           </Box>
-          <Link to={"/sign/in"} className="no-underline">
+          <Link to={"/sign/in"} className="no-underline ml-auto">
             <Button
-              className="menu"
-              // onClick={handleCloseNavMenu}
+              className="text-base"
               sx={{ my: 2, color: "white", display: "block" }}
             >
               Sign in
@@ -237,8 +222,7 @@ function Navbar() {
           </Link>
           <Link to={"/sign/up"} className="no-underline">
             <Button
-              className="menu"
-              // onClick={handleCloseNavMenu}
+              className="text-base"
               sx={{ my: 2, color: "white", display: "block" }}
             >
               Sign Up
@@ -250,7 +234,7 @@ function Navbar() {
             </SearchIconWrapper>
             <StyledInputBase
               onChange={(e) => {
-                fullTextSeatch(e.target.value);
+                fullTextSearch(e.target.value);
               }}
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
@@ -263,7 +247,7 @@ function Navbar() {
               <Brightness3Icon />
             )}
           </IconButton>
-          <Typography variant="h6">
+          <Typography variant="body1" className="capitalize">
             {JSON.parse(localStorage.getItem("user") || "{}").user_name}
           </Typography>
           <Box>

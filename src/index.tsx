@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from "react";
 import ReactDOM from "react-dom/client";
-import "react-toastify/dist/ReactToastify.css";
-import App from "./App";
-import "./index.css";
-import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { StyledEngineProvider } from "@mui/material";
-
+import reportWebVitals from "./reportWebVitals";
+import App from "./App";
+import { Provider } from "react-redux";
+import store from "./store/store";
+import "react-toastify/dist/ReactToastify.css";
+import "./index.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -14,13 +15,13 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <StyledEngineProvider injectFirst>
-      <BrowserRouter>
-      
+    <Provider store={store}>
+      <StyledEngineProvider injectFirst>
+        <BrowserRouter>
           <App />
-        
-      </BrowserRouter>
-    </StyledEngineProvider>
+        </BrowserRouter>
+      </StyledEngineProvider>
+    </Provider>
   </React.StrictMode>
 );
 

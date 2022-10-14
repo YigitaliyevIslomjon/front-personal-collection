@@ -85,7 +85,6 @@ function ViewItem() {
   };
 
   const submitComment = (data: any) => {
-    console.log(data);
     data.item_id = id;
     api
       .post("comment", data)

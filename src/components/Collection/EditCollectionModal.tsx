@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Autocomplete,
   Button,
@@ -9,18 +9,17 @@ import {
   TextField,
   FormControlLabel,
   Checkbox,
-  FormHelperText,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
-import ImageUploading, { ImageListType } from "react-images-uploading";
 import api from "../../utils/api";
 import ReactMarkdown from "react-markdown";
 import "./CreateCollectionModal.scss";
 import { imgURlToFile } from "./ConvertImgURltoFile";
+import UploadImage from "./UploadImage";
 
-export type FieldError = {
+export type ColletionFormField = {
   collection_name: string;
   description: string;
   topic_id: {
@@ -31,6 +30,7 @@ export type FieldError = {
   file?: any;
   mark_down: boolean;
 };
+
 type ModalProp = {
   setVisible: (value: boolean) => void;
   visible: boolean;
@@ -50,6 +50,7 @@ type ModalProp = {
     _id: string;
   };
 };
+
 type TopicListType = {
   topic_name: string;
   _id: string;
@@ -60,7 +61,7 @@ function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FieldError>();
+  } = useForm<ColletionFormField>();
 
   const [markDownContent, setMarkDownContent] = useState<string>("");
   const [markDown, setMarkDown] = useState<boolean>(false);
@@ -102,13 +103,10 @@ function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
     editColleactionApi(form_data);
   };
 
-  const onChangeImg = (imageList: ImageListType) => {
-    setImages(imageList as never[]);
-  };
-
   useEffect(() => {
     imgURlToFile(collection.path, setImages);
     getTopisList();
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -204,70 +202,12 @@ function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
                       : { required: false }
                   }
                   render={({ field: { onChange, value } }) => (
-                    <ImageUploading
-                      multiple
-                      value={images}
-                      onChange={(e, b) => {
-                        onChangeImg(e);
-                        onChange(e);
-                      }}
-                      maxNumber={1}
-                    >
-                      {({
-                        imageList,
-                        onImageUpload,
-                        onImageRemoveAll,
-                        onImageUpdate,
-                        onImageRemove,
-                        isDragging,
-                        dragProps,
-                      }) => (
-                        <div className="flex flex-col gap-y-2 items-start">
-                          <div
-                            style={{
-                              width: "290px",
-                              height: "220px",
-                            }}
-                            className="uplaod_img"
-                          >
-                            {imageList.map((image, index) => (
-                              <img
-                                src={image.dataURL}
-                                alt=""
-                                className="object-cover"
-                                width="100%"
-                                height="100%"
-                              />
-                            ))}
-                          </div>
-                          <FormHelperText className="text-red-500">
-                            {errors.img && errors.img.message}
-                          </FormHelperText>
-
-                          <Button
-                            className="button_width"
-                            variant="contained"
-                            onClick={() => {
-                              if (imageList.length < 1) {
-                                onImageUpload();
-                              }
-                            }}
-                            {...dragProps}
-                          >
-                            upload image
-                          </Button>
-                          {imageList.length > 0 ? (
-                            <Button
-                              className="button_width"
-                              variant={"outlined"}
-                              onClick={onImageRemoveAll}
-                            >
-                              remove image
-                            </Button>
-                          ) : null}
-                        </div>
-                      )}
-                    </ImageUploading>
+                    <UploadImage
+                      onChange={onChange}
+                      setImages={setImages}
+                      images={images}
+                      errors={errors}
+                    />
                   )}
                 />
               </Grid>

@@ -1,18 +1,19 @@
+import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import Footer from "../Footer/Footer";
 import Navbar from "../Navbar/Navbar";
 
 function Layout() {
   return (
-    <div>
+    <Box sx={{ bgcolor: "background.default" }}>
       <Navbar />
-      <div className="py-5 px-7">
-        <div className="">
+      <Box className="py-5 px-12">
+        <Box className="">
           <Outlet />
-        </div>
-      </div>
+        </Box>
+      </Box>
       {/* <Footer /> */}
-    </div>
+    </Box>
   );
 }
 
