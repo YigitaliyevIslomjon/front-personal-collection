@@ -110,7 +110,7 @@ function ViewCollection() {
               className="object-cover h-[330px] w-full cursor-pointer"
             />
           </div>
-          <Box className="flex flex-col gap-y-1 mt-1">
+          <Box className="flex flex-col gap-y-1 mt-2">
             <Box className="flex gap-x-2 mb-1">
               <Button variant="contained" onClick={editCollection}>
                 edit
@@ -176,6 +176,14 @@ function ViewCollection() {
                 ) : (
                   collection?.description
                 )}
+              </Typography>
+            </Box>
+            <Box className="flex gap-x-2">
+              <Typography variant="body1" className="font-semibold">
+                Number of items :{" "}
+              </Typography>
+              <Typography variant="body1">
+                {colleCtionItemList.length}
               </Typography>
             </Box>
           </Box>

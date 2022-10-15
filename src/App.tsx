@@ -14,6 +14,7 @@ import AdminCollection from "./pages/AdminCollection/AdminCollection";
 import ViewCollection from "./pages/ViewCollection/ViewCollection";
 import ViewItem from "./pages/ViewItem/ViewItem";
 import Home from "./pages/Home/Home";
+import Personal from "./pages/Personal/Personal";
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
@@ -53,6 +54,7 @@ function App() {
               <Route path="item-view/:id" element={<ViewItem />} />
               <Route path="collection" element={<Collection />} />
               <Route path="collection-view/:id" element={<ViewCollection />} />
+              <Route path="personal" element={<Personal />} />
               <Route path="*" element={<div>Not fo und</div>} />
             </Route>
             <Route path="/sign" element={<AuthLayout />}>

@@ -17,7 +17,7 @@ import ImageUploading, { ImageListType } from "react-images-uploading";
 import api from "../../utils/api";
 import { ItemDataType } from "../../pages/ViewItem/ViewItem";
 
-import { ItemExtraFieldListType, ItemFormTypes } from "./CreateItemModal";
+import { ItemExtraFieldListType, ItemFormTypes } from "../Item/CreateItemModal";
 import { imgURlToFile } from "../Collection/ConvertImgURltoFile";
 
 type ModalProp = {
@@ -40,7 +40,6 @@ function EditItemModal({
   const {
     handleSubmit,
     control,
-    resetField,
     reset,
     formState: { errors },
   } = useForm<ItemFormTypes>();
@@ -79,6 +78,7 @@ function EditItemModal({
       .put(`item/${itemData._id}`, body)
       .then((res) => {
         setVisible(false);
+        reset();
       })
       .catch((err) => {
         console.log(err);
@@ -122,7 +122,6 @@ function EditItemModal({
     data.img = images[0].file;
     data.collection_id = data.collection_id._id;
     let form_data = new FormData();
-    console.log("onSubmit", data);
     for (let key in data) {
       if (key !== "img") {
         form_data.append(key, JSON.stringify(data[key]));
@@ -130,9 +129,8 @@ function EditItemModal({
         form_data.append(key, data[key]);
       }
     }
-    // setVisible(false);
-    reset();
-    // editItemApi(form_data);
+
+    editItemApi(form_data);
   };
 
   const onChangeImg = (

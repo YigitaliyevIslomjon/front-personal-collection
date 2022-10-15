@@ -2,20 +2,20 @@ import { Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import React, { useEffect, useState } from "react";
 import { TagCloud } from "react-tagcloud";
-import api from "../../utils/api";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper";
-import "./Home.scss";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import "swiper/css";
 import { Link, useNavigate } from "react-router-dom";
 import HomeSearch from "../../components/Home/HomeSearch";
 import { useDispatch, useSelector } from "react-redux";
 import { setSerachItemList } from "../../store/slice/searchSlice";
 import CollectionCard from "../../components/CollectionCard/CollectionCard";
 import ItemCard from "../../components/ItemCard/ItemCard";
+import api from "../../utils/api";
+import "./Home.scss";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import "swiper/css";
 
 type TagListType = {
   value: string;
@@ -173,6 +173,7 @@ function Home() {
           <Typography variant="body1">view all</Typography>
         </Link>
       </Box>
+
       <Grid container className="h-[400px]">
         <Swiper
           slidesPerView={4}
@@ -194,6 +195,7 @@ function Home() {
           ))}
         </Swiper>
       </Grid>
+
       <Box className="pb-80 pt-12">
         <Box className="flex justify-between mb-4 mt-5">
           <Typography variant="h6"> Tag cloud</Typography>
