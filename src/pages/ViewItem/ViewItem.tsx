@@ -50,6 +50,7 @@ type CommentFormType = {
 type CommentListType = {
   text: string;
   user_name: string;
+  id: string;
 }[];
 
 function ViewItem() {
@@ -62,6 +63,7 @@ function ViewItem() {
   } = useForm<CommentFormType>();
 
   let { id } = useParams();
+  let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   const [itemData, setItemData] = useState({} as ItemDataType);
 
@@ -153,6 +155,7 @@ function ViewItem() {
           res.data.map((item: any) => ({
             text: item.text,
             user_name: item.user_id.user_name,
+            id: item._id,
           }))
         );
       })
@@ -171,10 +174,24 @@ function ViewItem() {
     window.history.back();
   };
 
+  let userExist = Object.keys(loginUser).length === 0;
+
+  const checkingRole = () => {
+    if (
+      loginUser?.role === "admin" ||
+      itemData.user_id?._id === loginUser?._id
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   useEffect(() => {
     getItemDataByIdApi();
     getLikeCountApi();
     getCommentList();
+   // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -186,12 +203,13 @@ function ViewItem() {
       let commentCopy: any = JSON.parse(
         localStorage.getItem("commentList") || "{}"
       );
-      setCommentList([data, ...commentCopy]);
+      setCommentList([...commentCopy, data]);
     });
 
     return () => {
       socket.off("disconnect");
     };
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -210,27 +228,31 @@ function ViewItem() {
             />
           </div>
           <Box className="flex flex-col gap-y-1 mt-2">
-            <Box mb-1>
-              <IconButton>
-                <ThumbUpIcon
-                  style={likeStatus ? { color: "red" } : {}}
-                  onClick={() => pressLikeButton(likeStatus)}
-                />
+            <Box className="mb-1">
+              <IconButton
+                disabled={userExist ? true : false}
+                className="cursor-pointer"
+                onClick={() => pressLikeButton(likeStatus)}
+              >
+                <ThumbUpIcon style={likeStatus ? { color: "red" } : {}} />
               </IconButton>
               {likeCount}
             </Box>
-            <Box className="flex gap-x-2">
-              <Button variant="contained" onClick={edititemData}>
-                edit
-              </Button>
-              <Button
-                variant="contained"
-                className="bg-red-500 hover:bg-red-600"
-                onClick={deleteitemData}
-              >
-                delete
-              </Button>
-            </Box>
+            {checkingRole() ? (
+              <Box className="flex gap-x-2">
+                <Button variant="contained" onClick={edititemData}>
+                  edit
+                </Button>
+                <Button
+                  variant="contained"
+                  className="bg-red-500 hover:bg-red-600"
+                  onClick={deleteitemData}
+                >
+                  delete
+                </Button>
+              </Box>
+            ) : null}
+
             <Box className="flex gap-x-2">
               <Typography variant="body1" className="font-semibold">
                 Name :{" "}
@@ -260,12 +282,14 @@ function ViewItem() {
               </Typography>
               <Box>
                 {itemData.tags?.map((tag) => (
-                  <Typography variant="body1">{tag}</Typography>
+                  <Typography key={tag} variant="body1">
+                    {tag}
+                  </Typography>
                 ))}
               </Box>
             </Box>
-            {itemExtraFieldList.int_field?.map((item) => (
-              <Box className="flex gap-x-2">
+            {itemExtraFieldList.int_field?.map((item, index) => (
+              <Box className="flex gap-x-2" key={index}>
                 <Typography variant="body1" className="font-semibold">
                   {Object.keys(item)[0]} :
                 </Typography>
@@ -275,8 +299,8 @@ function ViewItem() {
                 </Typography>
               </Box>
             ))}
-            {itemExtraFieldList.str_field?.map((item) => (
-              <Box className="flex gap-x-2">
+            {itemExtraFieldList.str_field?.map((item, index) => (
+              <Box className="flex gap-x-2" key={index}>
                 <Typography variant="body1" className="font-semibold">
                   {Object.keys(item)[0]} :
                 </Typography>
@@ -286,8 +310,8 @@ function ViewItem() {
                 </Typography>
               </Box>
             ))}
-            {itemExtraFieldList.checkbox_field?.map((item) => (
-              <Box className="flex gap-x-2">
+            {itemExtraFieldList.checkbox_field?.map((item, index) => (
+              <Box className="flex gap-x-2" key={index}>
                 <Typography variant="body1" className="font-semibold">
                   {Object.keys(item)[0]} :
                 </Typography>
@@ -297,8 +321,8 @@ function ViewItem() {
                 </Typography>
               </Box>
             ))}
-            {itemExtraFieldList.textare_field?.map((item) => (
-              <Box className="flex gap-x-2">
+            {itemExtraFieldList.textare_field?.map((item, index) => (
+              <Box className="flex gap-x-2" key={index}>
                 <Typography variant="body1" className="font-semibold">
                   {Object.keys(item)[0]} :
                 </Typography>
@@ -308,8 +332,8 @@ function ViewItem() {
                 </Typography>
               </Box>
             ))}
-            {itemExtraFieldList.date_field?.map((item) => (
-              <Box className="flex gap-x-2">
+            {itemExtraFieldList.date_field?.map((item, index) => (
+              <Box className="flex gap-x-2" key={index}>
                 <Typography variant="body1" className="font-semibold">
                   {Object.keys(item)[0]} :
                 </Typography>
@@ -322,10 +346,8 @@ function ViewItem() {
           </Box>
           <Box className="mt-3">
             <Box className="flex gap-x-2">
-              <Avatar className="capitalize self-end">
-                {JSON.parse(
-                  localStorage.getItem("user") || "{}"
-                ).user_name.slice(0, 1)}
+              <Avatar className="capitalize self-end cursor-pointer">
+                {userExist ? "Z" : loginUser.user_name.slice(0, 1)}
               </Avatar>
               <Box
                 className="flex-1"
@@ -359,13 +381,14 @@ function ViewItem() {
                 type="submit"
                 className="bg-gray-100 hover:bg-gray-200"
                 form={"comment_form"}
+                disabled={userExist ? true : false}
               >
                 comment
               </Button>
             </Box>
             <Box className="flex flex-col gap-y-4">
               {commentList.map((item: any) => {
-                return <CommentText key={item._id} data={item} />;
+                return <CommentText key={item.id} data={item} />;
               })}
             </Box>
           </Box>

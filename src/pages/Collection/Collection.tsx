@@ -5,6 +5,8 @@ import CreateCollectionModal from "../../components/Collection/СreateCollection
 import api from "../../utils/api";
 
 import CollectionCard from "../../components/CollectionCard/CollectionCard";
+import HomeSearch from "../../components/Home/HomeSearch";
+import { useSelector } from "react-redux";
 
 type CollectionListType = {
   collection_name: string;
@@ -16,6 +18,9 @@ type CollectionListType = {
 }[];
 
 function Collection() {
+  let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const searchData = useSelector((state: any) => state.search);
+
   const [createCollModalVisible, setCreateCollModalVisible] =
     useState<boolean>(false);
   const [collectionList, setCollectionList] = useState<CollectionListType | []>(
@@ -50,16 +55,22 @@ function Collection() {
     getCollectionListApi();
   }, []);
 
+  if (searchData.collection.length > 0 && searchData.url === "/collection") {
+    return <HomeSearch />;
+  }
+
   return (
     <Box>
       <Box className="flex justify-end mb-5">
-        <Button onClick={handleOpenModal} variant="contained">
-          Create Collection
-        </Button>
+        {loginUser.role ? (
+          <Button onClick={handleOpenModal} variant="contained">
+            Create Collection
+          </Button>
+        ) : null}
       </Box>
       <Grid container spacing={3}>
         {collectionList.map((item, index) => (
-          <Grid xs={3}>
+          <Grid xs={3} key={item.id}>
             <CollectionCard data={item} />
           </Grid>
         ))}

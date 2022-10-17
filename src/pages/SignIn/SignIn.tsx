@@ -22,7 +22,6 @@ function SignIn() {
     formState: { errors },
   } = useForm<SignInFormValues>();
 
-
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const notify = (message: string) => toast(message);
   const navigate = useNavigate();
@@ -39,6 +38,7 @@ function SignIn() {
         } else {
           notify("user is blocked");
         }
+       
       })
       .catch((err) => {
         notify(err.response.data.error);

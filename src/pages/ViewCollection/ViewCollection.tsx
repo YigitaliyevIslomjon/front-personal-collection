@@ -1,13 +1,13 @@
-import { Button, Box, Typography, IconButton } from "@mui/material";
+import { Button, Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import EditCollectionModal from "../../components/Collection/EditCollectionModal";
 import CreateItemExtraFieldModal from "../../components/ViewCollection/CreateItemExtraFieldModal";
 import ReactMarkdown from "react-markdown";
-import api from "../../utils/api";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CollectionItemCard from "../../components/ViewCollection/CollectionItemCard";
+import api from "../../utils/api";
 
 export type CollectionType = {
   collection_name: string;
@@ -36,10 +36,12 @@ type CollectionItemListType = {
 
 function ViewCollection() {
   let { id } = useParams();
+  let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
+
   const [collection, setCollection] = useState({} as CollectionType);
   const [editCollecModalVisible, setEditCollecModalVisible] =
     useState<boolean>(false);
-  const [colleCtionItemList, setCollectionItemList] = useState(
+  const [collectionItemList, setCollectionItemList] = useState(
     [] as CollectionItemListType
   );
   const [itemExtraFieldModalVisible, setItemExtraFieldModalVisible] =
@@ -54,9 +56,14 @@ function ViewCollection() {
       .catch((err) => {});
   };
 
-  const getCollectionItemListApi = () => {
+  const getCollectionItemListByIdApi = (
+    pageNumber: number,
+    pageSize: number
+  ) => {
     api
-      .get(`collection/items`, { params: { collection_id: id } })
+      .get(`collection/items`, {
+        params: { collection_id: id, pageNumber, pageSize },
+      })
       .then((res) => {
         setCollectionItemList(
           res.data.map((item: any) => ({
@@ -74,7 +81,8 @@ function ViewCollection() {
 
   useEffect(() => {
     getCollectionByIdApi();
-    getCollectionItemListApi();
+    getCollectionItemListByIdApi(1, 10);
+   // eslint-disable-next-line
   }, []);
 
   const editCollection = () => {
@@ -95,6 +103,17 @@ function ViewCollection() {
     window.history.back();
   };
 
+  const checkingRole = () => {
+    if (
+      loginUser.role === "admin" ||
+      collection.user_id?._id === loginUser._id
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <Box>
       <Grid container columnSpacing={4}>
@@ -112,26 +131,35 @@ function ViewCollection() {
           </div>
           <Box className="flex flex-col gap-y-1 mt-2">
             <Box className="flex gap-x-2 mb-1">
-              <Button variant="contained" onClick={editCollection}>
-                edit
-              </Button>
-              <Button
-                variant="contained"
-                className="bg-red-500 hover:bg-red-600"
-                onClick={deleteCollection}
-              >
-                delete
-              </Button>
-              <Button
-                variant="contained"
-                className="bg-green-500 hover:bg-green-600"
-                onClick={createItemExtraField}
-              >
-                add item field
-              </Button>
-              <Button variant="contained" color="primary">
-                view item table
-              </Button>
+              {checkingRole() ? (
+                <>
+                  <Button variant="contained" onClick={editCollection}>
+                    edit
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className="bg-red-500 hover:bg-red-600"
+                    onClick={deleteCollection}
+                  >
+                    delete
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className="bg-green-500 hover:bg-green-600"
+                    onClick={createItemExtraField}
+                  >
+                    add item field
+                  </Button>
+                  <Link
+                    to={`/collection-item-table/${id}`}
+                    className="no-underline"
+                  >
+                    <Button variant="contained" color="primary">
+                      view item table
+                    </Button>
+                  </Link>
+                </>
+              ) : null}
             </Box>
             <Box className="flex gap-x-2">
               <Typography variant="body1" className="font-semibold">
@@ -183,7 +211,7 @@ function ViewCollection() {
                 Number of items :{" "}
               </Typography>
               <Typography variant="body1">
-                {colleCtionItemList.length}
+                {collectionItemList.length}
               </Typography>
             </Box>
           </Box>
@@ -191,8 +219,8 @@ function ViewCollection() {
         <Grid xs={5}>
           <Typography variant="h6"> Items of Colleciton</Typography>
           <Box className="flex flex-col gap-y-1 mt-3 overflow-y-scroll h-[40rem]">
-            {colleCtionItemList.map((item) => (
-              <CollectionItemCard data={item} />
+            {collectionItemList.map((item) => (
+              <CollectionItemCard key={item.id} data={item} />
             ))}
           </Box>
         </Grid>

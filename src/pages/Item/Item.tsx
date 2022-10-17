@@ -1,19 +1,11 @@
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Card,
-  Button,
-  CardActionArea,
-  CardActions,
-  Typography,
-  CardContent,
-  CardMedia,
-} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import api from "../../utils/api";
-import { Link } from "react-router-dom";
 import CreateItemModal from "../../components/Item/CreateItemModal";
 import ItemCard from "../../components/ItemCard/ItemCard";
+import HomeSearch from "../../components/Home/HomeSearch";
+import { useSelector } from "react-redux";
 
 type itemListType = {
   item_name: string;
@@ -25,14 +17,17 @@ type itemListType = {
 }[];
 
 function Item() {
+  const searchData = useSelector((state: any) => state.search);
+
+  let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
+
   const [createItemModalVisible, setCreateItemModalVisible] =
     useState<boolean>(false);
+  const [itemList, setItemList] = useState<itemListType | []>([]);
 
   const handleOpenModal = () => {
     setCreateItemModalVisible(true);
   };
-
-  const [itemList, setItemList] = useState<itemListType | []>([]);
 
   const getItemListApi = (pageSize: number, pageNumber: number) => {
     api
@@ -57,18 +52,23 @@ function Item() {
   useEffect(() => {
     getItemListApi(10, 1);
   }, []);
-  console.log(itemList);
 
+  if (searchData.item.length > 0 && searchData.url === "/item") {
+    return <HomeSearch />;
+  }
+  
   return (
     <Box>
       <Box className="flex justify-end mb-5">
-        <Button onClick={handleOpenModal} variant="contained">
-          Create Item
-        </Button>
+        {loginUser.role ? (
+          <Button onClick={handleOpenModal} variant="contained">
+            Create Item
+          </Button>
+        ) : null}
       </Box>
       <Grid container spacing={3}>
         {itemList.map((item, index) => (
-          <Grid xs={3}>
+          <Grid xs={3} key={item.id}>
             <ItemCard data={item} />
           </Grid>
         ))}

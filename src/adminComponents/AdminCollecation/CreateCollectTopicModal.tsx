@@ -10,6 +10,7 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
 import api from "../../utils/api";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 
 export type TopicFormField = {
   topic_name: string;
@@ -42,9 +43,10 @@ function CreateCollectTopicModal({
       .then((res) => {
         getTopicTableData(1, 10);
         setVisible(false);
+        toastifyMessage({});
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
 

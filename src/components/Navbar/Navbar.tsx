@@ -9,7 +9,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
@@ -32,11 +31,11 @@ import { Link, NavLink } from "react-router-dom";
 import api from "../../utils/api";
 import { useDispatch } from "react-redux";
 import {
+  setSearchUrl,
   setSerachCollectionList,
   setSerachCommentList,
   setSerachItemList,
 } from "../../store/slice/searchSlice";
-
 import "./Navbar.scss";
 
 const Search = styled("div")(({ theme }) => ({
@@ -90,22 +89,27 @@ const pages = [
 
 const settings = [
   { title: "Admin panel", link: "sign/in/admin" },
-  { title: "Logout", link: "/sign/in" },
+  { title: "Logout", link: "/" },
 ];
 
 function Navbar() {
-  const dispatch = useDispatch();
-  const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
-
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [userMenuVisible, setUserMenuVisible] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  const theme = useTheme();
+  let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   const handleOpenUserMenu = () => {
     setUserMenuVisible(true);
   };
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (url: string) => {
     setUserMenuVisible(false);
+    if (url === "/") {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("admin_token");
+      localStorage.removeItem("user");
+    }
   };
 
   const handleDrawerOpen = () => {
@@ -120,7 +124,7 @@ function Navbar() {
     api
       .post("search", { search: e, url: window.location.pathname })
       .then((res) => {
-        console.log(res.data);
+        dispatch(setSearchUrl(res.data.searchUrl))
         dispatch(
           setSerachCollectionList(
             res.data.collection.map((item: any, index: any) => ({
@@ -206,74 +210,110 @@ function Navbar() {
           </Box>
           {/* <img src={logo} alt="ram" /> */}
           <Box className="xs:hidden md:flex gap-x-4">
-            {pages.map((page, index) => (
-              <NavLink to={page.link} key={index} className="no-underline">
-                <Button className="text-base text-white">{page.title}</Button>
-              </NavLink>
-            ))}
+            {pages.map((page, index) => {
+              if (page.title === "Personal") {
+                if (loginUser.role) {
+                  return (
+                    <NavLink
+                      to={page.link}
+                      key={index}
+                      className="no-underline"
+                    >
+                      <Button className="text-base text-white">
+                        {page.title}
+                      </Button>
+                    </NavLink>
+                  );
+                } else {
+                  return null;
+                }
+              } else {
+                return (
+                  <NavLink to={page.link} key={index} className="no-underline">
+                    <Button className="text-base text-white">
+                      {page.title}
+                    </Button>
+                  </NavLink>
+                );
+              }
+            })}
           </Box>
-          <Link to={"/sign/in"} className="no-underline ml-auto">
-            <Button
-              className="text-base"
-              sx={{ my: 2, color: "white", display: "block" }}
-            >
-              Sign in
-            </Button>
-          </Link>
-          <Link to={"/sign/up"} className="no-underline">
-            <Button
-              className="text-base"
-              sx={{ my: 2, color: "white", display: "block" }}
-            >
-              Sign Up
-            </Button>
-          </Link>
-          <Search className="mr-2">
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              onChange={(e) => {
-                fullTextSearch(e.target.value);
-              }}
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
-          <IconButton onClick={colorMode.toggleColorMode} color="inherit">
-            {theme.palette.mode === "dark" ? (
-              <LightModeIcon />
-            ) : (
-              <Brightness3Icon />
-            )}
-          </IconButton>
-          <Typography variant="body1" className="capitalize">
-            {JSON.parse(localStorage.getItem("user") || "{}").user_name}
-          </Typography>
-          <Box>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={userMenuVisible}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting.title} onClick={handleCloseUserMenu}>
-                  <Link className="no-underline" to={setting.link}>
-                    {setting.title}
-                  </Link>
-                </MenuItem>
-              ))}
-            </Menu>
+          <Box className="flex items-center ml-auto">
+            {Object.keys(loginUser).length === 0 ? (
+              <>
+                <Link to={"/sign/in"} className="no-underline">
+                  <Button
+                    className="text-base"
+                    sx={{ my: 2, color: "white", display: "block" }}
+                  >
+                    Sign in
+                  </Button>
+                </Link>
+                <Link to={"/sign/up"} className="no-underline">
+                  <Button
+                    className="text-base"
+                    sx={{ my: 2, color: "white", display: "block" }}
+                  >
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            ) : null}
+
+            <Search className="mr-2">
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                onChange={(e) => {
+                  fullTextSearch(e.target.value);
+                }}
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+              />
+            </Search>
+            <IconButton onClick={colorMode.toggleColorMode} color="inherit">
+              {theme.palette.mode === "dark" ? (
+                <LightModeIcon />
+              ) : (
+                <Brightness3Icon />
+              )}
+            </IconButton>
+            <Typography variant="body1" className="capitalize mr-1">
+              {loginUser.user_name}
+            </Typography>
+            <Box>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar
+                    className="capitalize"
+                    alt={loginUser.user_name}
+                    src="/static/images/avatar/2.jpg"
+                  />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={userMenuVisible}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem
+                    key={setting.title}
+                    onClick={() => handleCloseUserMenu(setting.link)}
+                  >
+                    <Link className="no-underline" to={setting.link}>
+                      {setting.title}
+                    </Link>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>

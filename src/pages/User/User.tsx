@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, IconButton } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { DataGrid, GridColDef, GridValidRowModel } from "@mui/x-data-grid";
-
 import Swal from "sweetalert2";
 import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EditUserModal from "../../adminComponents/User/EditUserModal";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 
 export type UserTableType = {
   user_name: string;
@@ -48,6 +49,7 @@ function User() {
   );
 
   const [userTableLoading, setUserTableLoading] = useState<boolean>(false);
+
   const userTableColumn: GridColDef[] = [
     {
       field: "user_name",
@@ -101,7 +103,7 @@ function User() {
               <EditIcon className="cursor-pointer" />
             </IconButton>
             <IconButton
-              onClick={() => delteUserTableRow(params.row)}
+              onClick={() => deleteUserTableRow(params.row)}
               color="warning"
               component="label"
             >
@@ -118,7 +120,7 @@ function User() {
     setUserTableRowData(data);
   }
 
-  function delteUserTableRow(data: UserTableRowType) {
+  function deleteUserTableRow(data: UserTableRowType) {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -127,17 +129,22 @@ function User() {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: `Yes, delete it!`,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteUserApi(data);
-      }
-    });
+    })
+      .then((result) => {
+        if (result.isConfirmed) {
+          deleteUserApi(data);
+        }
+      })
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   }
 
   function deleteUserApi(data: UserTableRowType) {
     api
       .delete(`/user/${data._id}`)
       .then((res) => {
+        toastifyMessage({});
         if (res.data.isInValidUser) {
           navigate("/sign/in/admin");
           localStorage.removeItem("admin_token");
@@ -146,7 +153,7 @@ function User() {
         getUserTableData(1, 10);
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       });
   }
 
@@ -158,7 +165,7 @@ function User() {
         setUserTableData(res.data);
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       })
       .finally(() => {
         setUserTableLoading(false);
@@ -190,6 +197,7 @@ function User() {
           visible={editUserModalVisible}
         />
       ) : null}
+      <ToastContainer />
     </div>
   );
 }

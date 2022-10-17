@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Box,
   Button,
   Card,
   CardActionArea,
@@ -32,39 +33,39 @@ function CollectionCard({ data }: CollectionCardType) {
             alt="green iguana"
           />
           <CardContent>
-            <div className="flex gap-x-2">
+            <Box className="flex gap-x-2">
               <Typography gutterBottom variant="body2" component="span">
                 Name :
               </Typography>
               <Typography gutterBottom variant="body2" component="span">
                 {data.collection_name}
               </Typography>
-            </div>
-            <div className="flex gap-x-2">
+            </Box>
+            <Box className="flex gap-x-2">
               <Typography gutterBottom variant="body2" component="span">
                 Author :
               </Typography>
               <Typography gutterBottom variant="body2" component="span">
                 {data.user_name}
               </Typography>
-            </div>
-            <div className="flex gap-x-2">
+            </Box>
+            <Box className="flex gap-x-2">
               <Typography gutterBottom variant="body2" component="span">
                 topic :
               </Typography>
               <Typography gutterBottom variant="body2" component="span">
                 {data.topic_name}
               </Typography>
-            </div>
+            </Box>
             {data.item_count ? (
-              <div className="flex gap-x-2">
+              <Box className="flex gap-x-2">
                 <Typography gutterBottom variant="body2" component="span">
                   items :
                 </Typography>
                 <Typography gutterBottom variant="body2" component="span">
                   {data.item_count}
                 </Typography>
-              </div>
+              </Box>
             ) : null}
           </CardContent>
         </CardActionArea>

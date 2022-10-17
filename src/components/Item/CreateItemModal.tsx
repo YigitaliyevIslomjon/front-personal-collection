@@ -307,6 +307,7 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                       onChange={(e, value) => {
                         onChange(value);
                       }}
+                      freeSolo
                       options={tagList}
                       renderTags={(value: readonly string[], getTagProps) =>
                         value.map((option: string, index: number) => (

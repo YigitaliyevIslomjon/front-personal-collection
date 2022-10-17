@@ -1,22 +1,23 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
-  Button,
   Card,
   CardActionArea,
-  CardActions,
   CardContent,
-  CardMedia,
   Typography,
+  Button,
+  Box,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import { Box } from "@mui/system";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ItemListType } from "../../pages/Home/Home";
 import CollectionCard from "../CollectionCard/CollectionCard";
 import ItemCard from "../ItemCard/ItemCard";
+import CloseIcon from "@mui/icons-material/Close";
+import { setSerachItemList } from "../../store/slice/searchSlice";
 
 function HomeSearch() {
+  const dispatch = useDispatch();
   let searchItemList: ItemListType = useSelector(
     (state: any) => state.search.item
   );
@@ -24,7 +25,9 @@ function HomeSearch() {
     (state: any) => state.search.collection
   );
   let searchCommentList = useSelector((state: any) => state.search.comment);
-
+  const clearTagFilter = () => {
+    dispatch(setSerachItemList([]));
+  };
   return (
     <Box className="mb-20">
       {searchCollectionList.length > 0 ? (
@@ -42,6 +45,14 @@ function HomeSearch() {
       {searchItemList.length > 0 ? (
         <Box className="flex justify-between mb-4 mt-5">
           <Typography variant="h6">searched item list</Typography>
+          <Button
+            variant="contained"
+            className="flex justify-between items-center"
+            onClick={clearTagFilter}
+          >
+            <CloseIcon className="w-[22px] h-[22px]" />
+            <Typography variant="body1">clear filter</Typography>
+          </Button>{" "}
         </Box>
       ) : null}
       <Grid container spacing={3}>
@@ -58,7 +69,7 @@ function HomeSearch() {
       ) : null}
       <Grid container spacing={3}>
         {searchCommentList.map((item: any) => (
-          <Grid xs={3}>
+          <Grid xs={3} key={item.id}>
             <div className="border-2 border-solid border-indigo-100 rounded p-2">
               <Card className="h-full">
                 <CardActionArea>

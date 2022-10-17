@@ -9,6 +9,8 @@ import Swal from "sweetalert2";
 import api from "../../utils/api";
 import EditCollectTopicModal from "../../adminComponents/AdminCollecation/EditCollectTopicModal";
 import CreateCollectTopicModal from "../../adminComponents/AdminCollecation/CreateCollectTopicModal";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { ToastContainer } from "react-toastify";
 
 export type TopicTableType = {
   topic_name: string;
@@ -96,9 +98,10 @@ function AdminCollection() {
       .delete(`/topic/${data._id}`)
       .then((res) => {
         getTopicTableData(1, 10);
+        toastifyMessage({});
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       });
   }
 
@@ -110,13 +113,13 @@ function AdminCollection() {
         setTopicTableData(res.data);
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       })
       .finally(() => {
         setTopicTableLoading(false);
       });
   };
-  
+
   const handleOpenModal = () => {
     setCollectTopicModalVisible(true);
   };
@@ -159,6 +162,7 @@ function AdminCollection() {
           getTopicTableData={getTopicTableData}
         />
       ) : null}
+      <ToastContainer />
     </Box>
   );
 }

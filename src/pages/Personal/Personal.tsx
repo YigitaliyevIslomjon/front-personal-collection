@@ -5,6 +5,8 @@ import CreateCollectionModal from "../../components/Collection/СreateCollection
 import api from "../../utils/api";
 
 import CollectionCard from "../../components/CollectionCard/CollectionCard";
+import HomeSearch from "../../components/Home/HomeSearch";
+import { useSelector } from "react-redux";
 
 type CollectionListType = {
   collection_name: string;
@@ -16,6 +18,8 @@ type CollectionListType = {
 }[];
 
 function Personal() {
+  const searchData = useSelector((state: any) => state.search);
+
   const [createCollModalVisible, setCreateCollModalVisible] =
     useState<boolean>(false);
 
@@ -29,7 +33,7 @@ function Personal() {
 
   const getCollectionListApi = () => {
     api
-      .get("collection/list")
+      .get("collection/list/by-user")
       .then((res) => {
         setCollectionList(
           res.data.map((item: any, index: any) => ({
@@ -50,6 +54,10 @@ function Personal() {
   useEffect(() => {
     getCollectionListApi();
   }, []);
+
+  if (searchData.collection.length > 0 && searchData.url === "/personal") {
+    return <HomeSearch />;
+  }
 
   return (
     <Box>

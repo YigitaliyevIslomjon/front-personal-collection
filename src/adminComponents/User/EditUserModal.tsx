@@ -17,6 +17,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import api from "../../utils/api";
 import { UserTableRowType } from "../../pages/User/User";
 import { useNavigate } from "react-router-dom";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 
 export type FormField = {
   user_name: string;
@@ -59,7 +60,12 @@ function EditUserModal({
       .then((res) => {
         setVisible(false);
         getUserTableData(1, 10);
+        toastifyMessage({});
         if (res.data.isInValidUser) {
+          toastifyMessage({
+            type: "warn",
+            message: "You have lost admin rights",
+          });
           navigate("/");
           localStorage.removeItem("access_token");
           localStorage.removeItem("admin_token");
@@ -67,7 +73,7 @@ function EditUserModal({
         }
       })
       .catch((err) => {
-        console.error(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
   const onFinish = (data: FormField) => {

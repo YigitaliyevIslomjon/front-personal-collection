@@ -1,4 +1,4 @@
-import React, { useState, useMemo, createContext } from "react";
+import { useState, useMemo, createContext } from "react";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import SignIn from "./pages/SignIn/SignIn";
@@ -15,6 +15,7 @@ import ViewCollection from "./pages/ViewCollection/ViewCollection";
 import ViewItem from "./pages/ViewItem/ViewItem";
 import Home from "./pages/Home/Home";
 import Personal from "./pages/Personal/Personal";
+import CollectionItemTable from "./pages/CollectionItemTable/CollectionItemTable";
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
@@ -54,6 +55,10 @@ function App() {
               <Route path="item-view/:id" element={<ViewItem />} />
               <Route path="collection" element={<Collection />} />
               <Route path="collection-view/:id" element={<ViewCollection />} />
+              <Route
+                path="collection-item-table/:id"
+                element={<CollectionItemTable />}
+              />
               <Route path="personal" element={<Personal />} />
               <Route path="*" element={<div>Not fo und</div>} />
             </Route>

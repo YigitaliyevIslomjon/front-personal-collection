@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import { TagCloud } from "react-tagcloud";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import HomeSearch from "../../components/Home/HomeSearch";
 import { useDispatch, useSelector } from "react-redux";
-import { setSerachItemList } from "../../store/slice/searchSlice";
+import { setSearchUrl, setSerachItemList } from "../../store/slice/searchSlice";
 import CollectionCard from "../../components/CollectionCard/CollectionCard";
 import ItemCard from "../../components/ItemCard/ItemCard";
 import api from "../../utils/api";
@@ -16,10 +16,11 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "swiper/css";
+import { ToastContainer } from "react-toastify";
 
 type TagListType = {
   value: string;
-  item_id: string;
+  id: string;
   count: number;
 }[];
 
@@ -45,8 +46,10 @@ function Home() {
   const dispatch = useDispatch();
 
   const searchData = useSelector((state: any) => state.search);
+
   const [tagList, setTagList] = useState([] as TagListType);
   const [itemList, setItemList] = useState([] as ItemListType);
+
   const [collectionList, setCollectionList] = useState(
     [] as CollectionListType
   );
@@ -73,7 +76,6 @@ function Home() {
     api
       .get("collection/large")
       .then((res) => {
-        console.log("large", res.data);
         setCollectionList(
           res.data.map((item: any, index: any) => ({
             collection_name: item.collection_name,
@@ -90,7 +92,7 @@ function Home() {
 
   const getSearchTag = (id: string) => {
     api.post(`search/${id}`).then((res) => {
-      console.log(res.data);
+      dispatch(setSearchUrl("/"));
       dispatch(
         setSerachItemList(
           res.data.map((item: any) => ({
@@ -114,8 +116,8 @@ function Home() {
         setTagList(
           res.data.map((item: any, index: any) => ({
             value: item.tag_name,
-            item_id: item._id,
-            count: 10 + index,
+            id: item._id,
+            count: 5 * (index + 1),
           }))
         );
       })
@@ -129,9 +131,10 @@ function Home() {
   }, []);
 
   if (
-    searchData.item.length > 0 ||
-    searchData.collection.length > 0 ||
-    searchData.comment.length > 0
+    (searchData.item.length > 0 ||
+      searchData.collection.length > 0 ||
+      searchData.comment.length > 0) &&
+    searchData.url === "/"
   ) {
     return <HomeSearch />;
   }
@@ -205,10 +208,11 @@ function Home() {
             minSize={12}
             maxSize={35}
             tags={tagList}
-            onClick={(tag: any) => getSearchTag(tag.item_id)}
+            onClick={(tag: any) => getSearchTag(tag.id)}
           />
         </Box>
       </Box>
+      <ToastContainer />
     </Box>
   );
 }

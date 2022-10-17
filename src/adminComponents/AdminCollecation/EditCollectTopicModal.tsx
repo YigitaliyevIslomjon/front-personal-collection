@@ -12,6 +12,7 @@ import { Box } from "@mui/system";
 import api from "../../utils/api";
 import { TopicTableRowType } from "../../pages/AdminCollection/AdminCollection";
 import { TopicFormField } from "./CreateCollectTopicModal";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 
 type ModalProp = {
   setVisible: (value: boolean) => void;
@@ -42,9 +43,10 @@ function EditCollectTopicModal({
       .then((res) => {
         getTopicTableData(1, 10);
         setVisible(false);
+        toastifyMessage({});
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
 

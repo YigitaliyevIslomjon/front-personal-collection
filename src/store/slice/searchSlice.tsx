@@ -5,6 +5,7 @@ export type SearchSliceType = {
   item: ItemListType;
   collection: CollectionListType;
   comment: any[];
+  url : "string";
 };
 
 export const searchSlice = createSlice({
@@ -13,8 +14,9 @@ export const searchSlice = createSlice({
     item: [],
     collection: [],
     comment: [],
-    tag: [],
+    url: [],
   },
+
   reducers: {
     setSerachItemList: (state, { payload }) => {
       state.item = payload;
@@ -25,10 +27,11 @@ export const searchSlice = createSlice({
     setSerachCommentList: (state, { payload }) => {
       state.comment = payload;
     },
-    setSearchTagList: (state, { payload }) => {
-      state.tag = payload;
+    setSearchUrl: (state, { payload }) => {
+      state.url = payload
     },
   },
+
 });
 
 // each case under reducers becomes an action
@@ -37,6 +40,6 @@ export const {
   setSerachItemList,
   setSerachCommentList,
   setSerachCollectionList,
-  setSearchTagList,
+  setSearchUrl,
 } = searchSlice.actions;
 export default searchSlice.reducer;
