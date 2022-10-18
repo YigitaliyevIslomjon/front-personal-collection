@@ -19,6 +19,7 @@ import "swiper/css";
 import { ToastContainer } from "react-toastify";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
+import { useTranslation } from "react-i18next";
 
 type TagListType = {
   value: string;
@@ -46,7 +47,7 @@ export type CollectionListType = {
 
 function Home() {
   const dispatch = useDispatch();
-
+  let { t } = useTranslation();
   const searchData = useSelector((state: any) => state.search);
 
   const [tagList, setTagList] = useState([] as TagListType);
@@ -154,9 +155,9 @@ function Home() {
   return (
     <Box id="home" className="flex flex-col">
       <Box className="flex justify-between mb-4 mt-5">
-        <Typography variant="h6"> Largest collections</Typography>
+        <Typography variant="h6">{t("largeCollections")}</Typography>
         <Link to="/collection" className="no-underline">
-          <Typography variant="body1"> view all</Typography>
+          <Typography variant="body1"> {t("viewAll")}</Typography>
         </Link>
       </Box>
 
@@ -191,9 +192,9 @@ function Home() {
       </Grid>
 
       <Box className="flex justify-between mb-4 mt-6">
-        <Typography variant="h6">Latest Items</Typography>
+        <Typography variant="h6">{t("lastItem")}</Typography>
         <Link to="/collection" className="no-underline">
-          <Typography variant="body1">view all</Typography>
+          <Typography variant="body1"> {t("viewAll")}</Typography>
         </Link>
       </Box>
 

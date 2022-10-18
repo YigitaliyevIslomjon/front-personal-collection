@@ -1,0 +1,26 @@
+{
+    "signin": "sign in",
+    "signup": "sign in",
+    "home": "home",
+    "personal": "personal",
+     "items": "items",
+     "collections": "collections",
+     "search": "Search...",
+     "adminPenel":"Admin penel",
+     "logout": "logout",
+     "no-account" : "Don't have an account",
+     "email":"Email",
+     "password": "Password",
+     "confirm_password" : "Confirm password",
+     "name" : "Name",
+     "largeCollections":"Largest collections",
+     "lastItem": "Last items",
+     "viewAll": "View all",
+     "searchedCollections" : "Searched collection list",
+     "searchedItems" : "Searched item list",
+     "searchedComments" : "Searched comment list",
+     "clearFilter": "Clear filter",
+     "createCollection" : "create collection",
+     "createItem" : "create item"
+
+}

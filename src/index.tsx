@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
+import "./i18n";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -18,7 +19,9 @@ root.render(
     <Provider store={store}>
       <StyledEngineProvider injectFirst>
         <BrowserRouter>
-          <App />
+          <React.Suspense fallback="loading">
+            <App />
+          </React.Suspense>
         </BrowserRouter>
       </StyledEngineProvider>
     </Provider>

@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import "./SignIn.scss";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { useTranslation } from "react-i18next";
 
 type SignInFormValues = {
   email: string;
@@ -22,6 +23,8 @@ function SignIn() {
     control,
     formState: { errors },
   } = useForm<SignInFormValues>();
+
+  let { t } = useTranslation();
 
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
 
@@ -65,7 +68,7 @@ function SignIn() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          {t("signin")}
         </Typography>
         <Box
           component="form"
@@ -88,7 +91,7 @@ function SignIn() {
                 onChange={onChange}
                 margin="normal"
                 fullWidth
-                label="Email Address"
+                label={t("email")}
                 autoComplete="email"
                 error={errors.email ? true : false}
                 helperText={errors.email && errors.email.message}
@@ -108,7 +111,7 @@ function SignIn() {
                 required
                 fullWidth
                 helperText={errors.password && errors.password.message}
-                label="Password"
+                label={t("password")}
                 error={errors.password ? true : false}
                 type="password"
               />
@@ -122,16 +125,16 @@ function SignIn() {
             sx={{ mt: 3, mb: 2 }}
             fullWidth
           >
-            Sign In
+            {t("signin")}
           </LoadingButton>
           <Grid container>
             <Grid item xs>
-              Don't have an account ?
+              {t("no-account")}
             </Grid>
             <Grid item>
               <Link to="/sign/up" className="no-underline">
                 {" "}
-                Sign Up
+                {t("signup")}
               </Link>
             </Grid>
           </Grid>

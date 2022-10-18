@@ -10,6 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import "./AdminSignIn.scss";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { useTranslation } from "react-i18next";
 
 type SignInFormValues = {
   email: string;
@@ -17,6 +18,7 @@ type SignInFormValues = {
 };
 
 function AdminSignIn() {
+  let { t } = useTranslation();
   const {
     handleSubmit,
     control,
@@ -34,7 +36,6 @@ function AdminSignIn() {
         localStorage.setItem("admin_token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         navigate("/admin/user");
-        
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -73,7 +74,7 @@ function AdminSignIn() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Admin Panel
+          {t("adminPenel")}
         </Typography>
         <Box
           component="form"
@@ -96,7 +97,7 @@ function AdminSignIn() {
                 onChange={onChange}
                 margin="normal"
                 fullWidth
-                label="Email Address"
+                label={t("email")}
                 autoComplete="email"
                 error={errors.email ? true : false}
                 helperText={errors.email && errors.email.message}
@@ -116,7 +117,7 @@ function AdminSignIn() {
                 required
                 fullWidth
                 helperText={errors.password && errors.password.message}
-                label="Password"
+                label={t("password")}
                 error={errors.password ? true : false}
                 type="password"
               />
@@ -130,16 +131,15 @@ function AdminSignIn() {
             sx={{ mt: 3, mb: 2 }}
             fullWidth
           >
-            Sign In
+            {t("signin")}
           </LoadingButton>
           <Grid container>
             <Grid item xs>
-              Don't have an account ?
+              {t("no-account")}
             </Grid>
             <Grid item>
               <Link to="/sign/up" className="no-underline">
-                {" "}
-                Sign Up
+                {t("signup")}
               </Link>
             </Grid>
           </Grid>

@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { ToastContainer } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 type itemListType = {
   item_name: string;
@@ -20,6 +21,7 @@ type itemListType = {
 }[];
 
 function Item() {
+  let { t } = useTranslation();
   const searchData = useSelector((state: any) => state.search);
 
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -65,7 +67,7 @@ function Item() {
       <Box className="flex justify-end mb-5">
         {loginUser.role ? (
           <Button onClick={handleOpenModal} variant="contained">
-            Create Item
+            {t("createItem")}
           </Button>
         ) : null}
       </Box>

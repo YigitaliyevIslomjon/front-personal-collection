@@ -15,8 +15,10 @@ import CollectionCard from "../CollectionCard/CollectionCard";
 import ItemCard from "../ItemCard/ItemCard";
 import CloseIcon from "@mui/icons-material/Close";
 import { setSerachItemList } from "../../store/slice/searchSlice";
+import { useTranslation } from "react-i18next";
 
 function HomeSearch() {
+  let { t } = useTranslation();
   const dispatch = useDispatch();
   let searchItemList: ItemListType = useSelector(
     (state: any) => state.search.item
@@ -32,7 +34,7 @@ function HomeSearch() {
     <Box className="mb-20">
       {searchCollectionList.length > 0 ? (
         <Box className="flex justify-between mb-4 mt-5">
-          <Typography variant="h6">searched collection list</Typography>
+          <Typography variant="h6">{t("searchedCollections")}</Typography>
         </Box>
       ) : null}
       <Grid container spacing={3}>
@@ -44,14 +46,14 @@ function HomeSearch() {
       </Grid>
       {searchItemList.length > 0 ? (
         <Box className="flex justify-between mb-4 mt-5">
-          <Typography variant="h6">searched item list</Typography>
+          <Typography variant="h6">{t("searchedItems")}</Typography>
           <Button
             variant="contained"
             className="flex justify-between items-center"
             onClick={clearTagFilter}
           >
             <CloseIcon className="w-[22px] h-[22px]" />
-            <Typography variant="body1">clear filter</Typography>
+            <Typography variant="body1">{t("clearFilter")}</Typography>
           </Button>{" "}
         </Box>
       ) : null}
@@ -64,7 +66,7 @@ function HomeSearch() {
       </Grid>
       {searchCommentList.length > 0 ? (
         <Box className="flex justify-between mb-4 mt-5">
-          <Typography variant="h6">searched comment list</Typography>
+          <Typography variant="h6">{t("searchedComments")}</Typography>
         </Box>
       ) : null}
       <Grid container spacing={3}>

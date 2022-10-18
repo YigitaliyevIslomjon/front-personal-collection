@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
 import { ToastContainer } from "react-toastify";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { useTranslation } from "react-i18next";
 
 type CollectionListType = {
   collection_name: string;
@@ -21,6 +22,8 @@ type CollectionListType = {
 }[];
 
 function Collection() {
+  let { t } = useTranslation();
+
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
   const searchData = useSelector((state: any) => state.search);
 
@@ -67,7 +70,7 @@ function Collection() {
       <Box className="flex justify-end mb-5">
         {loginUser.role ? (
           <Button onClick={handleOpenModal} variant="contained">
-            Create Collection
+            {t("createCollcetion")}
           </Button>
         ) : null}
       </Box>

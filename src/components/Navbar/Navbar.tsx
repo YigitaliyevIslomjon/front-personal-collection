@@ -20,7 +20,13 @@ import MailIcon from "@mui/icons-material/Mail";
 import Menu from "@mui/material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { Drawer, InputBase } from "@mui/material";
+import {
+  Drawer,
+  FormControl,
+  InputBase,
+  InputLabel,
+  Select,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import { ColorModeContext } from "../../App";
@@ -39,6 +45,8 @@ import {
 import "./Navbar.scss";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 import { ToastContainer } from "react-toastify";
+import { SelectChangeEvent } from "@mui/material/Select";
+import { useTranslation } from "react-i18next";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -83,21 +91,27 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const pages = [
-  { title: "Home", link: "/" },
-  { title: "Personal", link: "/personal" },
-  { title: "Items", link: "/item" },
-  { title: "Collections", link: "/collection" },
+  { title: "home", link: "/" },
+  { title: "personal", link: "/personal" },
+  { title: "items", link: "/item" },
+  { title: "collections", link: "/collection" },
 ];
 
 const settings = [
-  { title: "Admin panel", link: "sign/in/admin" },
-  { title: "Logout", link: "/" },
+  { title: "adminPenel", link: "sign/in/admin" },
+  { title: "logout", link: "/" },
 ];
 
 function Navbar() {
+  const { t, i18n } = useTranslation();
+
   const colorMode = useContext(ColorModeContext);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [userMenuVisible, setUserMenuVisible] = useState<boolean>(false);
+  const [language, setLanguage] = useState<string>(
+    localStorage.getItem("i18nextLng") || "eng"
+  );
+
   const dispatch = useDispatch();
   const theme = useTheme();
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -105,6 +119,7 @@ function Navbar() {
   const handleOpenUserMenu = () => {
     setUserMenuVisible(true);
   };
+
   const handleCloseUserMenu = (url: string) => {
     setUserMenuVisible(false);
     if (url === "/") {
@@ -168,6 +183,11 @@ function Navbar() {
       .finally(() => {});
   };
 
+  const changeLanguage = (e: SelectChangeEvent) => {
+    setLanguage(e.target.value);
+    i18n.changeLanguage(e.target.value);
+    // console.log("e", e);
+  };
   const drawerWidth = 240;
 
   return (
@@ -178,6 +198,7 @@ function Navbar() {
             <IconButton size="large" onClick={handleDrawerOpen} color="inherit">
               <MenuIcon />
             </IconButton>
+
             <Drawer
               anchor={"left"}
               sx={{
@@ -203,7 +224,7 @@ function Navbar() {
                         <ListItemIcon>
                           {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                         </ListItemIcon>
-                        <ListItemText primary={item.title} />
+                        <ListItemText primary={t(`${item.title}`)} />
                       </ListItemButton>
                     </ListItem>
                   ))}
@@ -214,7 +235,7 @@ function Navbar() {
           {/* <img src={logo} alt="ram" /> */}
           <Box className="xs:hidden md:flex gap-x-4">
             {pages.map((page, index) => {
-              if (page.title === "Personal") {
+              if (page.title === "personal") {
                 if (loginUser.role) {
                   return (
                     <NavLink
@@ -223,7 +244,7 @@ function Navbar() {
                       className="no-underline"
                     >
                       <Button className="text-base text-white">
-                        {page.title}
+                        {t(`${page.title}`)}
                       </Button>
                     </NavLink>
                   );
@@ -234,7 +255,7 @@ function Navbar() {
                 return (
                   <NavLink to={page.link} key={index} className="no-underline">
                     <Button className="text-base text-white">
-                      {page.title}
+                      {t(`${page.title}`)}
                     </Button>
                   </NavLink>
                 );
@@ -242,6 +263,18 @@ function Navbar() {
             })}
           </Box>
           <Box className="flex items-center ml-auto">
+            <Select
+              className="text-white"
+              sx={{
+                ".MuiOutlinedInput-notchedOutline": { border: 0 },
+              }}
+              size="small"
+              value={language}
+              onChange={(e) => changeLanguage(e)}
+            >
+              <MenuItem value={"en"}>en</MenuItem>
+              <MenuItem value={"uz"}>uz</MenuItem>
+            </Select>
             {Object.keys(loginUser).length === 0 ? (
               <>
                 <Link to={"/sign/in"} className="no-underline">
@@ -249,7 +282,7 @@ function Navbar() {
                     className="text-base"
                     sx={{ my: 2, color: "white", display: "block" }}
                   >
-                    Sign in
+                    {t("signin")}
                   </Button>
                 </Link>
                 <Link to={"/sign/up"} className="no-underline">
@@ -257,7 +290,7 @@ function Navbar() {
                     className="text-base"
                     sx={{ my: 2, color: "white", display: "block" }}
                   >
-                    Sign Up
+                    {t("signup")}
                   </Button>
                 </Link>
               </>
@@ -271,8 +304,8 @@ function Navbar() {
                 onChange={(e) => {
                   fullTextSearch(e.target.value);
                 }}
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
+                placeholder={t("search")}
+                inputProps={{ "aria-label": "" }}
               />
             </Search>
             <IconButton onClick={colorMode.toggleColorMode} color="inherit">
@@ -311,7 +344,7 @@ function Navbar() {
                     onClick={() => handleCloseUserMenu(setting.link)}
                   >
                     <Link className="no-underline" to={setting.link}>
-                      {setting.title}
+                      {t(`${setting.title}`)}
                     </Link>
                   </MenuItem>
                 ))}

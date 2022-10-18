@@ -12,6 +12,7 @@ import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { useTranslation } from "react-i18next";
 
 type SignUpFormValues = {
   email: string;
@@ -21,6 +22,7 @@ type SignUpFormValues = {
 };
 
 function SignUp() {
+  let { t } = useTranslation();
   const {
     handleSubmit,
     control,
@@ -70,7 +72,7 @@ function SignUp() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign Up
+          {t("signup")}
         </Typography>
         <Box
           component="form"
@@ -91,7 +93,7 @@ function SignUp() {
                     required
                     fullWidth
                     helperText={errors.user_name && errors.user_name.message}
-                    label="name"
+                    label={t("name")}
                     error={errors.user_name ? true : false}
                   />
                 )}
@@ -114,7 +116,7 @@ function SignUp() {
                     required
                     fullWidth
                     helperText={errors.email && errors.email.message}
-                    label="Email"
+                    label={t("email")}
                     error={errors.email ? true : false}
                   />
                 )}
@@ -135,7 +137,7 @@ function SignUp() {
                     required
                     fullWidth
                     helperText={errors.password && errors.password.message}
-                    label="Password"
+                    label={t("password")}
                     error={errors.password ? true : false}
                   />
                 )}
@@ -160,7 +162,7 @@ function SignUp() {
                     helperText={
                       errors.confirm_password && errors.confirm_password.message
                     }
-                    label="Confirm password"
+                    label={t("confirm_password")}
                     error={errors.confirm_password ? true : false}
                   />
                 )}
@@ -175,7 +177,7 @@ function SignUp() {
             sx={{ mt: 3, mb: 2 }}
             fullWidth
           >
-            Sign Up
+            {t("signup")}
           </LoadingButton>
         </Box>
       </Box>
