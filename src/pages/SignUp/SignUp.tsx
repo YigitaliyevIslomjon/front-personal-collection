@@ -9,8 +9,9 @@ import { useForm, Controller } from "react-hook-form";
 import api from "../../utils/api";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 
 type SignUpFormValues = {
   email: string;
@@ -28,7 +29,7 @@ function SignUp() {
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
-  const notify = (message: string) => toast(message);
+
   const createUserApi = (body: SignUpFormValues) => {
     setLoadingButton(true);
     api
@@ -39,7 +40,7 @@ function SignUp() {
         navigate("/");
       })
       .catch((err) => {
-        notify(err.response.data.error);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       })
       .finally(() => {
         setLoadingButton(false);

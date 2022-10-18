@@ -18,6 +18,7 @@ import ReactMarkdown from "react-markdown";
 import "./CreateCollectionModal.scss";
 import { imgURlToFile } from "./ConvertImgURltoFile";
 import UploadImage from "./UploadImage";
+import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 
 export type ColletionFormField = {
   collection_name: string;
@@ -78,7 +79,9 @@ function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
       .then((res) => {
         setTopicList(res.data);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const editColleactionApi = (body: any) => {
@@ -86,9 +89,10 @@ function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
       .put(`collection/${collection._id}`, body)
       .then((res) => {
         setVisible(false);
+        toastifyMessage({});
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
 

@@ -117,6 +117,7 @@ function CollectionItemTable() {
     pageNumber: number,
     pageSize: number
   ) => {
+    setItemTableLoading(true);
     api
       .get(`collection/items`, {
         params: { collection_id: id, pageNumber, pageSize },
@@ -135,6 +136,9 @@ function CollectionItemTable() {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setItemTableLoading(false);
       });
   };
 
@@ -157,7 +161,7 @@ function CollectionItemTable() {
           rows={itemListTableData}
           columns={itemListTableColumn}
           pageSize={5}
-          //   loading={userTableLoading}
+          loading={itemTableLoading}
           rowsPerPageOptions={[5]}
           getRowId={(row: GridValidRowModel) => row.id}
           experimentalFeatures={{ newEditingApi: true }}

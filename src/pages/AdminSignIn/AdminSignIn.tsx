@@ -9,6 +9,7 @@ import api from "../../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import "./AdminSignIn.scss";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 
 type SignInFormValues = {
   email: string;
@@ -22,7 +23,6 @@ function AdminSignIn() {
     formState: { errors },
   } = useForm<SignInFormValues>();
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
-  const notify = (message: string) => toast(message);
   const navigate = useNavigate();
 
   const signInUser = (body: SignInFormValues) => {
@@ -33,14 +33,11 @@ function AdminSignIn() {
         localStorage.setItem("access_token", res.data.token);
         localStorage.setItem("admin_token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
-        if (!res.data.user.status) {
-          navigate("/admin");
-        } else {
-          notify("user is blocked");
-        }
+        navigate("/admin/user");
+        
       })
       .catch((err) => {
-        notify(err.response.data.error);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       })
       .finally(() => {
         setLoadingButton(false);
@@ -125,10 +122,6 @@ function AdminSignIn() {
               />
             )}
           />
-          {/* <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          /> */}
           <LoadingButton
             type="submit"
             loading={loadingButton}

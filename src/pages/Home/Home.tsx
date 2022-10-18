@@ -17,6 +17,8 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "swiper/css";
 import { ToastContainer } from "react-toastify";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
 
 type TagListType = {
   value: string;
@@ -69,7 +71,9 @@ function Home() {
           }))
         );
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const getLargetCollectionListApi = () => {
@@ -87,32 +91,38 @@ function Home() {
           }))
         );
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const getSearchTag = (id: string) => {
-    api.post(`search/${id}`).then((res) => {
-      dispatch(setSearchUrl("/"));
-      dispatch(
-        setSerachItemList(
-          res.data.map((item: any) => ({
-            item_name: item.item_name,
-            collection_name: item.collection_id?.collection_name,
-            user_name: item.user_id?.user_name,
-            id: item._id,
-            path: item.path,
-            tags: item.tags.map((item: any) => item?.tag_name),
-          }))
-        )
-      );
-    });
+    api
+      .post(`search/${id}`)
+      .then((res) => {
+        dispatch(setSearchUrl("/"));
+        dispatch(
+          setSerachItemList(
+            res.data.map((item: any) => ({
+              item_name: item.item_name,
+              collection_name: item.collection_id?.collection_name,
+              user_name: item.user_id?.user_name,
+              id: item._id,
+              path: item.path,
+              tags: item.tags.map((item: any) => item?.tag_name),
+            }))
+          )
+        );
+      })
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const getTagListApi = () => {
     api
       .get("/tag/list")
       .then((res) => {
-        console.log(res.data);
         setTagList(
           res.data.map((item: any, index: any) => ({
             value: item.tag_name,
@@ -121,7 +131,9 @@ function Home() {
           }))
         );
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   useEffect(() => {
@@ -162,11 +174,19 @@ function Home() {
           modules={[Pagination, Navigation]}
           className="home-swiper"
         >
-          {collectionList.map((item) => (
-            <SwiperSlide key={item.id}>
-              <CollectionCard data={item} />
-            </SwiperSlide>
-          ))}
+          {collectionList.length > 0
+            ? collectionList.map((item) => (
+                <SwiperSlide key={item.id}>
+                  <CollectionCard data={item} />
+                </SwiperSlide>
+              ))
+            : Array(5)
+                .fill(0)
+                .map((item, index) => (
+                  <SwiperSlide key={index}>
+                    <CardSkeletion />
+                  </SwiperSlide>
+                ))}
         </Swiper>
       </Grid>
 
@@ -191,11 +211,19 @@ function Home() {
           modules={[Pagination, Navigation]}
           className="home-swiper"
         >
-          {itemList.map((item) => (
-            <SwiperSlide key={item.id}>
-              <ItemCard data={item} />
-            </SwiperSlide>
-          ))}
+          {itemList.length > 0
+            ? itemList.map((item) => (
+                <SwiperSlide key={item.id}>
+                  <ItemCard data={item} />
+                </SwiperSlide>
+              ))
+            : Array(5)
+                .fill(0)
+                .map((item, index) => (
+                  <SwiperSlide key={index}>
+                    <CardSkeletion />
+                  </SwiperSlide>
+                ))}
         </Swiper>
       </Grid>
 

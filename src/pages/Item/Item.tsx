@@ -6,6 +6,9 @@ import CreateItemModal from "../../components/Item/CreateItemModal";
 import ItemCard from "../../components/ItemCard/ItemCard";
 import HomeSearch from "../../components/Home/HomeSearch";
 import { useSelector } from "react-redux";
+import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { ToastContainer } from "react-toastify";
 
 type itemListType = {
   item_name: string;
@@ -45,7 +48,7 @@ function Item() {
         );
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
 
@@ -56,7 +59,7 @@ function Item() {
   if (searchData.item.length > 0 && searchData.url === "/item") {
     return <HomeSearch />;
   }
-  
+
   return (
     <Box>
       <Box className="flex justify-end mb-5">
@@ -67,11 +70,19 @@ function Item() {
         ) : null}
       </Box>
       <Grid container spacing={3}>
-        {itemList.map((item, index) => (
-          <Grid xs={3} key={item.id}>
-            <ItemCard data={item} />
-          </Grid>
-        ))}
+        {itemList.length > 0
+          ? itemList.map((item, index) => (
+              <Grid xs={3} key={item.id}>
+                <ItemCard data={item} />
+              </Grid>
+            ))
+          : Array(8)
+              .fill(0)
+              .map((item, index) => (
+                <Grid xs={3} key={index}>
+                  <CardSkeletion />
+                </Grid>
+              ))}
       </Grid>
       {createItemModalVisible ? (
         <CreateItemModal
@@ -79,6 +90,7 @@ function Item() {
           visible={createItemModalVisible}
         />
       ) : null}
+      <ToastContainer />
     </Box>
   );
 }

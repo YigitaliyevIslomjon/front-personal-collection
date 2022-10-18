@@ -5,7 +5,7 @@ export type SearchSliceType = {
   item: ItemListType;
   collection: CollectionListType;
   comment: any[];
-  url : "string";
+  url: "string";
 };
 
 export const searchSlice = createSlice({
@@ -28,10 +28,9 @@ export const searchSlice = createSlice({
       state.comment = payload;
     },
     setSearchUrl: (state, { payload }) => {
-      state.url = payload
+      state.url = payload;
     },
   },
-
 });
 
 // each case under reducers becomes an action

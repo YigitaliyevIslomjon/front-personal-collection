@@ -16,6 +16,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import api from "../../utils/api";
+import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 
 export type ItemFormTypes = {
   collection_id: {
@@ -81,7 +82,9 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
           }))
         );
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const createItemApi = (body: any) => {
@@ -89,21 +92,23 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
       .post("item", body)
       .then((res) => {
         setVisible(false);
+        toastifyMessage({});
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
 
   const getTagListApi = () => {
-    console.log("salom");
     api
       .get("tag/list")
       .then((res) => {
         let tagList = res.data.map((item: any) => item.tag_name);
         setTagList(tagList);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
   const getItemExtraField = (
     value: {
@@ -116,7 +121,9 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
       .then((res) => {
         setItemExtraFieldList(res.data);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const onSubmit = (data: any) => {

@@ -19,6 +19,7 @@ import { ItemDataType } from "../../pages/ViewItem/ViewItem";
 
 import { ItemExtraFieldListType, ItemFormTypes } from "../Item/CreateItemModal";
 import { imgURlToFile } from "../Collection/ConvertImgURltoFile";
+import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 
 type ModalProp = {
   setVisible: (value: boolean) => void;
@@ -70,7 +71,9 @@ function EditItemModal({
           }))
         );
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const editItemApi = (body: any) => {
@@ -79,9 +82,10 @@ function EditItemModal({
       .then((res) => {
         setVisible(false);
         reset();
+        toastifyMessage({});
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
 
@@ -93,7 +97,9 @@ function EditItemModal({
 
         setTagList(tagList);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
   const getItemExtraField = (
     value: {
@@ -113,7 +119,9 @@ function EditItemModal({
           setItemExtraFields(res.data);
           reset();
         })
-        .catch((err) => {});
+        .catch((err) => {
+          toastifyMessage({ type: "error", message: err.response.data.error });
+        });
     }
   };
 

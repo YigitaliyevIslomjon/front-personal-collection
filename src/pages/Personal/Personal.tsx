@@ -7,6 +7,8 @@ import api from "../../utils/api";
 import CollectionCard from "../../components/CollectionCard/CollectionCard";
 import HomeSearch from "../../components/Home/HomeSearch";
 import { useSelector } from "react-redux";
+import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 
 type CollectionListType = {
   collection_name: string;
@@ -26,12 +28,14 @@ function Personal() {
   const [collectionList, setCollectionList] = useState<CollectionListType | []>(
     []
   );
-
+  const [collectionListLoading, setCollectionListLoading] =
+    useState<boolean>(false);
   const handleOpenModal = () => {
     setCreateCollModalVisible(true);
   };
 
   const getCollectionListApi = () => {
+    setCollectionListLoading(true);
     api
       .get("collection/list/by-user")
       .then((res) => {
@@ -47,7 +51,10 @@ function Personal() {
         );
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setCollectionListLoading(false);
       });
   };
 
@@ -67,11 +74,19 @@ function Personal() {
         </Button>
       </Box>
       <Grid container spacing={3}>
-        {collectionList.map((item, index) => (
-          <Grid xs={3}>
-            <CollectionCard data={item} />
-          </Grid>
-        ))}
+        {!collectionListLoading
+          ? collectionList.map((item, index) => (
+              <Grid xs={3} key={item.id}>
+                <CollectionCard data={item} />
+              </Grid>
+            ))
+          : Array(8)
+              .fill(0)
+              .map((item, index) => (
+                <Grid xs={3} key={index}>
+                  <CardSkeletion />
+                </Grid>
+              ))}
       </Grid>
       {createCollModalVisible ? (
         <CreateCollectionModal

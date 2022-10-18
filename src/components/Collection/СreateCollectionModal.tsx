@@ -18,6 +18,7 @@ import api from "../../utils/api";
 import ReactMarkdown from "react-markdown";
 import "./CreateCollectionModal.scss";
 import UploadImage from "./UploadImage";
+import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 
 export type CollectionFormFieldType = {
   collection_name: string;
@@ -61,7 +62,9 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
       .then((res) => {
         setTopicList(res.data);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   //  becouse of tsx problem , given any type
@@ -70,9 +73,10 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
       .post("collection", body)
       .then((res) => {
         setVisible(false);
+        toastifyMessage({});
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
 

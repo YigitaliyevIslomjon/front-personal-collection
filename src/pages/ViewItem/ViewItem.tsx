@@ -12,6 +12,10 @@ import io from "socket.io-client";
 import ItemCollectionCard from "../../components/ViewItem/ItemCollectionCard";
 import CommentText from "../../components/ViewItem/CommentText";
 import EditItemModal from "../../components/ViewItem/EditItemModal";
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
+import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { ToastContainer } from "react-toastify";
 
 export type ItemDataType = {
   item_name: string;
@@ -64,7 +68,8 @@ function ViewItem() {
 
   let { id } = useParams();
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
-
+  const [itemLoading, setItemLoading] = useState<boolean>(false);
+  const [collectionLoading, setCollectionLoading] = useState<boolean>(false);
   const [itemData, setItemData] = useState({} as ItemDataType);
 
   const [itemCollection, setItemCollection] = useState(
@@ -96,10 +101,17 @@ function ViewItem() {
           topic_name: collection.topic_id.topic_name,
         });
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setCollectionLoading(false);
+      });
   };
 
   const getItemDataByIdApi = () => {
+    setItemLoading(true);
+    setCollectionLoading(true);
     api
       .get(`item/${id}`)
       .then((res) => {
@@ -110,7 +122,12 @@ function ViewItem() {
         console.log(item_list);
         getItemCollection(item_list);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setItemLoading(false);
+      });
   };
 
   const edititemData = () => {
@@ -120,8 +137,12 @@ function ViewItem() {
   const deleteitemData = () => {
     api
       .delete(`item/${id}`)
-      .then((res) => {})
-      .catch((err) => {});
+      .then((res) => {
+        toastifyMessage({});
+      })
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const pressLikeButton = (like_status: boolean) => {
@@ -134,7 +155,9 @@ function ViewItem() {
       .then((res) => {
         setLikeCount(res.data.count);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const getLikeCountApi = () => {
@@ -144,7 +167,10 @@ function ViewItem() {
         setLikeCount(res.data.count);
         setLikeStatus(res.data.like_status.like_status === "1" ? true : false);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+        
+      });
   };
 
   const getCommentList = () => {
@@ -159,7 +185,9 @@ function ViewItem() {
           }))
         );
       })
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const submitComment = (data: any) => {
@@ -167,7 +195,9 @@ function ViewItem() {
     api
       .post("comment", data)
       .then((res) => {})
-      .catch((err) => {});
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
   };
 
   const getBackPerviewUrl = () => {
@@ -191,7 +221,7 @@ function ViewItem() {
     getItemDataByIdApi();
     getLikeCountApi();
     getCommentList();
-   // eslint-disable-next-line
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -220,12 +250,16 @@ function ViewItem() {
             <ArrowBackIcon />
             <Typography variant="body1">back</Typography>
           </Button>
-          <div className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 ">
-            <img
-              alt="rasm"
-              src={itemData?.path}
-              className="object-cover h-[330px] w-full cursor-pointer"
-            />
+          <div className="border-2 border-solid border-indigo-100 rounded p-2 pb-1">
+            {!itemLoading ? (
+              <img
+                alt="rasm"
+                src={itemData?.path}
+                className="object-cover h-[330px] w-full cursor-pointer"
+              />
+            ) : (
+              <Skeleton variant="rounded" width={"100%"} height={330} />
+            )}
           </div>
           <Box className="flex flex-col gap-y-1 mt-2">
             <Box className="mb-1">
@@ -253,41 +287,58 @@ function ViewItem() {
               </Box>
             ) : null}
 
-            <Box className="flex gap-x-2">
-              <Typography variant="body1" className="font-semibold">
-                Name :{" "}
-              </Typography>
-              <Typography variant="body1">{itemData.item_name}</Typography>
-            </Box>
-
-            <Box className="flex gap-x-2">
-              <Typography variant="body1" className="font-semibold">
-                Collection :{" "}
-              </Typography>
-              <Typography variant="body1">
-                {itemData.collection_id?.collection_name}
-              </Typography>
-            </Box>
-            <Box className="flex gap-x-2">
-              <Typography variant="body1" className="font-semibold">
-                Auther :{" "}
-              </Typography>
-              <Typography variant="body1">
-                {itemData?.user_id?.user_name}
-              </Typography>
-            </Box>
-            <Box className="flex gap-x-2">
-              <Typography variant="body1" className="font-semibold">
-                tags :
-              </Typography>
-              <Box>
-                {itemData.tags?.map((tag) => (
-                  <Typography key={tag} variant="body1">
-                    {tag}
+            {!itemLoading ? (
+              <>
+                <Box className="flex gap-x-2">
+                  <Typography variant="body1" className="font-semibold">
+                    Name :{" "}
                   </Typography>
-                ))}
-              </Box>
-            </Box>
+                  <Typography variant="body1">{itemData.item_name}</Typography>
+                </Box>
+                <Box className="flex gap-x-2">
+                  <Typography variant="body1" className="font-semibold">
+                    Collection :{" "}
+                  </Typography>
+                  <Typography variant="body1">
+                    {itemData.collection_id?.collection_name}
+                  </Typography>
+                </Box>
+                <Box className="flex gap-x-2">
+                  <Typography variant="body1" className="font-semibold">
+                    Auther :{" "}
+                  </Typography>
+                  <Typography variant="body1">
+                    {itemData?.user_id?.user_name}
+                  </Typography>
+                </Box>
+                <Box className="flex gap-x-2">
+                  <Typography variant="body1" className="font-semibold">
+                    tags :
+                  </Typography>
+                  <Box>
+                    {itemData.tags?.map((tag) => (
+                      <Typography key={tag} variant="body1">
+                        {tag}
+                      </Typography>
+                    ))}
+                  </Box>
+                </Box>
+              </>
+            ) : (
+              <Stack spacing={2} className="mt-3">
+                {Array(5)
+                  .fill(0)
+                  .map((item, index) => (
+                    <Skeleton
+                      key={index}
+                      variant="rounded"
+                      width={"40%"}
+                      height={20}
+                    />
+                  ))}
+              </Stack>
+            )}
+
             {itemExtraFieldList.int_field?.map((item, index) => (
               <Box className="flex gap-x-2" key={index}>
                 <Typography variant="body1" className="font-semibold">
@@ -396,10 +447,23 @@ function ViewItem() {
         <Grid xs={5}>
           <Typography variant="h6"> Collection of item</Typography>
           <Box className="flex flex-col gap-y-1 mt-3 overflow-y-scroll h-[40rem]">
-            {Object.keys(itemCollection).length > 0 ? (
-              <ItemCollectionCard data={itemCollection} />
-            ) : (
+            {collectionLoading ? (
+              <Stack spacing={2} className="mt-3">
+                {Array(5)
+                  .fill(0)
+                  .map((item, index) => (
+                    <Skeleton
+                      key={index}
+                      variant="rounded"
+                      width={"50%"}
+                      height={140}
+                    />
+                  ))}
+              </Stack>
+            ) : Object.keys(itemCollection).length === 0 ? (
               <Typography variant="body1">there is no Collection</Typography>
+            ) : (
+              <ItemCollectionCard data={itemCollection} />
             )}
           </Box>
         </Grid>
@@ -413,6 +477,7 @@ function ViewItem() {
           setVisible={setEditItemModalVisible}
         />
       ) : null}
+      <ToastContainer />
     </Box>
   );
 }
