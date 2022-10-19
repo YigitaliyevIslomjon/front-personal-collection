@@ -61,15 +61,9 @@ function EditUserModal({
         setVisible(false);
         getUserTableData(1, 10);
         toastifyMessage({});
-        if (res.data.isInValidUser) {
-          toastifyMessage({
-            type: "warn",
-            message: "You have lost admin rights",
-          });
+        if (res.data.user.role === "user") {
+          localStorage.setItem("user", JSON.stringify(res.data.user));
           navigate("/");
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("admin_token");
-          localStorage.removeItem("user");
         }
       })
       .catch((err) => {

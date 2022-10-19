@@ -52,7 +52,8 @@ function Home() {
 
   const [tagList, setTagList] = useState([] as TagListType);
   const [itemList, setItemList] = useState([] as ItemListType);
-
+  const [collectionListLoading, setCollectionListLoading] =
+    useState<boolean>(false);
   const [collectionList, setCollectionList] = useState(
     [] as CollectionListType
   );
@@ -78,6 +79,7 @@ function Home() {
   };
 
   const getLargetCollectionListApi = () => {
+    setCollectionListLoading(true);
     api
       .get("collection/large")
       .then((res) => {
@@ -94,6 +96,9 @@ function Home() {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setCollectionListLoading(false);
       });
   };
 
@@ -175,7 +180,7 @@ function Home() {
           modules={[Pagination, Navigation]}
           className="home-swiper"
         >
-          {collectionList.length > 0
+          {!collectionListLoading
             ? collectionList.map((item) => (
                 <SwiperSlide key={item.id}>
                   <CollectionCard data={item} />

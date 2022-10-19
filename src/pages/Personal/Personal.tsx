@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Pagination } from "@mui/material";
+
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import CreateCollectionModal from "../../components/Collection/СreateCollectionModal";
 import api from "../../utils/api";
@@ -24,6 +25,7 @@ function Personal() {
 
   const [createCollModalVisible, setCreateCollModalVisible] =
     useState<boolean>(false);
+  const [pageNumber, setPageNumber] = useState<number>(1);
 
   const [collectionList, setCollectionList] = useState<CollectionListType | []>(
     []
@@ -34,10 +36,10 @@ function Personal() {
     setCreateCollModalVisible(true);
   };
 
-  const getCollectionListApi = () => {
+  const getCollectionListApi = (pageNumber: number, pageSize: number) => {
     setCollectionListLoading(true);
     api
-      .get("collection/list/by-user")
+      .get("collection/list/by-user", { params: { pageNumber, pageSize } })
       .then((res) => {
         setCollectionList(
           res.data.map((item: any, index: any) => ({
@@ -58,8 +60,16 @@ function Personal() {
       });
   };
 
+  const handlePaginationOnChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPageNumber(value);
+    getCollectionListApi(value, 8);
+  };
+
   useEffect(() => {
-    getCollectionListApi();
+    getCollectionListApi(1, 8);
   }, []);
 
   if (searchData.collection.length > 0 && searchData.url === "/personal") {
@@ -67,7 +77,7 @@ function Personal() {
   }
 
   return (
-    <Box>
+    <Box className="mb-10">
       <Box className="flex justify-end mb-5">
         <Button onClick={handleOpenModal} variant="contained">
           Create Collection
@@ -88,6 +98,15 @@ function Personal() {
                 </Grid>
               ))}
       </Grid>
+      <Box className="mt-10 flex justify-end">
+        <Pagination
+          variant="outlined"
+          shape="rounded"
+          count={10}
+          page={pageNumber}
+          onChange={handlePaginationOnChange}
+        />
+      </Box>
       {createCollModalVisible ? (
         <CreateCollectionModal
           setVisible={setCreateCollModalVisible}

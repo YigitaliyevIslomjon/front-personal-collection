@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, IconButton, TextField } from "@mui/material";
 import { useEffect, useState, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import { Controller, useForm } from "react-hook-form";
 import api from "../../utils/api";
@@ -16,6 +16,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { ToastContainer } from "react-toastify";
+import delelteAlert from "../../components/SweetAlert/SweetAlert";
 
 export type ItemDataType = {
   item_name: string;
@@ -58,15 +59,15 @@ type CommentListType = {
 }[];
 
 function ViewItem() {
-  const socket = useMemo(() => io("http://localhost:4000"), []);
-
   const {
     formState: { errors },
     control,
     handleSubmit,
   } = useForm<CommentFormType>();
 
-  let { id } = useParams();
+  const socket = useMemo(() => io("http://localhost:4000"), []);
+  const { id } = useParams();
+  const navigate = useNavigate();
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
   const [itemLoading, setItemLoading] = useState<boolean>(false);
   const [collectionLoading, setCollectionLoading] = useState<boolean>(false);
@@ -134,15 +135,19 @@ function ViewItem() {
     setEditItemModalVisible(true);
   };
 
-  const deleteitemData = () => {
+  const deleteitemDataById = () => {
     api
       .delete(`item/${id}`)
       .then((res) => {
+        navigate("/item");
         toastifyMessage({});
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
       });
+  };
+  const deleteItemOnClick = () => {
+    delelteAlert(deleteitemDataById);
   };
 
   const pressLikeButton = (like_status: boolean) => {
@@ -169,7 +174,6 @@ function ViewItem() {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
-        
       });
   };
 
@@ -280,7 +284,7 @@ function ViewItem() {
                 <Button
                   variant="contained"
                   className="bg-red-500 hover:bg-red-600"
-                  onClick={deleteitemData}
+                  onClick={deleteItemOnClick}
                 >
                   delete
                 </Button>

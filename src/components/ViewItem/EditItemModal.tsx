@@ -16,10 +16,10 @@ import { Box } from "@mui/system";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import api from "../../utils/api";
 import { ItemDataType } from "../../pages/ViewItem/ViewItem";
-
 import { ItemExtraFieldListType, ItemFormTypes } from "../Item/CreateItemModal";
 import { imgURlToFile } from "../Collection/ConvertImgURltoFile";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 type ModalProp = {
   setVisible: (value: boolean) => void;
@@ -51,6 +51,7 @@ function EditItemModal({
   const [collectionList, setCollectionList] = useState(
     [] as CollectionListType
   );
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const [itemExtraFields, setItemExtraFields] = useState(
     {} as ItemExtraFieldListType
@@ -77,6 +78,7 @@ function EditItemModal({
   };
 
   const editItemApi = (body: any) => {
+    setSaveLoading(true);
     api
       .put(`item/${itemData._id}`, body)
       .then((res) => {
@@ -86,6 +88,9 @@ function EditItemModal({
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setSaveLoading(false);
       });
   };
 
@@ -177,7 +182,7 @@ function EditItemModal({
       <DialogTitle id="alert-dialog-title">Create item</DialogTitle>
       <DialogContent className="overflow-y-auto">
         <Box
-          id="countField"
+          id="itemForm"
           component={"form"}
           className="flex flex-col gap-y-5 pt-2"
           encType="multipart/form-data"
@@ -672,9 +677,14 @@ function EditItemModal({
         <Button variant="contained" type="button" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="outlined" type="submit" form="countField" autoFocus>
-          OK
-        </Button>
+        <LoadingButton
+          loading={saveLoading}
+          type="submit"
+          form="itemForm"
+          variant="outlined"
+        >
+          Save
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

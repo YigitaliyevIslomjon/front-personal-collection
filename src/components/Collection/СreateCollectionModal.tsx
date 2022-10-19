@@ -19,6 +19,7 @@ import ReactMarkdown from "react-markdown";
 import "./CreateCollectionModal.scss";
 import UploadImage from "./UploadImage";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 export type CollectionFormFieldType = {
   collection_name: string;
@@ -51,6 +52,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
   const [markDown, setMarkDown] = useState<boolean>(false);
   const [topicList, setTopicList] = useState([] as TopicListType);
   const [images, setImages] = React.useState([]);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const closeModal = () => {
     setVisible(false);
@@ -69,6 +71,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
 
   //  becouse of tsx problem , given any type
   const createColleactionApi = (body: any) => {
+    setSaveLoading(true);
     api
       .post("collection", body)
       .then((res) => {
@@ -77,6 +80,9 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setSaveLoading(false);
       });
   };
 
@@ -114,7 +120,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
       <DialogTitle id="alert-dialog-title">Create collection</DialogTitle>
       <DialogContent id="alert-dialog-description">
         <Box
-          id="countField"
+          id="collectionField"
           component={"form"}
           className="flex flex-col gap-y-5 pt-2"
           encType="multipart/form-data"
@@ -248,9 +254,14 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
         <Button variant="contained" type="button" onClick={closeModal}>
           Cancel
         </Button>
-        <Button variant="outlined" type="submit" form="countField" autoFocus>
-          OK
-        </Button>
+        <LoadingButton
+          loading={saveLoading}
+          type="submit"
+          form="collectionField"
+          variant="outlined"
+        >
+          Save
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

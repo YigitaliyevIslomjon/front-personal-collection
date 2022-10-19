@@ -14,7 +14,7 @@ export let toastifyMessage = ({
   type = "success",
   message = "successfully",
   theme = "light",
-  time = 3000,
+  time = 1000,
   position = "top-right",
 }: {
   message?: string;

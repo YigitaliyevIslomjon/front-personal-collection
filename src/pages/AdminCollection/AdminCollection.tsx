@@ -5,12 +5,12 @@ import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridColDef, GridValidRowModel } from "@mui/x-data-grid";
-import Swal from "sweetalert2";
 import api from "../../utils/api";
 import EditCollectTopicModal from "../../adminComponents/AdminCollecation/EditCollectTopicModal";
 import CreateCollectTopicModal from "../../adminComponents/AdminCollecation/CreateCollectTopicModal";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { ToastContainer } from "react-toastify";
+import delelteAlert from "../../components/SweetAlert/SweetAlert";
 
 export type TopicTableType = {
   topic_name: string;
@@ -78,19 +78,7 @@ function AdminCollection() {
   }
 
   function deleteTopicTableRow(data: TopicTableRowType) {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: `Yes, delete it!`,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteTopicApi(data);
-      }
-    });
+    delelteAlert(deleteTopicApi, data);
   }
 
   function deleteTopicApi(data: TopicTableRowType) {

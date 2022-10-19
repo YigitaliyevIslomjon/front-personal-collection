@@ -17,6 +17,7 @@ import { Box } from "@mui/system";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import api from "../../utils/api";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 export type ItemFormTypes = {
   collection_id: {
@@ -59,6 +60,8 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
 
   const [images, setImages] = React.useState([]);
   const [tagList, setTagList] = useState([]);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
+
   const [collectionList, setCollectionList] = useState(
     [] as CollectionListType
   );
@@ -88,6 +91,7 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
   };
 
   const createItemApi = (body: any) => {
+    setSaveLoading(true);
     api
       .post("item", body)
       .then((res) => {
@@ -96,6 +100,9 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setSaveLoading(false);
       });
   };
 
@@ -148,7 +155,6 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
     console.log("img list", imageList);
     setImages(imageList as never[]);
   };
-  console.log("itemExtraFieldList", itemExtraFieldList);
   useEffect(() => {
     getCollectionsList();
     getTagListApi();
@@ -175,7 +181,7 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
       <DialogTitle id="alert-dialog-title">Create item</DialogTitle>
       <DialogContent className="overflow-y-auto">
         <Box
-          id="countField"
+          id="itemForm"
           component={"form"}
           className="flex flex-col gap-y-5 pt-2"
           encType="multipart/form-data"
@@ -465,9 +471,14 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
         <Button variant="contained" type="button" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="outlined" type="submit" form="countField" autoFocus>
-          OK
-        </Button>
+        <LoadingButton
+          loading={saveLoading}
+          type="submit"
+          form="itemForm"
+          variant="outlined"
+        >
+          Save
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

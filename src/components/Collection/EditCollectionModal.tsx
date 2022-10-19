@@ -19,6 +19,7 @@ import "./CreateCollectionModal.scss";
 import { imgURlToFile } from "./ConvertImgURltoFile";
 import UploadImage from "./UploadImage";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 export type ColletionFormField = {
   collection_name: string;
@@ -68,6 +69,7 @@ function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
   const [markDown, setMarkDown] = useState<boolean>(false);
   const [topicList, setTopicList] = useState([] as TopicListType);
   const [images, setImages] = useState<any>([]);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const handleClose = () => {
     setVisible(false);
@@ -85,6 +87,7 @@ function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
   };
 
   const editColleactionApi = (body: any) => {
+    setSaveLoading(true);
     api
       .put(`collection/${collection._id}`, body)
       .then((res) => {
@@ -93,6 +96,9 @@ function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setSaveLoading(false);
       });
   };
 
@@ -134,7 +140,7 @@ function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
       <DialogTitle id="alert-dialog-title">Create collection</DialogTitle>
       <DialogContent id="alert-dialog-description">
         <Box
-          id="countField"
+          id="collectionField"
           component={"form"}
           className="flex flex-col gap-y-5 pt-2"
           encType="multipart/form-data"
@@ -276,9 +282,14 @@ function EditCollectionModal({ setVisible, visible, collection }: ModalProp) {
         <Button variant="contained" type="button" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="outlined" type="submit" form="countField" autoFocus>
-          OK
-        </Button>
+        <LoadingButton
+          loading={saveLoading}
+          type="submit"
+          form="collectionField"
+          variant="outlined"
+        >
+          Save
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

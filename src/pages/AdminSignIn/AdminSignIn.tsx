@@ -6,7 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import "./AdminSignIn.scss";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
@@ -26,6 +26,9 @@ function AdminSignIn() {
   } = useForm<SignInFormValues>();
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const navigate = useNavigate();
+  const token = localStorage.getItem("access_token");
+  const isAdmin =
+    JSON.parse(localStorage.getItem("user") || "{}").role === "admin";
 
   const signInUser = (body: SignInFormValues) => {
     setLoadingButton(true);
@@ -33,7 +36,7 @@ function AdminSignIn() {
       .post("/user/login/admin", body)
       .then((res) => {
         localStorage.setItem("access_token", res.data.token);
-        localStorage.setItem("admin_token", res.data.token);
+        // localStorage.setItem("admin_token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         navigate("/admin/user");
       })
@@ -49,8 +52,8 @@ function AdminSignIn() {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("admin_token")) {
-      navigate("/admin");
+    if (token && isAdmin) {
+      navigate("/admin/user");
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

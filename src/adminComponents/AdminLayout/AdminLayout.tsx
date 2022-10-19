@@ -10,7 +10,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
@@ -18,16 +18,19 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import { People } from "@mui/icons-material";
 import Menu from "@mui/material/Menu";
+import Button from "@mui/material/Button";
 
 function AdminLayout() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const token = localStorage.getItem("access_token");
+  const isAdmin =
+    JSON.parse(localStorage.getItem("user") || "{}").role === "admin";
 
   const handleMenuClose = () => {
     navigate("/");
     setIsMenuOpen(false);
     localStorage.removeItem("access_token");
-    localStorage.removeItem("admin_token");
     localStorage.removeItem("user");
   };
 
@@ -61,7 +64,7 @@ function AdminLayout() {
   );
 
   useEffect(() => {
-    if (!localStorage.getItem("admin_token")) {
+    if (!(token && isAdmin)) {
       navigate("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,8 +75,14 @@ function AdminLayout() {
         position="fixed"
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
       >
-        <Toolbar className="flex justify-end gap-x-2">
-          <Typography variant="h6">
+        <Toolbar className="flex gap-x-2">
+          <Link to="/" className="no-underline">
+            <Button className="text-base" sx={{ color: "white" }}>
+              home
+            </Button>
+          </Link>
+
+          <Typography variant="body1" className="ml-auto">
             {JSON.parse(localStorage.getItem("user") || "{}").user_name}
           </Typography>
           <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

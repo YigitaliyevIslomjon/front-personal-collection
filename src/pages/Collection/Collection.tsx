@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Pagination } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import CreateCollectionModal from "../../components/Collection/СreateCollectionModal";
 import api from "../../utils/api";
@@ -23,23 +23,25 @@ type CollectionListType = {
 
 function Collection() {
   let { t } = useTranslation();
-
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
   const searchData = useSelector((state: any) => state.search);
-
+  const [pageNumber, setPageNumber] = useState<number>(1);
   const [createCollModalVisible, setCreateCollModalVisible] =
     useState<boolean>(false);
   const [collectionList, setCollectionList] = useState<CollectionListType | []>(
     []
   );
+  const [collectionListLoading, setCollectionListLoading] =
+    useState<boolean>(false);
 
   const handleOpenModal = () => {
     setCreateCollModalVisible(true);
   };
 
-  const getCollectionListApi = () => {
+  const getCollectionListApi = (pageNumber: number, pageSize: number) => {
+    setCollectionListLoading(true);
     api
-      .get("collection/list")
+      .get("collection/list", { params: { pageNumber, pageSize } })
       .then((res) => {
         setCollectionList(
           res.data.map((item: any, index: any) => ({
@@ -54,11 +56,22 @@ function Collection() {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setCollectionListLoading(false);
       });
   };
 
+  const handlePaginationOnChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPageNumber(value);
+    getCollectionListApi(value, 8);
+  };
+
   useEffect(() => {
-    getCollectionListApi();
+    getCollectionListApi(1, 8);
   }, []);
 
   if (searchData.collection.length > 0 && searchData.url === "/collection") {
@@ -66,16 +79,16 @@ function Collection() {
   }
 
   return (
-    <Box>
+    <Box className="mb-10">
       <Box className="flex justify-end mb-5">
         {loginUser.role ? (
           <Button onClick={handleOpenModal} variant="contained">
-            {t("createCollcetion")}
+            {t("createCollection")}
           </Button>
         ) : null}
       </Box>
       <Grid container spacing={3}>
-        {collectionList.length > 0
+        {!collectionListLoading
           ? collectionList.map((item, index) => (
               <Grid xs={3} key={item.id}>
                 <CollectionCard data={item} />
@@ -89,6 +102,15 @@ function Collection() {
                 </Grid>
               ))}
       </Grid>
+      <Box className="mt-10 flex justify-end">
+        <Pagination
+          variant="outlined"
+          shape="rounded"
+          count={10}
+          page={pageNumber}
+          onChange={handlePaginationOnChange}
+        />
+      </Box>
       {createCollModalVisible ? (
         <CreateCollectionModal
           setVisible={setCreateCollModalVisible}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Pagination } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import api from "../../utils/api";
 import CreateItemModal from "../../components/Item/CreateItemModal";
@@ -29,12 +29,14 @@ function Item() {
   const [createItemModalVisible, setCreateItemModalVisible] =
     useState<boolean>(false);
   const [itemList, setItemList] = useState<itemListType | []>([]);
-
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [itemListLoading, setItemListLoading] = useState<boolean>(false);
   const handleOpenModal = () => {
     setCreateItemModalVisible(true);
   };
 
-  const getItemListApi = (pageSize: number, pageNumber: number) => {
+  const getItemListApi = (pageNumber: number, pageSize: number) => {
+    setItemListLoading(true);
     api
       .get("item/list", { params: { pageNumber, pageSize } })
       .then((res) => {
@@ -51,11 +53,22 @@ function Item() {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setItemListLoading(false);
       });
   };
 
+  const handlePaginationOnChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPageNumber(value);
+    getItemListApi(value, 8);
+  };
+
   useEffect(() => {
-    getItemListApi(10, 1);
+    getItemListApi(1, 8);
   }, []);
 
   if (searchData.item.length > 0 && searchData.url === "/item") {
@@ -63,7 +76,7 @@ function Item() {
   }
 
   return (
-    <Box>
+    <Box className="mb-10">
       <Box className="flex justify-end mb-5">
         {loginUser.role ? (
           <Button onClick={handleOpenModal} variant="contained">
@@ -72,7 +85,7 @@ function Item() {
         ) : null}
       </Box>
       <Grid container spacing={3}>
-        {itemList.length > 0
+        {!itemListLoading
           ? itemList.map((item, index) => (
               <Grid xs={3} key={item.id}>
                 <ItemCard data={item} />
@@ -86,6 +99,15 @@ function Item() {
                 </Grid>
               ))}
       </Grid>
+      <Box className="mt-10 flex justify-end">
+        <Pagination
+          variant="outlined"
+          shape="rounded"
+          count={10}
+          page={pageNumber}
+          onChange={handlePaginationOnChange}
+        />
+      </Box>
       {createItemModalVisible ? (
         <CreateItemModal
           setVisible={setCreateItemModalVisible}

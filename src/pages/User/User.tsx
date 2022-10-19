@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import { DataGrid, GridColDef, GridValidRowModel } from "@mui/x-data-grid";
-import Swal from "sweetalert2";
 import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -10,6 +9,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EditUserModal from "../../adminComponents/User/EditUserModal";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import delelteAlert from "../../components/SweetAlert/SweetAlert";
 
 export type UserTableType = {
   user_name: string;
@@ -121,23 +121,7 @@ function User() {
   }
 
   function deleteUserTableRow(data: UserTableRowType) {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: `Yes, delete it!`,
-    })
-      .then((result) => {
-        if (result.isConfirmed) {
-          deleteUserApi(data);
-        }
-      })
-      .catch((err) => {
-        toastifyMessage({ type: "error", message: err.response.data.error });
-      });
+    delelteAlert(deleteUserApi, data);
   }
 
   function deleteUserApi(data: UserTableRowType) {

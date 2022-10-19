@@ -1,7 +1,7 @@
 import { Button, Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import EditCollectionModal from "../../components/Collection/EditCollectionModal";
 import CreateItemExtraFieldModal from "../../components/ViewCollection/CreateItemExtraFieldModal";
 import ReactMarkdown from "react-markdown";
@@ -12,6 +12,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { ToastContainer } from "react-toastify";
+import delelteAlert from "../../components/SweetAlert/SweetAlert";
 
 export type CollectionType = {
   collection_name: string;
@@ -40,6 +41,7 @@ type CollectionItemListType = {
 
 function ViewCollection() {
   let { id } = useParams();
+  const navigate = useNavigate();
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
   const [collection, setCollection] = useState({} as CollectionType);
   const [collectionItemListLoading, setCollectionItemListLoding] =
@@ -113,10 +115,15 @@ function ViewCollection() {
       .delete(`collection/${collection._id}`)
       .then((res) => {
         toastifyMessage({});
+        navigate("/collection");
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
       });
+  };
+
+  const delelteCollectionOnClick = () => {
+    delelteAlert(deleteCollection);
   };
   const createItemExtraField = () => {
     setItemExtraFieldModalVisible(true);
@@ -166,7 +173,7 @@ function ViewCollection() {
                   <Button
                     variant="contained"
                     className="bg-red-500 hover:bg-red-600"
-                    onClick={deleteCollection}
+                    onClick={delelteCollectionOnClick}
                   >
                     delete
                   </Button>
