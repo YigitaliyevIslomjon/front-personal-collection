@@ -17,6 +17,8 @@ import { Box } from "@mui/system";
 import SpecifyFieldCount from "./SpecifyFieldCount";
 import api from "../../utils/api";
 import { CollectionType } from "../../pages/ViewCollection/ViewCollection";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 
 interface DialogProp {
   setVisible: (value: boolean) => void;
@@ -47,13 +49,13 @@ function CreateItemExtraFieldModal({
     checkbox: "0",
   });
 
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [propertyName, setPropertyName] = useState("0");
   const { handleSubmit, control, register } = useForm<FormField>({});
 
   const handleClose = () => {
     setVisible(false);
   };
-  console.log("collection", collection);
   const itemField = [
     { name: "Integer Field", field: "integer" },
     { name: "String Field", field: "string" },
@@ -63,13 +65,18 @@ function CreateItemExtraFieldModal({
   ];
 
   const createExtraItemFieldApi = (body: FormField) => {
+    setSaveLoading(true);
     api
       .post(`/item-extra-field/${collection._id}`, body)
       .then((res) => {
         setVisible(false);
+        toastifyMessage({});
       })
       .catch((err) => {
-        console.log(err);
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setSaveLoading(false);
       });
   };
   const onFinish = (data: FormField) => {
@@ -274,9 +281,14 @@ function CreateItemExtraFieldModal({
           <Button variant="contained" type="button" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="outlined" type="submit" form="createItemField">
-            OK
-          </Button>
+          <LoadingButton
+            loading={saveLoading}
+            type="submit"
+            form="createItemField"
+            variant="outlined"
+          >
+            Save
+          </LoadingButton>
         </DialogActions>
       </Dialog>
       {true ? (

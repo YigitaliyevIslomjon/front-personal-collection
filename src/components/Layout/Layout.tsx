@@ -4,7 +4,10 @@ import Navbar from "../Navbar/Navbar";
 
 function Layout() {
   return (
-    <Box sx={{ bgcolor: "background.default", color: "text.primary" }}>
+    <Box
+      sx={{ bgcolor: "background.default", color: "text.primary" }}
+      className="p-4"
+    >
       <Navbar />
       <Box className="py-5 px-12">
         <Box className="">

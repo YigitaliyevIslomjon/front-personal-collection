@@ -146,8 +146,8 @@ function ViewCollection() {
 
   return (
     <Box>
-      <Grid container columnSpacing={4}>
-        <Grid xs={7}>
+      <Grid container columnSpacing={4} rowSpacing={5}>
+        <Grid xs={12} md={7}>
           <Button className="mb-2" onClick={getBackPerviewUrl}>
             <ArrowBackIcon />
             <Typography variant="body1">back</Typography>
@@ -157,38 +157,46 @@ function ViewCollection() {
               <img
                 alt="rasm"
                 src={collection?.path}
-                className="object-cover h-[330px] w-full cursor-pointer"
+                className="object-cover h-[200px] sm:h-[250px] md:h-[330px] w-full cursor-pointer"
               />
             ) : (
               <Skeleton variant="rounded" width={"100%"} height={330} />
             )}
           </Box>
           <Box className="flex flex-col gap-y-1 mt-2">
-            <Box className="flex gap-x-2 mb-1">
+            <Box className="flex flex-wrap gap-2 mb-1">
               {checkingRole() ? (
                 <>
-                  <Button variant="contained" onClick={editCollection}>
+                  <Button
+                    variant="contained"
+                    onClick={editCollection}
+                    className="grow md:grow-0"
+                  >
                     edit
                   </Button>
                   <Button
                     variant="contained"
-                    className="bg-red-500 hover:bg-red-600"
+                    className="bg-red-500 hover:bg-red-600 grow md:grow-0"
                     onClick={delelteCollectionOnClick}
                   >
                     delete
                   </Button>
                   <Button
                     variant="contained"
-                    className="bg-green-500 hover:bg-green-600"
+                    className="bg-green-500 hover:bg-green-600 grow md:grow-0"
                     onClick={createItemExtraField}
                   >
                     add item field
                   </Button>
                   <Link
                     to={`/collection-item-table/${id}`}
-                    className="no-underline"
+                    className="no-underline grow md:grow-0"
                   >
-                    <Button variant="contained" color="primary">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className="w-full"
+                    >
                       view item table
                     </Button>
                   </Link>
@@ -268,9 +276,15 @@ function ViewCollection() {
             )}
           </Box>
         </Grid>
-        <Grid xs={5}>
-          <Typography variant="h6"> Items of Colleciton</Typography>
-          <Box className="flex flex-col gap-y-1 mt-3 overflow-y-scroll h-[40rem]">
+        <Grid xs={12} md={5}>
+          <Typography
+            variant="h6"
+            className="text-base sm:text-lg md:text-xl font-semibold"
+          >
+            {" "}
+            Items of Colleciton
+          </Typography>
+          <Box className="flex flex-col gap-y-3 mt-4 overflow-y-scroll h-[40rem] sm:gap-y-1">
             {collectionItemListLoading ? (
               <Stack spacing={2} className="mt-3">
                 {Array(5)

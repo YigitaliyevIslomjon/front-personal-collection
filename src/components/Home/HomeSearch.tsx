@@ -34,19 +34,23 @@ function HomeSearch() {
     <Box className="mb-20">
       {searchCollectionList.length > 0 ? (
         <Box className="flex justify-between mb-4 mt-5">
-          <Typography variant="h6">{t("searchedCollections")}</Typography>
+          <Typography variant="h6" className="text-base sm:text-xl">
+            {t("searchedCollections")}
+          </Typography>
         </Box>
       ) : null}
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 4, md: 3 }}>
         {searchCollectionList.map((item: any) => (
-          <Grid xs={3}>
+          <Grid xs={12} sm={6} md={3}>
             <CollectionCard data={item} />
           </Grid>
         ))}
       </Grid>
       {searchItemList.length > 0 ? (
         <Box className="flex justify-between mb-4 mt-5">
-          <Typography variant="h6">{t("searchedItems")}</Typography>
+          <Typography variant="h6" className="text-base sm:text-xl">
+            {t("searchedItems")}
+          </Typography>
           <Button
             variant="contained"
             className="flex justify-between items-center"
@@ -57,21 +61,23 @@ function HomeSearch() {
           </Button>{" "}
         </Box>
       ) : null}
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 4, md: 3 }}>
         {searchItemList.map((item: any) => (
-          <Grid xs={3}>
+          <Grid xs={12} sm={6} md={3}>
             <ItemCard data={item} />
           </Grid>
         ))}
       </Grid>
       {searchCommentList.length > 0 ? (
         <Box className="flex justify-between mb-4 mt-5">
-          <Typography variant="h6">{t("searchedComments")}</Typography>
+          <Typography variant="h6" className="text-base sm:text-xl">
+            {t("searchedComments")}
+          </Typography>
         </Box>
       ) : null}
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 4, md: 3 }}>
         {searchCommentList.map((item: any) => (
-          <Grid xs={3} key={item.id}>
+          <Grid xs={12} sm={6} md={3} key={item.id}>
             <div className="border-2 border-solid border-indigo-100 rounded p-2">
               <Card className="h-full">
                 <CardActionArea>

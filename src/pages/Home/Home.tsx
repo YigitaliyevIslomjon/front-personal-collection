@@ -106,6 +106,9 @@ function Home() {
     api
       .post(`search/${id}`)
       .then((res) => {
+        if (res.data.length === 0) {
+          toastifyMessage({ type: "warn", message: "success" });
+        }
         dispatch(setSearchUrl("/"));
         dispatch(
           setSerachItemList(
@@ -141,7 +144,12 @@ function Home() {
         toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
-
+  const breakpointsSwiper = {
+    0: { slidesPerView: 1, spaceBetween: 0 },
+    480: { slidesPerView: 2, spaceBetween: 20 },
+    768: { slidesPerView: 3, spaceBetween: 20 },
+    1024: { slidesPerView: 4, spaceBetween: 30 },
+  };
   useEffect(() => {
     getTagListApi();
     getItemListApi(5, 1);
@@ -159,15 +167,21 @@ function Home() {
 
   return (
     <Box id="home" className="flex flex-col">
-      <Box className="flex justify-between mb-4 mt-5">
-        <Typography variant="h6">{t("largeCollections")}</Typography>
+      <Box className="flex justify-between items-center mb-4 mt-5">
+        <Typography variant="h6" className="text-base sm:text-xl">
+          {t("largeCollections")}
+        </Typography>
         <Link to="/collection" className="no-underline">
-          <Typography variant="body1"> {t("viewAll")}</Typography>
+          <Typography variant="body1" className="text-base sm:text-base">
+            {" "}
+            {t("viewAll")}
+          </Typography>
         </Link>
       </Box>
 
       <Grid container className="h-[400px]">
         <Swiper
+          breakpoints={breakpointsSwiper}
           slidesPerView={4}
           spaceBetween={30}
           slidesPerGroup={1}
@@ -196,15 +210,21 @@ function Home() {
         </Swiper>
       </Grid>
 
-      <Box className="flex justify-between mb-4 mt-6">
-        <Typography variant="h6">{t("lastItem")}</Typography>
+      <Box className="flex justify-between items-center mb-4 mt-6">
+        <Typography variant="h6" className="text-base sm:text-xl">
+          {t("lastItem")}
+        </Typography>
         <Link to="/collection" className="no-underline">
-          <Typography variant="body1"> {t("viewAll")}</Typography>
+          <Typography variant="body1" className="text-base sm:text-base">
+            {" "}
+            {t("viewAll")}
+          </Typography>
         </Link>
       </Box>
 
       <Grid container className="h-[400px]">
         <Swiper
+          breakpoints={breakpointsSwiper}
           slidesPerView={4}
           spaceBetween={30}
           slidesPerGroup={1}
@@ -235,7 +255,10 @@ function Home() {
 
       <Box className="pb-80 pt-12">
         <Box className="flex justify-between mb-4 mt-5">
-          <Typography variant="h6"> Tag cloud</Typography>
+          <Typography variant="h6" className="text-base sm:text-xl">
+            {" "}
+            Tag cloud
+          </Typography>
         </Box>
         <Box className="bg-slate-900 px-12 py-12 rounded-[20px]">
           <TagCloud

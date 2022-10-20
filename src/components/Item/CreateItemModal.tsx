@@ -359,11 +359,11 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                             onChange={onChange}
                             label={item.name}
                             variant="outlined"
-                            // error={!!errors.int_field?.[index]?.item.name}
-                            // helperText={
-                            //   errors.int_field?.[index]?.item.name &&
-                            //   errors.int_field?.[index]?.item.name.message
-                            // }
+                            error={!!errors.int_field?.[index]?.[item.name]}
+                            helperText={
+                              errors.int_field?.[index]?.[item.name] &&
+                              errors.int_field?.[index]?.[item.name]?.message
+                            }
                           />
                         )}
                       />

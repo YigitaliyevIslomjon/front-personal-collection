@@ -194,29 +194,60 @@ function Navbar() {
     <div>
       <AppBar position="fixed" className="px-6">
         <Toolbar className="flex gap-x-1">
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box className="flex md:hidden">
             <IconButton size="large" onClick={handleDrawerOpen} color="inherit">
               <MenuIcon />
             </IconButton>
-
             <Drawer
               anchor={"left"}
               sx={{
-                display: { xs: "block", sm: "none" },
                 "& .MuiDrawer-paper": {
                   width: drawerWidth,
                 },
               }}
+              className="block md:hidden"
               open={mobileOpen}
               onClose={handleDrawerOpen}
             >
-              <Box sx={{ width: 250 }} role="presentation">
+              <Box sx={{ width: 250 }}>
                 <div className="flex justify-end py-2 px-4">
                   <IconButton onClick={handleDrawerClose}>
                     {mobileOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                   </IconButton>
                 </div>
                 <Divider />
+                <List className="blcok md:hidden">
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <MailIcon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={
+                          <Box className="flex gap-x-2 items-center">
+                            <Typography
+                              variant="body1"
+                              className="capitalize mr-1"
+                            >
+                              {loginUser.user_name}
+                            </Typography>
+                            <IconButton
+                              onClick={colorMode.toggleColorMode}
+                              color="inherit"
+                            >
+                              {theme.palette.mode === "dark" ? (
+                                <LightModeIcon />
+                              ) : (
+                                <Brightness3Icon />
+                              )}
+                            </IconButton>
+                          </Box>
+                        }
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+
                 <List>
                   {pages.map((item, index) => (
                     <ListItem key={item.title} disablePadding>
@@ -224,7 +255,13 @@ function Navbar() {
                         <ListItemIcon>
                           {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                         </ListItemIcon>
-                        <ListItemText primary={t(`${item.title}`)} />
+                        <ListItemText
+                          primary={
+                            <Link to={item.link} className="no-underline">
+                              {t(`${item.title}`)}
+                            </Link>
+                          }
+                        />
                       </ListItemButton>
                     </ListItem>
                   ))}
@@ -233,7 +270,7 @@ function Navbar() {
             </Drawer>
           </Box>
           {/* <img src={logo} alt="ram" /> */}
-          <Box className="xs:hidden md:flex gap-x-4">
+          <Box className="hidden md:flex md:gap-x-4">
             {pages.map((page, index) => {
               if (page.title === "personal") {
                 if (loginUser.role) {
@@ -308,17 +345,24 @@ function Navbar() {
                 inputProps={{ "aria-label": "" }}
               />
             </Search>
-            <IconButton onClick={colorMode.toggleColorMode} color="inherit">
+            <IconButton
+              onClick={colorMode.toggleColorMode}
+              color="inherit"
+              className="hidden md:blcok"
+            >
               {theme.palette.mode === "dark" ? (
                 <LightModeIcon />
               ) : (
                 <Brightness3Icon />
               )}
             </IconButton>
-            <Typography variant="body1" className="capitalize mr-1">
+            <Typography
+              variant="body1"
+              className="capitalize mr-1 hidden md:block"
+            >
               {loginUser.user_name}
             </Typography>
-            <Box>
+            <Box className="hidden md:block">
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
@@ -337,6 +381,7 @@ function Navbar() {
                 }}
                 open={userMenuVisible}
                 onClose={handleCloseUserMenu}
+                className="hidden md:block"
               >
                 {settings.map((setting) => (
                   <MenuItem

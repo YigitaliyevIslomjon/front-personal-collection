@@ -79,21 +79,25 @@ function Personal() {
   return (
     <Box className="mb-10">
       <Box className="flex justify-end mb-5">
-        <Button onClick={handleOpenModal} variant="contained">
+        <Button
+          onClick={handleOpenModal}
+          variant="contained"
+          className="text-sm sm:text-base"
+        >
           Create Collection
         </Button>
       </Box>
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, md: 3 }}>
         {!collectionListLoading
           ? collectionList.map((item, index) => (
-              <Grid xs={3} key={item.id}>
+              <Grid xs={12} sm={6} md={4} lg={3} key={item.id}>
                 <CollectionCard data={item} />
               </Grid>
             ))
           : Array(8)
               .fill(0)
               .map((item, index) => (
-                <Grid xs={3} key={index}>
+                <Grid xs={12} sm={6} md={4} lg={3} key={index}>
                   <CardSkeletion />
                 </Grid>
               ))}

@@ -79,22 +79,26 @@ function Item() {
     <Box className="mb-10">
       <Box className="flex justify-end mb-5">
         {loginUser.role ? (
-          <Button onClick={handleOpenModal} variant="contained">
+          <Button
+            onClick={handleOpenModal}
+            variant="contained"
+            className="text-sm sm:text-base"
+          >
             {t("createItem")}
           </Button>
         ) : null}
       </Box>
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, md: 3 }}>
         {!itemListLoading
           ? itemList.map((item, index) => (
-              <Grid xs={3} key={item.id}>
+              <Grid xs={12} sm={6} md={4} lg={3} key={item.id}>
                 <ItemCard data={item} />
               </Grid>
             ))
           : Array(8)
               .fill(0)
               .map((item, index) => (
-                <Grid xs={3} key={index}>
+                <Grid xs={12} sm={6} md={4} lg={3} key={index}>
                   <CardSkeletion />
                 </Grid>
               ))}
