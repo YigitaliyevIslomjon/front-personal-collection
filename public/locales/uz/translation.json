@@ -21,5 +21,6 @@
       "searchedComments" : "Qidirilgan sharhlar ro'yxati",
       "clearFilter": "Filtrni tozalash",
       "createCollection" : "Kolleksiya yaratish",
-     "createItem" : "Element yaratish"
+     "createItem" : "Element yaratish",
+     "downloadcsv" :"CSV fayl"
 }

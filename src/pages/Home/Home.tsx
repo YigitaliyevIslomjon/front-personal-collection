@@ -34,6 +34,7 @@ export type ItemListType = {
   id: string;
   path: string;
   tags: string[];
+  created_at: string;
 }[];
 
 export type CollectionListType = {
@@ -43,6 +44,7 @@ export type CollectionListType = {
   path: string;
   item_count: number;
   topic_name: string;
+  created_at: string;
 }[];
 
 function Home() {
@@ -52,6 +54,7 @@ function Home() {
 
   const [tagList, setTagList] = useState([] as TagListType);
   const [itemList, setItemList] = useState([] as ItemListType);
+  const [itemListLoading, setItemListLoading] = useState<boolean>(false);
   const [collectionListLoading, setCollectionListLoading] =
     useState<boolean>(false);
   const [collectionList, setCollectionList] = useState(
@@ -59,22 +62,27 @@ function Home() {
   );
 
   const getItemListApi = (pageSize: number, pageNumber: number) => {
+    setItemListLoading(true);
     api
       .get("item/list", { params: { pageNumber, pageSize } })
       .then((res) => {
         setItemList(
-          res.data.map((item: any) => ({
+          res.data.item.map((item: any) => ({
             item_name: item.item_name,
             collection_name: item.collection_id?.collection_name,
             user_name: item.user_id?.user_name,
             id: item._id,
             path: item.path,
             tags: item.tags.map((item: any) => item.tag_name),
+            created_at: item.created_at,
           }))
         );
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setItemListLoading(false);
       });
   };
 
@@ -237,7 +245,7 @@ function Home() {
           modules={[Pagination, Navigation]}
           className="home-swiper"
         >
-          {itemList.length > 0
+          {!itemListLoading
             ? itemList.map((item) => (
                 <SwiperSlide key={item.id}>
                   <ItemCard data={item} />

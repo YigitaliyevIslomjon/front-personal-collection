@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, Grid, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -11,6 +11,8 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import "./SignIn.scss";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { useTranslation } from "react-i18next";
+import { GoogleLogin } from "@react-oauth/google";
+import jwt_decode from "jwt-decode";
 
 type SignInFormValues = {
   email: string;
@@ -25,9 +27,7 @@ function SignIn() {
   } = useForm<SignInFormValues>();
 
   let { t } = useTranslation();
-
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
-
   const navigate = useNavigate();
 
   const signInUser = (body: SignInFormValues) => {
@@ -49,6 +49,18 @@ function SignIn() {
   const submitSignInForm = (data: SignInFormValues) => {
     signInUser(data);
   };
+  const handleCallbackResponse = (response: any) => {
+    console.log(response);
+  };
+
+  <GoogleLogin
+    onSuccess={(credentialResponse) => {
+      console.log(credentialResponse);
+    }}
+    onError={() => {
+      console.log("Login Failed");
+    }}
+  />;
 
   return (
     <div className="flex justify-center items-center h-full">
@@ -140,6 +152,7 @@ function SignIn() {
           </Grid>
         </Box>
       </Box>
+
       <ToastContainer />
     </div>
   );

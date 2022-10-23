@@ -1,4 +1,4 @@
-import { Button, Box, Typography } from "@mui/material";
+import { Button, Box, Typography, Pagination } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -39,6 +39,12 @@ type CollectionItemListType = {
   tags: string[];
 }[];
 
+type PagenationType = {
+  pageNumber: number;
+  pageSize: number;
+  total_page_count: number;
+};
+
 function ViewCollection() {
   let { id } = useParams();
   const navigate = useNavigate();
@@ -47,6 +53,11 @@ function ViewCollection() {
   const [collectionItemListLoading, setCollectionItemListLoding] =
     useState<boolean>(false);
   const [collectionLoading, setCollectionLoading] = useState<boolean>(false);
+  const [pagenation, setPagenation] = useState({
+    pageNumber: 1,
+    pageSize: 1,
+    total_page_count: 1,
+  } as PagenationType);
 
   const [editCollecModalVisible, setEditCollecModalVisible] =
     useState<boolean>(false);
@@ -81,8 +92,9 @@ function ViewCollection() {
         params: { collection_id: id, pageNumber, pageSize },
       })
       .then((res) => {
+        setPagenation(res.data.pagenation);
         setCollectionItemList(
-          res.data.map((item: any) => ({
+          res.data.item.map((item: any) => ({
             item_name: item.item_name,
             collection_name: item.collection_id.collection_name,
             user_name: item.user_id.user_name,
@@ -100,6 +112,14 @@ function ViewCollection() {
       });
   };
 
+  const handlePaginationOnChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPagenation({ ...pagenation, pageNumber: value });
+    getCollectionItemListByIdApi(value, 8);
+  };
+
   useEffect(() => {
     getCollectionByIdApi();
     getCollectionItemListByIdApi(1, 10);
@@ -115,7 +135,7 @@ function ViewCollection() {
       .delete(`collection/${collection._id}`)
       .then((res) => {
         toastifyMessage({});
-        navigate("/collection");
+        window.history.back();
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -152,60 +172,62 @@ function ViewCollection() {
             <ArrowBackIcon />
             <Typography variant="body1">back</Typography>
           </Button>
-          <Box className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 ">
+          <Box className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 h-[200px] sm:h-[250px] md:h-[330px]">
             {!collectionLoading ? (
               <img
                 alt="rasm"
                 src={collection?.path}
-                className="object-cover h-[200px] sm:h-[250px] md:h-[330px] w-full cursor-pointer"
+                className="object-cover  w-full h-full cursor-pointer"
               />
             ) : (
-              <Skeleton variant="rounded" width={"100%"} height={330} />
+              <Skeleton
+                variant="rounded"
+                className="w-full h-full cursor-pointer"
+              />
             )}
           </Box>
           <Box className="flex flex-col gap-y-1 mt-2">
-            <Box className="flex flex-wrap gap-2 mb-1">
-              {checkingRole() ? (
-                <>
-                  <Button
-                    variant="contained"
-                    onClick={editCollection}
-                    className="grow md:grow-0"
-                  >
-                    edit
-                  </Button>
-                  <Button
-                    variant="contained"
-                    className="bg-red-500 hover:bg-red-600 grow md:grow-0"
-                    onClick={delelteCollectionOnClick}
-                  >
-                    delete
-                  </Button>
-                  <Button
-                    variant="contained"
-                    className="bg-green-500 hover:bg-green-600 grow md:grow-0"
-                    onClick={createItemExtraField}
-                  >
-                    add item field
-                  </Button>
-                  <Link
-                    to={`/collection-item-table/${id}`}
-                    className="no-underline grow md:grow-0"
-                  >
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      className="w-full"
-                    >
-                      view item table
-                    </Button>
-                  </Link>
-                </>
-              ) : null}
-            </Box>
-
             {!collectionLoading ? (
               <>
+                <Box className="flex flex-wrap gap-2 mb-1">
+                  {checkingRole() ? (
+                    <>
+                      <Button
+                        variant="contained"
+                        onClick={editCollection}
+                        className="grow md:grow-0"
+                      >
+                        edit
+                      </Button>
+                      <Button
+                        variant="contained"
+                        className="bg-red-500 hover:bg-red-600 grow md:grow-0"
+                        onClick={delelteCollectionOnClick}
+                      >
+                        delete
+                      </Button>
+                      <Button
+                        variant="contained"
+                        className="bg-green-500 hover:bg-green-600 grow md:grow-0"
+                        onClick={createItemExtraField}
+                      >
+                        add item field
+                      </Button>
+                      <Link
+                        to={`/collection-item-table/${id}`}
+                        className="no-underline grow md:grow-0"
+                      >
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          className="w-full"
+                        >
+                          view item table
+                        </Button>
+                      </Link>
+                    </>
+                  ) : null}
+                </Box>
                 <Box className="flex gap-x-2">
                   <Typography variant="body1" className="font-semibold">
                     Name :{" "}
@@ -284,7 +306,7 @@ function ViewCollection() {
             {" "}
             Items of Colleciton
           </Typography>
-          <Box className="flex flex-col gap-y-3 mt-4 overflow-y-scroll h-[40rem] sm:gap-y-1">
+          <Box className="flex flex-col gap-y-3 mt-4 overflow-y-scroll h-[30rem] sm:gap-y-1">
             {collectionItemListLoading ? (
               <Stack spacing={2} className="mt-3">
                 {Array(5)
@@ -293,8 +315,7 @@ function ViewCollection() {
                     <Skeleton
                       key={index}
                       variant="rounded"
-                      width={"50%"}
-                      height={140}
+                      className="w-[200px] sm:w-[245px] h-[145px]"
                     />
                   ))}
               </Stack>
@@ -306,11 +327,20 @@ function ViewCollection() {
               ))
             )}
           </Box>
+          <Pagination
+            className="mt-10"
+            variant="outlined"
+            shape="rounded"
+            count={pagenation.total_page_count}
+            page={pagenation.pageNumber}
+            onChange={handlePaginationOnChange}
+          />
         </Grid>
       </Grid>
 
       {editCollecModalVisible ? (
         <EditCollectionModal
+          getCollectionByIdApi={getCollectionByIdApi}
           collection={collection}
           setVisible={setEditCollecModalVisible}
           visible={editCollecModalVisible}

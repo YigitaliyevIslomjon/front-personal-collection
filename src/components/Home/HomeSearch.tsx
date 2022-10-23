@@ -41,7 +41,7 @@ function HomeSearch() {
       ) : null}
       <Grid container spacing={{ xs: 4, md: 3 }}>
         {searchCollectionList.map((item: any) => (
-          <Grid xs={12} sm={6} md={3}>
+          <Grid xs={12} sm={6} md={3} key={item.id}>
             <CollectionCard data={item} />
           </Grid>
         ))}
@@ -78,17 +78,17 @@ function HomeSearch() {
       <Grid container spacing={{ xs: 4, md: 3 }}>
         {searchCommentList.map((item: any) => (
           <Grid xs={12} sm={6} md={3} key={item.id}>
-            <div className="border-2 border-solid border-indigo-100 rounded p-2">
+            <Box className="border-2 border-solid border-indigo-100 rounded p-2">
               <Card className="h-full">
                 <CardActionArea>
                   <CardContent>
-                    <div className="flex gap-x-2">
+                    <Box className="flex gap-x-2">
                       <Typography gutterBottom variant="body2" component="span">
                         Item :
                       </Typography>
 
                       <Link
-                        to={`item/${item.item_id}`}
+                        to={`item-view/${item.item_id}`}
                         className="underline-offset-2"
                       >
                         {" "}
@@ -100,27 +100,27 @@ function HomeSearch() {
                           {item.item_name}
                         </Typography>
                       </Link>
-                    </div>
-                    <div className="flex gap-x-2">
+                    </Box>
+                    <Box className="flex gap-x-2">
                       <Typography gutterBottom variant="body2" component="span">
                         Author :
                       </Typography>
                       <Typography gutterBottom variant="body2" component="span">
                         {item.user_name}
                       </Typography>
-                    </div>
-                    <div className="flex gap-x-2">
+                    </Box>
+                    <Box className="flex gap-x-2">
                       <Typography gutterBottom variant="body2" component="span">
                         Comment :
                       </Typography>
                       <Typography gutterBottom variant="body2" component="span">
                         {item.text}
                       </Typography>
-                    </div>
+                    </Box>
                   </CardContent>
                 </CardActionArea>
               </Card>
-            </div>
+            </Box>
           </Grid>
         ))}
       </Grid>

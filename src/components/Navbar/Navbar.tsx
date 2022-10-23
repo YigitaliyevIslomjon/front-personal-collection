@@ -20,13 +20,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import Menu from "@mui/material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import {
-  Drawer,
-  FormControl,
-  InputBase,
-  InputLabel,
-  Select,
-} from "@mui/material";
+import { Drawer, InputBase, Select } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import { ColorModeContext } from "../../App";
@@ -348,7 +342,7 @@ function Navbar() {
             <IconButton
               onClick={colorMode.toggleColorMode}
               color="inherit"
-              className="hidden md:blcok"
+              className="hidden md:block"
             >
               {theme.palette.mode === "dark" ? (
                 <LightModeIcon />

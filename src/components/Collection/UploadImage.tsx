@@ -28,21 +28,14 @@ function UploadImage({ setImages, images, onChange, errors }: UploadImageType) {
       maxNumber={1}
     >
       {({ imageList, onImageUpload, onImageRemoveAll, dragProps }) => (
-        <div className="flex flex-col gap-y-2 items-start">
-          <div
-            style={{
-              width: "290px",
-              height: "220px",
-            }}
-            className="uplaod_img"
-          >
+        <div className="flex flex-col gap-y-2 items-start w-full">
+          <div className="uplaod_img h-[220px] md:w-[290px] md:h-[220px]">
             {imageList.map((image, index) => (
               <img
+                key={image.dataURL}
                 src={image.dataURL}
                 alt=""
-                className="object-cover"
-                width="100%"
-                height="100%"
+                className="object-cover  w-full h-full"
               />
             ))}
           </div>
@@ -51,7 +44,7 @@ function UploadImage({ setImages, images, onChange, errors }: UploadImageType) {
           </FormHelperText>
 
           <Button
-            className="button_width"
+            className="w-1/2"
             variant="contained"
             onClick={() => {
               if (imageList.length < 1) {
@@ -64,7 +57,7 @@ function UploadImage({ setImages, images, onChange, errors }: UploadImageType) {
           </Button>
           {imageList.length > 0 ? (
             <Button
-              className="button_width"
+              className="w-1/2"
               variant={"outlined"}
               onClick={onImageRemoveAll}
             >

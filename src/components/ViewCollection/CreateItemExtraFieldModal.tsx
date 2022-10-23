@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Button,
   Dialog,
@@ -10,6 +10,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
@@ -40,6 +41,12 @@ function CreateItemExtraFieldModal({
   visible,
   collection,
 }: DialogProp) {
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FormField>({});
+
   const [fieldCountDioVisible, setFieldCountDioVisible] = useState(false);
   const [itemFieldCount, setItemFieldCount] = useState({
     integer: "0",
@@ -51,17 +58,16 @@ function CreateItemExtraFieldModal({
 
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [propertyName, setPropertyName] = useState("0");
-  const { handleSubmit, control, register } = useForm<FormField>({});
 
   const handleClose = () => {
     setVisible(false);
   };
   const itemField = [
-    { name: "Integer Field", field: "integer" },
-    { name: "String Field", field: "string" },
+    { name: "Integer field", field: "integer" },
+    { name: "String field", field: "string" },
     { name: "Multiline text fields", field: "textare" },
-    { name: "Date Field", field: "date" },
-    { name: "Checkbox Field", field: "checkbox" },
+    { name: "Date field", field: "date" },
+    { name: "Checkbox field", field: "checkbox" },
   ];
 
   const createExtraItemFieldApi = (body: FormField) => {
@@ -91,13 +97,11 @@ function CreateItemExtraFieldModal({
           setVisible(false);
         }}
         open={visible}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle id="alert-dialog-title">Create Field Item</DialogTitle>
-        <DialogContent id="alert-dialog-description">
+        <DialogTitle>Create item field</DialogTitle>
+        <DialogContent>
           <Box
             id="createItemField"
             component={"form"}
@@ -107,18 +111,20 @@ function CreateItemExtraFieldModal({
             <Controller
               control={control}
               name="selectedField"
-              render={({ field: { onChange } }) => (
+              defaultValue={""}
+              render={({ field: { onChange, value } }) => (
                 <FormControl fullWidth size="small">
-                  <InputLabel id="itemFields">Item Fields</InputLabel>
+                  <InputLabel id="itemFields">Item Field</InputLabel>
                   <Select
                     onChange={onChange}
                     labelId="itemFields"
-                    label="select Fields"
+                    label="select field"
+                    value={value}
                   >
                     {itemField.map((item, index) => {
                       return (
                         <MenuItem
-                          key={item.field}
+                          key={index}
                           value={item.field}
                           onClick={() => {
                             setPropertyName(item.field);
@@ -137,7 +143,9 @@ function CreateItemExtraFieldModal({
             <Grid container spacing={2}>
               <Grid xs={12}>
                 {+itemFieldCount.integer > 0 ? (
-                  <div>Specify interger filed Name</div>
+                  <Typography variant="body2">
+                    Specify interger filed name
+                  </Typography>
                 ) : null}
               </Grid>
 
@@ -145,17 +153,23 @@ function CreateItemExtraFieldModal({
                 .fill(0)
                 .map((item, index) => {
                   return (
-                    <Grid xs={6}>
+                    <Grid xs={6} key={index}>
                       <Controller
                         control={control}
                         name={`int_field.${index}.name`}
+                        rules={{ required: "name is required" }}
                         render={({ field: { onChange } }) => (
                           <TextField
                             fullWidth
                             size="small"
                             onChange={onChange}
-                            label="integer Field"
+                            label="Name"
                             variant="outlined"
+                            error={!!errors.int_field?.[index]?.name}
+                            helperText={
+                              errors.int_field?.[index]?.name &&
+                              errors.int_field?.[index]?.name?.message
+                            }
                           />
                         )}
                       />
@@ -166,24 +180,32 @@ function CreateItemExtraFieldModal({
             <Grid container spacing={2}>
               <Grid xs={12}>
                 {+itemFieldCount.string > 0 ? (
-                  <div>Specify string filed Name</div>
+                  <Typography variant="body2">
+                    Specify string filed name
+                  </Typography>
                 ) : null}
               </Grid>
               {Array(+itemFieldCount.string)
                 .fill(0)
                 .map((item, index) => {
                   return (
-                    <Grid xs={6}>
+                    <Grid xs={6} key={index}>
                       <Controller
                         control={control}
                         name={`str_field.${index}.name`}
+                        rules={{ required: "name is required" }}
                         render={({ field: { onChange } }) => (
                           <TextField
                             fullWidth
                             size="small"
                             onChange={onChange}
-                            label="string Field"
+                            label="Name"
                             variant="outlined"
+                            error={!!errors.str_field?.[index]?.name}
+                            helperText={
+                              errors.str_field?.[index]?.name &&
+                              errors.str_field?.[index]?.name?.message
+                            }
                           />
                         )}
                       />
@@ -194,24 +216,32 @@ function CreateItemExtraFieldModal({
             <Grid container spacing={2}>
               <Grid xs={12}>
                 {+itemFieldCount.textare > 0 ? (
-                  <div>Specify textare filed Name</div>
+                  <Typography variant="body2">
+                    Specify textare filed name
+                  </Typography>
                 ) : null}
               </Grid>
               {Array(+itemFieldCount.textare)
                 .fill(0)
                 .map((item, index) => {
                   return (
-                    <Grid xs={6}>
+                    <Grid xs={6} key={index}>
                       <Controller
                         control={control}
                         name={`textare_field.${index}.name`}
+                        rules={{ required: "name is required" }}
                         render={({ field: { onChange } }) => (
                           <TextField
                             fullWidth
                             size="small"
                             onChange={onChange}
-                            label="textare Field"
+                            label="Name"
                             variant="outlined"
+                            error={!!errors.textare_field?.[index]?.name}
+                            helperText={
+                              errors.textare_field?.[index]?.name &&
+                              errors.textare_field?.[index]?.name?.message
+                            }
                           />
                         )}
                       />
@@ -222,24 +252,32 @@ function CreateItemExtraFieldModal({
             <Grid container spacing={2}>
               <Grid xs={12}>
                 {+itemFieldCount.date > 0 ? (
-                  <div>Specify date filed Name</div>
+                  <Typography variant="body2">
+                    Specify date filed name
+                  </Typography>
                 ) : null}
               </Grid>
               {Array(+itemFieldCount.date)
                 .fill(0)
                 .map((item, index) => {
                   return (
-                    <Grid xs={6}>
+                    <Grid xs={6} key={index}>
                       <Controller
                         control={control}
                         name={`date_field.${index}.name`}
+                        rules={{ required: "name is required" }}
                         render={({ field: { onChange } }) => (
                           <TextField
                             fullWidth
                             size="small"
                             onChange={onChange}
-                            label="date Field"
+                            label="Name"
                             variant="outlined"
+                            error={!!errors.date_field?.[index]?.name}
+                            helperText={
+                              errors.date_field?.[index]?.name &&
+                              errors.date_field?.[index]?.name?.message
+                            }
                           />
                         )}
                       />
@@ -250,24 +288,32 @@ function CreateItemExtraFieldModal({
             <Grid container spacing={2}>
               <Grid xs={12}>
                 {+itemFieldCount.checkbox > 0 ? (
-                  <div>Specify checkbox filed Name</div>
+                  <Typography variant="body2">
+                    Specify checkbox filed name
+                  </Typography>
                 ) : null}
               </Grid>
               {Array(+itemFieldCount.checkbox)
                 .fill(0)
                 .map((item, index) => {
                   return (
-                    <Grid xs={6}>
+                    <Grid xs={6} key={index}>
                       <Controller
                         control={control}
                         name={`checkbox_field.${index}.name`}
+                        rules={{ required: "name is required" }}
                         render={({ field: { onChange } }) => (
                           <TextField
                             fullWidth
                             size="small"
                             onChange={onChange}
-                            label="checkbox Field"
+                            label="Name"
                             variant="outlined"
+                            error={!!errors.checkbox_field?.[index]?.name}
+                            helperText={
+                              errors.checkbox_field?.[index]?.name &&
+                              errors.checkbox_field?.[index]?.name?.message
+                            }
                           />
                         )}
                       />
@@ -291,7 +337,7 @@ function CreateItemExtraFieldModal({
           </LoadingButton>
         </DialogActions>
       </Dialog>
-      {true ? (
+      {fieldCountDioVisible ? (
         <SpecifyFieldCount
           propertyName={propertyName}
           itemFieldCount={itemFieldCount}

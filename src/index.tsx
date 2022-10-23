@@ -11,6 +11,7 @@ import "./index.css";
 import "./i18n";
 import "sweetalert2/src/sweetalert2.scss";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -27,7 +28,9 @@ root.render(
       <StyledEngineProvider injectFirst>
         <BrowserRouter>
           <React.Suspense fallback={fallback}>
-            <App />
+            <GoogleOAuthProvider clientId="208108060419-1hp1b7e5pda2pdas3e363nlt200qufkp.apps.googleusercontent.com">
+              <App />
+            </GoogleOAuthProvider>
           </React.Suspense>
         </BrowserRouter>
       </StyledEngineProvider>

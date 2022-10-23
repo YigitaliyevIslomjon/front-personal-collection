@@ -9,6 +9,10 @@ import Typography from "@mui/material/Typography";
 import api from "../../utils/api";
 import { useParams } from "react-router-dom";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { setConstantValue } from "typescript";
+import delelteAlert from "../../components/SweetAlert/SweetAlert";
+import EditItemModal from "../../components/ViewItem/EditItemModal";
+import CreateItemModal from "../../components/Item/CreateItemModal";
 
 type ItemListType = {
   item_name: string;
@@ -27,32 +31,42 @@ type ItemListTableRowType = {
   path: string;
   tags: string[];
 };
+
+type PagenationType = {
+  pageNumber: number;
+  pageSize: number;
+  total_page_count: number;
+};
+
 function CollectionItemTable() {
   let { id } = useParams();
 
   const [itemListTableData, setItemListTableData] = useState<ItemListType>([]);
-
   const [itemTableLoading, setItemTableLoading] = useState<boolean>(false);
-
-  const itemListTableColumn: GridColDef[] = [
+  const [itemId, setItemId] = useState<string>("");
+  const [editItemModalVisible, setEditItemModalVisible] =
+    useState<boolean>(false);
+  const [createItemModalVisible, setCreateItemModalVisible] =
+    useState<boolean>(false);
+  const tableColumn: GridColDef[] = [
     {
       field: "item_name",
-      headerName: "Item name",
-      minWidth: 150,
+      headerName: "Name",
+
       flex: 1,
       sortable: false,
     },
     {
       field: "user_name",
       headerName: "User",
-      minWidth: 150,
+
       flex: 1,
       sortable: false,
     },
     {
       field: "tags",
       headerName: "Tags",
-      minWidth: 150,
+
       flex: 1,
       sortable: false,
       renderCell: (params) => {
@@ -68,7 +82,6 @@ function CollectionItemTable() {
     {
       field: "collection_name",
       headerName: "collection name",
-      minWidth: 150,
       flex: 1,
       sortable: false,
       renderCell: (params) => {
@@ -84,14 +97,14 @@ function CollectionItemTable() {
         return (
           <div className="flex justify-center items-center">
             <IconButton
-              onClick={() => editUserTableRow(params.row)}
+              onClick={() => editItemTableRow(params.row.id)}
               color="primary"
               component="label"
             >
               <EditIcon className="cursor-pointer" />
             </IconButton>
             <IconButton
-              onClick={() => delteUserTableRow(params.row.id)}
+              onClick={() => delteItemTableRow(params.row.id)}
               color="warning"
               component="label"
             >
@@ -103,16 +116,38 @@ function CollectionItemTable() {
     },
   ];
 
-  function editUserTableRow(data: ItemListTableRowType) {}
+  const [pagenation, setPagenation] = useState({
+    pageNumber: 1,
+    pageSize: 1,
+    total_page_count: 1,
+  } as PagenationType);
 
-  function delteUserTableRow(id: string) {
-    console.log(id);
+  function editItemTableRow(id: string) {
+    setEditItemModalVisible(true);
+    setItemId(id);
+  }
+
+  const deleteItemByIdApi = (id: string) => {
+    api
+      .delete(`item/${id}`)
+      .then((res) => {
+        toastifyMessage({});
+      })
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      });
+  };
+  function delteItemTableRow(id: string) {
+    delelteAlert(deleteItemByIdApi, id);
   }
 
   const getBackPerviewUrl = () => {
     window.history.back();
   };
 
+  const createItem = () => {
+    setCreateItemModalVisible(true);
+  };
   const getItemListByCollectionIdApi = (
     pageNumber: number,
     pageSize: number
@@ -123,8 +158,9 @@ function CollectionItemTable() {
         params: { collection_id: id, pageNumber, pageSize },
       })
       .then((res) => {
+        setPagenation(res.data.pagenation);
         setItemListTableData(
-          res.data.map((item: any) => ({
+          res.data.item.map((item: any) => ({
             item_name: item.item_name,
             collection_name: item.collection_id.collection_name,
             user_name: item.user_id.user_name,
@@ -143,7 +179,7 @@ function CollectionItemTable() {
   };
 
   useEffect(() => {
-    getItemListByCollectionIdApi(1, 10);
+    getItemListByCollectionIdApi(1, 8);
     // eslint-disable-next-line
   }, []);
 
@@ -154,12 +190,15 @@ function CollectionItemTable() {
           <ArrowBackIcon />
           <Typography variant="body1">back</Typography>
         </Button>
-        <Button variant={"contained"}>create item</Button>
+        <Button variant={"contained"} onClick={createItem}>
+          create item
+        </Button>
       </Box>
       <Box className="mt-3" sx={{ height: 500, width: "100%" }}>
         <DataGrid
+          className="overflow-x-scroll"
           rows={itemListTableData}
-          columns={itemListTableColumn}
+          columns={tableColumn}
           pageSize={5}
           loading={itemTableLoading}
           rowsPerPageOptions={[5]}
@@ -167,6 +206,22 @@ function CollectionItemTable() {
           experimentalFeatures={{ newEditingApi: true }}
         />
       </Box>
+
+      {editItemModalVisible ? (
+        <EditItemModal
+          itemId={itemId}
+          getItemDataByIdApi={getItemListByCollectionIdApi}
+          setVisible={setEditItemModalVisible}
+          visible={editItemModalVisible}
+        />
+      ) : null}
+      {createItemModalVisible ? (
+        <CreateItemModal
+          getItemListApi={getItemListByCollectionIdApi}
+          setVisible={setCreateItemModalVisible}
+          visible={createItemModalVisible}
+        />
+      ) : null}
     </Box>
   );
 }

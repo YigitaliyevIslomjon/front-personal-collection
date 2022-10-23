@@ -21,6 +21,6 @@
      "searchedComments" : "Searched comment list",
      "clearFilter": "Clear filter",
      "createCollection" : "create  collection",
-     "createItem" : "create item"
-
+     "createItem" : "create item",
+     "downloadcsv" :"CSV file"
 }

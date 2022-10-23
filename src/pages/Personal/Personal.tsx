@@ -20,12 +20,23 @@ type CollectionListType = {
   topic_name: string;
 }[];
 
+type PagenationType = {
+  pageNumber: number;
+  pageSize: number;
+  total_page_count: number;
+};
+
 function Personal() {
   const searchData = useSelector((state: any) => state.search);
 
   const [createCollModalVisible, setCreateCollModalVisible] =
     useState<boolean>(false);
-  const [pageNumber, setPageNumber] = useState<number>(1);
+
+  const [pagenation, setPagenation] = useState({
+    pageNumber: 1,
+    pageSize: 1,
+    total_page_count: 1,
+  } as PagenationType);
 
   const [collectionList, setCollectionList] = useState<CollectionListType | []>(
     []
@@ -41,8 +52,9 @@ function Personal() {
     api
       .get("collection/list/by-user", { params: { pageNumber, pageSize } })
       .then((res) => {
+        setPagenation(res.data.pagenation);
         setCollectionList(
-          res.data.map((item: any, index: any) => ({
+          res.data.collection.map((item: any, index: any) => ({
             collection_name: item.collection_name,
             user_name: item.user_id.user_name,
             id: item._id,
@@ -64,7 +76,7 @@ function Personal() {
     event: React.ChangeEvent<unknown>,
     value: number
   ) => {
-    setPageNumber(value);
+    setPagenation({ ...pagenation, pageNumber: +value });
     getCollectionListApi(value, 8);
   };
 
@@ -106,13 +118,14 @@ function Personal() {
         <Pagination
           variant="outlined"
           shape="rounded"
-          count={10}
-          page={pageNumber}
+          count={pagenation.total_page_count}
+          page={pagenation.pageNumber}
           onChange={handlePaginationOnChange}
         />
       </Box>
       {createCollModalVisible ? (
         <CreateCollectionModal
+          getCollectionListApi={getCollectionListApi}
           setVisible={setCreateCollModalVisible}
           visible={createCollModalVisible}
         />

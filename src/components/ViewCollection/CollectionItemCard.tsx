@@ -17,11 +17,11 @@ function CollectionItemCard({ data }: CollectionItemCardType) {
     <Box className="flex flex-wrap gap-3">
       <Link
         to={`/item-view/${data.id}`}
-        className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 cursor-pointer"
+        className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 cursor-pointer w-[200px] sm:w-[245px] h-[145px]"
       >
         <img
           src={data.path}
-          className="object-cover rounded w-[200px] sm:w-[245px] h-[145px]"
+          className="object-cover rounded w-full h-full"
           alt="rasm"
         />
       </Link>

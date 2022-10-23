@@ -60,13 +60,11 @@ function SpecifyFieldCount({
         setVisible(false);
       }}
       open={visible}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle id="alert-dialog-title">Specify Count of Field</DialogTitle>
-      <DialogContent id="alert-dialog-description">
+      <DialogTitle>Specify Count of Field</DialogTitle>
+      <DialogContent>
         <Box
           id="countField"
           component={"form"}

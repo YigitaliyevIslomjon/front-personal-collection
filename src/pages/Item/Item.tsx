@@ -18,7 +18,14 @@ type itemListType = {
   id: string;
   path: string;
   tags: string[];
+  created_at: string;
 }[];
+
+type PagenationType = {
+  pageNumber: number;
+  pageSize: number;
+  total_page_count: number;
+};
 
 function Item() {
   let { t } = useTranslation();
@@ -28,8 +35,13 @@ function Item() {
 
   const [createItemModalVisible, setCreateItemModalVisible] =
     useState<boolean>(false);
+
+  const [pagenation, setPagenation] = useState({
+    pageNumber: 1,
+    pageSize: 1,
+    total_page_count: 1,
+  } as PagenationType);
   const [itemList, setItemList] = useState<itemListType | []>([]);
-  const [pageNumber, setPageNumber] = useState<number>(1);
   const [itemListLoading, setItemListLoading] = useState<boolean>(false);
   const handleOpenModal = () => {
     setCreateItemModalVisible(true);
@@ -40,8 +52,9 @@ function Item() {
     api
       .get("item/list", { params: { pageNumber, pageSize } })
       .then((res) => {
+        setPagenation(res.data.pagenation);
         setItemList(
-          res.data.map((item: any) => ({
+          res.data.item.map((item: any) => ({
             item_name: item?.item_name,
             collection_name: item.collection_id?.collection_name,
             user_name: item.user_id?.user_name,
@@ -63,7 +76,7 @@ function Item() {
     event: React.ChangeEvent<unknown>,
     value: number
   ) => {
-    setPageNumber(value);
+    setPagenation({ ...pagenation, pageNumber: +value });
     getItemListApi(value, 8);
   };
 
@@ -76,7 +89,7 @@ function Item() {
   }
 
   return (
-    <Box className="mb-10">
+    <Box className="mb-4">
       <Box className="flex justify-end mb-5">
         {loginUser.role ? (
           <Button
@@ -88,7 +101,7 @@ function Item() {
           </Button>
         ) : null}
       </Box>
-      <Grid container spacing={{ xs: 2, md: 3 }}>
+      <Grid container spacing={{ xs: 2, md: 3 }} className="min-h-[400px]">
         {!itemListLoading
           ? itemList.map((item, index) => (
               <Grid xs={12} sm={6} md={4} lg={3} key={item.id}>
@@ -107,13 +120,14 @@ function Item() {
         <Pagination
           variant="outlined"
           shape="rounded"
-          count={10}
-          page={pageNumber}
+          count={pagenation.total_page_count}
+          page={pagenation.pageNumber}
           onChange={handlePaginationOnChange}
         />
       </Box>
       {createItemModalVisible ? (
         <CreateItemModal
+          getItemListApi={getItemListApi}
           setVisible={setCreateItemModalVisible}
           visible={createItemModalVisible}
         />

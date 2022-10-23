@@ -13,20 +13,26 @@ import {
 import Grid from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
-import ImageUploading, { ImageListType } from "react-images-uploading";
 import api from "../../utils/api";
 import { ItemDataType } from "../../pages/ViewItem/ViewItem";
 import { ItemExtraFieldListType, ItemFormTypes } from "../Item/CreateItemModal";
 import { imgURlToFile } from "../Collection/ConvertImgURltoFile";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import UploadImage from "../Collection/UploadImage";
 
 type ModalProp = {
   setVisible: (value: boolean) => void;
   visible: boolean;
-  itemData: ItemDataType;
-  itemExtraFieldList: ItemExtraFieldListType;
+  itemId: string | undefined;
+  getItemDataByIdApi: (a: number, b: number) => void;
 };
+
 type CollectionListType = {
   collection_name: string;
   _id: string;
@@ -35,8 +41,8 @@ type CollectionListType = {
 function EditItemModal({
   setVisible,
   visible,
-  itemData,
-  itemExtraFieldList,
+  itemId,
+  getItemDataByIdApi,
 }: ModalProp) {
   const {
     handleSubmit,
@@ -47,15 +53,20 @@ function EditItemModal({
 
   const [images, setImages] = useState<any>([]);
   const [tagList, setTagList] = useState([]);
-  const [decitionItemField, setDesctionItemField] = useState(true);
+  const [itemData, setItemData] = useState({} as ItemDataType);
   const [collectionList, setCollectionList] = useState(
     [] as CollectionListType
   );
+
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
-  const [itemExtraFields, setItemExtraFields] = useState(
+  const [itemExtraField, setItemExtraField] = useState(
     {} as ItemExtraFieldListType
   );
+  const [itemExtraFieldDefValue, setItemExtraFieldDefValue] = useState(
+    {} as ItemExtraFieldListType
+  );
+  const [decitionItemField, setDesctionItemField] = useState(true);
 
   const handleClose = () => {
     setVisible(false);
@@ -80,11 +91,12 @@ function EditItemModal({
   const editItemApi = (body: any) => {
     setSaveLoading(true);
     api
-      .put(`item/${itemData._id}`, body)
+      .put(`item/${itemId}`, body)
       .then((res) => {
         setVisible(false);
         reset();
         toastifyMessage({});
+        getItemDataByIdApi(1,8);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -113,7 +125,7 @@ function EditItemModal({
     } | null
   ) => {
     if (itemData.collection_id._id === value!._id) {
-      setItemExtraFields(itemExtraFieldList);
+      setItemExtraField(itemExtraFieldDefValue);
       setDesctionItemField(true);
     } else {
       setDesctionItemField(false);
@@ -121,7 +133,7 @@ function EditItemModal({
       api
         .get(`item-extra-field/${value!._id}`)
         .then((res) => {
-          setItemExtraFields(res.data);
+          setItemExtraField(res.data);
           reset();
         })
         .catch((err) => {
@@ -131,7 +143,6 @@ function EditItemModal({
   };
 
   const onSubmit = (data: any) => {
-    console.log("datas", data);
     data.img = images[0].file;
     data.collection_id = data.collection_id._id;
     let form_data = new FormData();
@@ -146,20 +157,32 @@ function EditItemModal({
     editItemApi(form_data);
   };
 
-  const onChangeImg = (
-    imageList: ImageListType,
-    addUpdateIndex: number[] | undefined
-  ) => {
-    console.log("img list", imageList);
-    setImages(imageList as never[]);
-  };
+  const getItemById = () => {
+    api
+      .get(`item/${itemId}`)
+      .then((res) => {
+        setItemExtraFieldDefValue(res.data.item_extra_field);
+        setItemExtraField(res.data.item_extra_field);
 
+        let item = res.data.item;
+        item.tags = item.tags.map((tag: any) => tag.tag_name);
+        setItemData(item);
+        imgURlToFile(item.path, setImages);
+      })
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {});
+  };
   useEffect(() => {
     getCollectionsList();
     getTagListApi();
-    setItemExtraFields(itemExtraFieldList);
-    imgURlToFile(itemData.path, setImages);
+    getItemById();
   }, []);
+
+  if (Object.values(itemData).length < 1) {
+    return <div>...loading</div>;
+  }
 
   return (
     <Dialog
@@ -179,7 +202,7 @@ function EditItemModal({
       }}
       className="create_colleaction"
     >
-      <DialogTitle id="alert-dialog-title">Create item</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Edit item</DialogTitle>
       <DialogContent className="overflow-y-auto">
         <Box
           id="itemForm"
@@ -253,70 +276,12 @@ function EditItemModal({
                       : { required: false }
                   }
                   render={({ field: { onChange } }) => (
-                    <ImageUploading
-                      multiple
-                      value={images}
-                      onChange={(e, b) => {
-                        onChangeImg(e, b);
-                        onChange(e);
-                      }}
-                      maxNumber={1}
-                    >
-                      {({
-                        imageList,
-                        onImageUpload,
-                        onImageRemoveAll,
-                        onImageUpdate,
-                        onImageRemove,
-                        isDragging,
-                        dragProps,
-                      }) => (
-                        <div className="flex flex-col gap-y-2 items-start">
-                          <div
-                            style={{
-                              width: "290px",
-                              height: "220px",
-                            }}
-                            className="uplaod_img"
-                          >
-                            {imageList.map((image, index) => (
-                              <img
-                                src={image.dataURL}
-                                alt=""
-                                className="object-cover"
-                                width="100%"
-                                height="100%"
-                              />
-                            ))}
-                          </div>
-                          <FormHelperText className="text-red-500">
-                            {errors.img && errors.img.message}
-                          </FormHelperText>
-
-                          <Button
-                            className="button_width"
-                            variant="contained"
-                            onClick={() => {
-                              if (imageList.length < 1) {
-                                onImageUpload();
-                              }
-                            }}
-                            {...dragProps}
-                          >
-                            upload image
-                          </Button>
-                          {imageList.length > 0 ? (
-                            <Button
-                              className="button_width"
-                              variant={"outlined"}
-                              onClick={onImageRemoveAll}
-                            >
-                              remove image
-                            </Button>
-                          ) : null}
-                        </div>
-                      )}
-                    </ImageUploading>
+                    <UploadImage
+                      onChange={onChange}
+                      setImages={setImages}
+                      images={images}
+                      errors={errors}
+                    />
                   )}
                 />
               </Grid>
@@ -329,6 +294,8 @@ function EditItemModal({
                     <Autocomplete
                       value={value}
                       multiple
+                      fullWidth
+                      freeSolo
                       size="small"
                       onChange={(e, value) => {
                         onChange(value);
@@ -359,12 +326,12 @@ function EditItemModal({
                   )}
                 />
               </Grid>
-              {Object.keys(itemExtraFields).length !== 0 ? (
+              {Object.keys(itemExtraField).length !== 0 ? (
                 <>
                   {decitionItemField ? (
                     <>
-                      {itemExtraFields?.int_field.map((item, index) => (
-                        <Grid xs={6}>
+                      {itemExtraField?.int_field.map((item, index) => (
+                        <Grid xs={6} key={index}>
                           <Controller
                             control={control}
                             defaultValue={Object.values(item)[0]}
@@ -398,8 +365,8 @@ function EditItemModal({
                           />
                         </Grid>
                       ))}
-                      {itemExtraFields?.str_field.map((item, index) => (
-                        <Grid xs={6}>
+                      {itemExtraField?.str_field.map((item, index) => (
+                        <Grid xs={6} key={index}>
                           <Controller
                             control={control}
                             defaultValue={Object.values(item)[0]}
@@ -433,8 +400,8 @@ function EditItemModal({
                           />
                         </Grid>
                       ))}
-                      {itemExtraFields?.textare_field.map((item, index) => (
-                        <Grid xs={6}>
+                      {itemExtraField?.textare_field.map((item, index) => (
+                        <Grid xs={6} key={index}>
                           <Controller
                             defaultValue={Object.values(item)[0]}
                             control={control}
@@ -446,6 +413,8 @@ function EditItemModal({
                             }}
                             render={({ field: { onChange, value } }) => (
                               <TextField
+                                multiline
+                                maxRows={4}
                                 size="small"
                                 fullWidth
                                 name="count"
@@ -466,8 +435,8 @@ function EditItemModal({
                           />
                         </Grid>
                       ))}
-                      {itemExtraFields?.checkbox_field.map((item, index) => (
-                        <Grid xs={6}>
+                      {itemExtraField?.checkbox_field.map((item, index) => (
+                        <Grid xs={6} key={index}>
                           <Controller
                             control={control}
                             defaultValue={Object.values(item)[0]}
@@ -478,28 +447,28 @@ function EditItemModal({
                               required: `${Object.keys(item)[0]} is required`,
                             }}
                             render={({ field: { onChange, value } }) => (
-                              <TextField
-                                size="small"
-                                fullWidth
-                                value={value}
-                                onChange={onChange}
-                                label={Object.keys(item)[0]}
-                                variant="outlined"
-                                helperText={
-                                  errors.checkbox_field?.[index]?.[
+                              <>
+                                <FormControlLabel
+                                  control={<Checkbox />}
+                                  value={value}
+                                  onChange={onChange}
+                                  label={Object.keys(item)[0]}
+                                />
+                                <FormHelperText>
+                                  {errors.checkbox_field?.[index]?.[
                                     Object.keys(item)[0]
                                   ] &&
-                                  errors.checkbox_field?.[index]?.[
-                                    Object.keys(item)[0]
-                                  ]?.message
-                                }
-                              />
+                                    errors.checkbox_field?.[index]?.[
+                                      Object.keys(item)[0]
+                                    ]?.message}
+                                </FormHelperText>
+                              </>
                             )}
                           />
                         </Grid>
                       ))}
-                      {itemExtraFields?.date_field.map((item, index) => (
-                        <Grid xs={6}>
+                      {itemExtraField?.date_field.map((item, index) => (
+                        <Grid xs={6} key={index}>
                           <Controller
                             control={control}
                             defaultValue={Object.values(item)[0]}
@@ -508,22 +477,27 @@ function EditItemModal({
                               required: `${Object.keys(item)[0]} is required`,
                             }}
                             render={({ field: { onChange, value } }) => (
-                              <TextField
-                                size="small"
-                                fullWidth
-                                value={value}
-                                onChange={onChange}
-                                label={Object.keys(item)[0]}
-                                variant="outlined"
-                                helperText={
-                                  errors.date_field?.[index]?.[
-                                    Object.keys(item)[0]
-                                  ] &&
-                                  errors.date_field?.[index]?.[
-                                    Object.keys(item)[0]
-                                  ]?.message
-                                }
-                              />
+                              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DesktopDatePicker
+                                  value={value}
+                                  onChange={onChange}
+                                  label={Object.keys(item)[0]}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      size="small"
+                                      {...params}
+                                      helperText={
+                                        errors.date_field?.[index]?.[
+                                          Object.keys(item)[0]
+                                        ] &&
+                                        errors.date_field?.[index]?.[
+                                          Object.keys(item)[0]
+                                        ]?.message
+                                      }
+                                    />
+                                  )}
+                                />
+                              </LocalizationProvider>
                             )}
                           />
                         </Grid>
@@ -531,8 +505,8 @@ function EditItemModal({
                     </>
                   ) : (
                     <>
-                      {itemExtraFields?.int_field.map((item, index) => (
-                        <Grid xs={6}>
+                      {itemExtraField?.int_field.map((item, index) => (
+                        <Grid xs={6} key={index}>
                           <Controller
                             control={control}
                             name={`int_field.${index}.${item.name}`}
@@ -556,9 +530,9 @@ function EditItemModal({
                           />
                         </Grid>
                       ))}
-                      {itemExtraFields?.str_field.map(
+                      {itemExtraField?.str_field.map(
                         (item: any, index: any) => (
-                          <Grid xs={6}>
+                          <Grid xs={6} key={index}>
                             <Controller
                               control={control}
                               name={`str_field.${index}.${item.name}`}
@@ -585,15 +559,17 @@ function EditItemModal({
                           </Grid>
                         )
                       )}
-                      {itemExtraFields?.textare_field.map(
+                      {itemExtraField?.textare_field.map(
                         (item: any, index: any) => (
-                          <Grid xs={6}>
+                          <Grid xs={6} key={index}>
                             <Controller
                               control={control}
                               name={`textare_field.${index}.${item.name}`}
                               rules={{ required: `${item.name} is required` }}
                               render={({ field: { onChange } }) => (
                                 <TextField
+                                  multiline
+                                  maxRows={4}
                                   size="small"
                                   fullWidth
                                   name="count"
@@ -613,53 +589,65 @@ function EditItemModal({
                           </Grid>
                         )
                       )}
-                      {itemExtraFields?.checkbox_field.map(
+                      {itemExtraField?.date_field.map(
                         (item: any, index: any) => (
-                          <Grid xs={6}>
+                          <Grid xs={6} key={index}>
                             <Controller
                               control={control}
-                              name={`checkbox_field.${index}.${item.name}`}
+                              name={`date_field.${index}.${item.name}`}
                               rules={{ required: `${item.name} is required` }}
-                              render={({ field: { onChange } }) => (
-                                <TextField
-                                  size="small"
-                                  fullWidth
-                                  onChange={onChange}
-                                  label={item.name}
-                                  variant="outlined"
-                                  helperText={
-                                    errors.checkbox_field?.[index]?.[
-                                      item.name
-                                    ] &&
-                                    errors.checkbox_field?.[index]?.[item.name]
-                                      ?.message
-                                  }
-                                />
+                              render={({ field: { onChange, value } }) => (
+                                <LocalizationProvider
+                                  dateAdapter={AdapterDayjs}
+                                >
+                                  <DesktopDatePicker
+                                    label={item.name}
+                                    value={value}
+                                    onChange={onChange}
+                                    renderInput={(params) => (
+                                      <TextField
+                                        size="small"
+                                        {...params}
+                                        helperText={
+                                          errors.date_field?.[index]?.[
+                                            item.name
+                                          ] &&
+                                          errors.date_field?.[index]?.[
+                                            item.name
+                                          ]?.message
+                                        }
+                                      />
+                                    )}
+                                  />
+                                </LocalizationProvider>
                               )}
                             />
                           </Grid>
                         )
                       )}
-                      {itemExtraFields?.date_field.map(
+                      {itemExtraField?.checkbox_field.map(
                         (item: any, index: any) => (
-                          <Grid xs={6}>
+                          <Grid xs={6} key={index}>
                             <Controller
                               control={control}
-                              name={`date_field.${index}.${item.name}`}
+                              name={`checkbox_field.${index}.${item.name}`}
                               rules={{ required: `${item.name} is required` }}
                               render={({ field: { onChange } }) => (
-                                <TextField
-                                  size="small"
-                                  fullWidth
-                                  onChange={onChange}
-                                  label={item.name}
-                                  variant="outlined"
-                                  helperText={
-                                    errors.date_field?.[index]?.[item.name] &&
-                                    errors.date_field?.[index]?.[item.name]
-                                      ?.message
-                                  }
-                                />
+                                <>
+                                  <FormControlLabel
+                                    control={<Checkbox />}
+                                    label={item.name}
+                                    onChange={onChange}
+                                  />
+                                  <FormHelperText>
+                                    {errors.checkbox_field?.[index]?.[
+                                      item.name
+                                    ] &&
+                                      errors.checkbox_field?.[index]?.[
+                                        item.name
+                                      ]?.message}
+                                  </FormHelperText>
+                                </>
                               )}
                             />
                           </Grid>
@@ -669,6 +657,140 @@ function EditItemModal({
                   )}
                 </>
               ) : null}
+              {/* {Object.keys(itemExtraField).length !== 0 ? (
+                <>
+                  {itemExtraField?.int_field.map((item, index) => (
+                    <Grid xs={6}>
+                      <Controller
+                        control={control}
+                        name={`int_field.${index}.${item.name}`}
+                        rules={{ required: `${item.name} is required` }}
+                        render={({ field: { onChange } }) => (
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            size="small"
+                            fullWidth
+                            onChange={onChange}
+                            label={item.name}
+                            variant="outlined"
+                            error={!!errors.int_field?.[index]?.[item.name]}
+                            helperText={
+                              errors.int_field?.[index]?.[item.name] &&
+                              errors.int_field?.[index]?.[item.name]?.message
+                            }
+                          />
+                        )}
+                      />
+                    </Grid>
+                  ))}
+                  {itemExtraField?.str_field.map((item: any, index: any) => (
+                    <Grid xs={6}>
+                      <Controller
+                        control={control}
+                        name={`str_field.${index}.${item.name}`}
+                        rules={{ required: `${item.name} is required` }}
+                        render={({ field: { onChange } }) => (
+                          <TextField
+                            size="small"
+                            fullWidth
+                            InputLabelProps={{ shrink: true }}
+                            onChange={onChange}
+                            label={item.name}
+                            variant="outlined"
+                            error={!!errors.str_field?.[index]?.[item.name]}
+                            helperText={
+                              errors.str_field?.[index]?.[item.name] &&
+                              errors.str_field?.[index]?.[item.name]?.message
+                            }
+                          />
+                        )}
+                      />
+                    </Grid>
+                  ))}
+                  {itemExtraField?.textare_field.map(
+                    (item: any, index: any) => (
+                      <Grid xs={6}>
+                        <Controller
+                          control={control}
+                          name={`textare_field.${index}.${item.name}`}
+                          rules={{ required: `${item.name} is required` }}
+                          render={({ field: { onChange } }) => (
+                            <TextField
+                              multiline
+                              maxRows={4}
+                              size="small"
+                              fullWidth
+                              name="count"
+                              onChange={onChange}
+                              label={item.name}
+                              variant="outlined"
+                              helperText={
+                                errors.textare_field?.[index]?.[item.name] &&
+                                errors.textare_field?.[index]?.[item.name]
+                                  ?.message
+                              }
+                            />
+                          )}
+                        />
+                      </Grid>
+                    )
+                  )}
+                  {itemExtraField?.date_field.map((item: any, index: any) => (
+                    <Grid xs={6}>
+                      <Controller
+                        control={control}
+                        name={`date_field.${index}.${item.name}`}
+                        rules={{ required: `${item.name} is required` }}
+                        render={({ field: { onChange, value } }) => (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DesktopDatePicker
+                              label={item.name}
+                              value={value}
+                              onChange={onChange}
+                              renderInput={(params) => (
+                                <TextField
+                                  size="small"
+                                  {...params}
+                                  helperText={
+                                    errors.date_field?.[index]?.[item.name] &&
+                                    errors.date_field?.[index]?.[item.name]
+                                      ?.message
+                                  }
+                                />
+                              )}
+                            />
+                          </LocalizationProvider>
+                        )}
+                      />
+                    </Grid>
+                  ))}
+                  {itemExtraField?.checkbox_field.map(
+                    (item: any, index: any) => (
+                      <Grid xs={6}>
+                        <Controller
+                          control={control}
+                          name={`checkbox_field.${index}.${item.name}`}
+                          rules={{ required: `${item.name} is required` }}
+                          render={({ field: { onChange } }) => (
+                            <>
+                              <FormControlLabel
+                                control={<Checkbox />}
+                                label={item.name}
+                                onChange={onChange}
+                              />
+                              <FormHelperText>
+                                {errors.checkbox_field?.[index]?.[item.name] &&
+                                  errors.checkbox_field?.[index]?.[item.name]
+                                    ?.message}
+                              </FormHelperText>
+                            </>
+                          )}
+                        />
+                      </Grid>
+                    )
+                  )}
+                </>
+              ) : null} */}
             </Grid>
           </Box>
         </Box>

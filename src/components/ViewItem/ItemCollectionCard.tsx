@@ -13,23 +13,20 @@ type ItemCollectionCardType = {
   };
 };
 function ItemCollectionCard({ data }: ItemCollectionCardType) {
-  console.log(data);
   return (
-    <Box className="flex gap-x-3">
+    <Box className="flex flex-wrap gap-3">
       <Link
         to={`/collection-view/${data.id}`}
-        className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 cursor-pointer"
+        className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 cursor-pointer w-[210px] sm:w-[245px] h-[145px]"
       >
         <img
-          width={"250px"}
-          height="145px"
           src={data.path}
-          className="object-cover rounded"
+          className="object-cover rounded w-full h-full"
           alt="rasm"
         />
       </Link>
 
-      <Box className="flex flex-col gap-y-1 mt-2">
+      <Box className="flex flex-col gap-y-1 sm:mt-2">
         <Box className="flex gap-x-1">
           <Typography variant="body2" className="font-medium">
             Name :{" "}

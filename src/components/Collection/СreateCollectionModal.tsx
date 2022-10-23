@@ -35,13 +35,18 @@ export type CollectionFormFieldType = {
 type ModalProp = {
   setVisible: (value: boolean) => void;
   visible: boolean;
+  getCollectionListApi: (a: number, b: number) => void;
 };
 type TopicListType = {
   topic_name: string;
   _id: string;
 }[];
 
-function CreateCollectionModal({ setVisible, visible }: ModalProp) {
+function CreateCollectionModal({
+  setVisible,
+  visible,
+  getCollectionListApi,
+}: ModalProp) {
   const {
     handleSubmit,
     control,
@@ -77,6 +82,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
       .then((res) => {
         setVisible(false);
         toastifyMessage({});
+        getCollectionListApi(1, 8);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -128,7 +134,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
         >
           <Box>
             <Grid container spacing={2}>
-              <Grid xs={6}>
+              <Grid xs={12} sm={12} md={6} className="order-1 md:order-none">
                 <Controller
                   control={control}
                   name="collection_name"
@@ -149,7 +155,7 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                 />
               </Grid>
 
-              <Grid xs={6}>
+              <Grid xs={12} sm={12} md={6} className="order-2 md:order-none">
                 <Controller
                   control={control}
                   name="topic_id"
@@ -177,7 +183,8 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                   )}
                 />
               </Grid>
-              <Grid xs={6}>
+
+              <Grid xs={12} sm={12} md={6} className="order-4 md:order-none">
                 <Controller
                   control={control}
                   name="img"
@@ -193,7 +200,12 @@ function CreateCollectionModal({ setVisible, visible }: ModalProp) {
                 />
               </Grid>
 
-              <Grid xs={6} className="flex flex-col gap-y-2">
+              <Grid
+                xs={12}
+                sm={12}
+                md={6}
+                className="flex flex-col gap-y-2 order-3 md:order-none"
+              >
                 <Controller
                   control={control}
                   name="mark_down"

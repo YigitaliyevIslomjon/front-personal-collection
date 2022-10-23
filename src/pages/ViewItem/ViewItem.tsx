@@ -17,6 +17,7 @@ import Stack from "@mui/material/Stack";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { ToastContainer } from "react-toastify";
 import delelteAlert from "../../components/SweetAlert/SweetAlert";
+import moment from "moment";
 
 export type ItemDataType = {
   item_name: string;
@@ -37,7 +38,7 @@ type ItemExtraFieldList = {
   int_field: { [key: string]: string }[];
   str_field: { [key: string]: string }[];
   textare_field: { [key: string]: string }[];
-  checkbox_field: { [key: string]: string }[];
+  checkbox_field: { [key: string]: boolean }[];
   date_field: { [key: string]: string }[];
 };
 type ItemCollectionCardType = {
@@ -63,6 +64,7 @@ function ViewItem() {
     formState: { errors },
     control,
     handleSubmit,
+    reset,
   } = useForm<CommentFormType>();
 
   const socket = useMemo(() => io("http://localhost:4000"), []);
@@ -116,12 +118,15 @@ function ViewItem() {
     api
       .get(`item/${id}`)
       .then((res) => {
-        setItemExtraFieldList(res.data.item_extra_field);
-        let item_list = res.data.item_list;
-        item_list.tags = item_list.tags.map((tag: any) => tag.tag_name);
-        setItemData(item_list);
-        console.log(item_list);
-        getItemCollection(item_list);
+        try {
+          setItemExtraFieldList(res.data.item_extra_field);
+          let item = res.data.item;
+          item.tags = item.tags.map((tag: any) => tag.tag_name);
+          setItemData(item);
+          getItemCollection(item);
+        } catch (err) {
+          console.log(err);
+        }
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -198,7 +203,10 @@ function ViewItem() {
     data.item_id = id;
     api
       .post("comment", data)
-      .then((res) => {})
+      .then((res) => {
+        reset();
+        toastifyMessage({});
+      })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
       });
@@ -247,52 +255,54 @@ function ViewItem() {
   }, []);
 
   return (
-    <Box className="mb-96">
-      <Grid container columnSpacing={4}>
-        <Grid xs={7}>
+    <Box className="mb-10 sm:mb-40">
+      <Grid container columnSpacing={4} rowSpacing={30}>
+        <Grid xs={12} md={7}>
           <Button className="mb-2" onClick={getBackPerviewUrl}>
             <ArrowBackIcon />
             <Typography variant="body1">back</Typography>
           </Button>
-          <div className="border-2 border-solid border-indigo-100 rounded p-2 pb-1">
+          <div className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 h-[200px] sm:h-[250px] md:h-[330px]">
             {!itemLoading ? (
               <img
                 alt="rasm"
                 src={itemData?.path}
-                className="object-cover h-[330px] w-full cursor-pointer"
+                className="object-cover  w-full h-full cursor-pointer"
               />
             ) : (
-              <Skeleton variant="rounded" width={"100%"} height={330} />
+              <Skeleton
+                variant="rounded"
+                className="w-full h-full cursor-pointer"
+              />
             )}
           </div>
           <Box className="flex flex-col gap-y-1 mt-2">
-            <Box className="mb-1">
-              <IconButton
-                disabled={userExist ? true : false}
-                className="cursor-pointer"
-                onClick={() => pressLikeButton(likeStatus)}
-              >
-                <ThumbUpIcon style={likeStatus ? { color: "red" } : {}} />
-              </IconButton>
-              {likeCount}
-            </Box>
-            {checkingRole() ? (
-              <Box className="flex gap-x-2">
-                <Button variant="contained" onClick={edititemData}>
-                  edit
-                </Button>
-                <Button
-                  variant="contained"
-                  className="bg-red-500 hover:bg-red-600"
-                  onClick={deleteItemOnClick}
-                >
-                  delete
-                </Button>
-              </Box>
-            ) : null}
-
             {!itemLoading ? (
               <>
+                <Box className="mb-1">
+                  <IconButton
+                    disabled={userExist ? true : false}
+                    className="cursor-pointer"
+                    onClick={() => pressLikeButton(likeStatus)}
+                  >
+                    <ThumbUpIcon style={likeStatus ? { color: "red" } : {}} />
+                  </IconButton>
+                  {likeCount}
+                </Box>
+                {checkingRole() ? (
+                  <Box className="flex gap-x-2">
+                    <Button variant="contained" onClick={edititemData}>
+                      edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      className="bg-red-500 hover:bg-red-600"
+                      onClick={deleteItemOnClick}
+                    >
+                      delete
+                    </Button>
+                  </Box>
+                ) : null}
                 <Box className="flex gap-x-2">
                   <Typography variant="body1" className="font-semibold">
                     Name :{" "}
@@ -394,7 +404,7 @@ function ViewItem() {
                 </Typography>
 
                 <Typography variant="body1">
-                  {Object.values(item)[0]}
+                  {moment(Object.values(item)[0]).format("YYYY-MM-DD")}
                 </Typography>
               </Box>
             ))}
@@ -413,9 +423,12 @@ function ViewItem() {
                 <Controller
                   control={control}
                   name="text"
-                  render={({ field: { onChange } }) => (
+                  defaultValue=""
+                  rules={{ required: "comment is required" }}
+                  render={({ field: { onChange, value } }) => (
                     <TextField
                       size="small"
+                      value={value}
                       fullWidth
                       className="text-sm"
                       onChange={onChange}
@@ -448,7 +461,7 @@ function ViewItem() {
             </Box>
           </Box>
         </Grid>
-        <Grid xs={5}>
+        <Grid xs={12} md={5}>
           <Typography variant="h6"> Collection of item</Typography>
           <Box className="flex flex-col gap-y-1 mt-3 overflow-y-scroll h-[40rem]">
             {collectionLoading ? (
@@ -459,8 +472,7 @@ function ViewItem() {
                     <Skeleton
                       key={index}
                       variant="rounded"
-                      width={"50%"}
-                      height={140}
+                      className="h-[145px] w-[210px] sm:w-[245px]"
                     />
                   ))}
               </Stack>
@@ -475,8 +487,8 @@ function ViewItem() {
 
       {editItemModalVisible ? (
         <EditItemModal
-          itemData={itemData}
-          itemExtraFieldList={itemExtraFieldList}
+          getItemDataByIdApi={getItemDataByIdApi}
+          itemId={id}
           visible={editItemModalVisible}
           setVisible={setEditItemModalVisible}
         />

@@ -9,15 +9,20 @@ import {
   TextField,
   FormHelperText,
   Chip,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
-
 import Grid from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
-import ImageUploading, { ImageListType } from "react-images-uploading";
 import api from "../../utils/api";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 import LoadingButton from "@mui/lab/LoadingButton";
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import UploadImage from "../Collection/UploadImage";
 
 export type ItemFormTypes = {
   collection_id: {
@@ -30,12 +35,13 @@ export type ItemFormTypes = {
   int_field: { [key: string]: string }[];
   str_field: { [key: string]: string }[];
   textare_field: { [key: string]: string }[];
-  checkbox_field: { [key: string]: string }[];
+  checkbox_field: { [key: string]: boolean }[];
   date_field: { [key: string]: string }[];
 };
 type ModalProp = {
   setVisible: (value: boolean) => void;
   visible: boolean;
+  getItemListApi: (a: number, b: number) => void;
 };
 type CollectionListType = {
   collection_name: string;
@@ -46,11 +52,11 @@ export type ItemExtraFieldListType = {
   int_field: { [key: string]: string }[];
   str_field: { [key: string]: string }[];
   textare_field: { [key: string]: string }[];
-  checkbox_field: { [key: string]: string }[];
+  checkbox_field: { [key: string]: boolean }[];
   date_field: { [key: string]: string }[];
 };
 
-function CreateItemModal({ setVisible, visible }: ModalProp) {
+function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
   const {
     handleSubmit,
     control,
@@ -97,6 +103,7 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
       .then((res) => {
         setVisible(false);
         toastifyMessage({});
+        getItemListApi(1, 8);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -148,13 +155,6 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
     createItemApi(form_data);
   };
 
-  const onChangeImg = (
-    imageList: ImageListType,
-    addUpdateIndex: number[] | undefined
-  ) => {
-    console.log("img list", imageList);
-    setImages(imageList as never[]);
-  };
   useEffect(() => {
     getCollectionsList();
     getTagListApi();
@@ -189,7 +189,7 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
         >
           <Box>
             <Grid container spacing={2}>
-              <Grid xs={6}>
+              <Grid xs={12} sm={12} md={6}>
                 <Controller
                   control={control}
                   name="item_name"
@@ -209,7 +209,7 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                 />
               </Grid>
 
-              <Grid xs={6}>
+              <Grid xs={12} sm={12} md={6}>
                 <Controller
                   control={control}
                   name="collection_id"
@@ -238,83 +238,29 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                   )}
                 />
               </Grid>
-              <Grid xs={6}>
+              <Grid xs={12} sm={12} md={6}>
                 <Controller
                   control={control}
                   name="img"
                   rules={{ required: "image is required" }}
                   render={({ field: { onChange } }) => (
-                    <ImageUploading
-                      multiple
-                      value={images}
-                      onChange={(e, b) => {
-                        onChangeImg(e, b);
-                        onChange(e);
-                      }}
-                      maxNumber={1}
-                    >
-                      {({
-                        imageList,
-                        onImageUpload,
-                        onImageRemoveAll,
-                        dragProps,
-                      }) => (
-                        <div className="flex flex-col gap-y-2 items-start">
-                          <div
-                            style={{
-                              width: "290px",
-                              height: "220px",
-                            }}
-                            className="uplaod_img"
-                          >
-                            {imageList.map((image, index) => (
-                              <img
-                                src={image.dataURL}
-                                alt=""
-                                className="object-cover"
-                                width="100%"
-                                height="100%"
-                              />
-                            ))}
-                          </div>
-                          <FormHelperText className="text-red-500">
-                            {errors.img && errors.img.message}
-                          </FormHelperText>
-
-                          <Button
-                            className="button_width"
-                            variant="contained"
-                            onClick={() => {
-                              if (imageList.length < 1) {
-                                onImageUpload();
-                              }
-                            }}
-                            {...dragProps}
-                          >
-                            upload image
-                          </Button>
-                          {imageList.length > 0 ? (
-                            <Button
-                              className="button_width"
-                              variant={"outlined"}
-                              onClick={onImageRemoveAll}
-                            >
-                              remove image
-                            </Button>
-                          ) : null}
-                        </div>
-                      )}
-                    </ImageUploading>
+                    <UploadImage
+                      onChange={onChange}
+                      setImages={setImages}
+                      images={images}
+                      errors={errors}
+                    />
                   )}
                 />
               </Grid>
-              <Grid xs={6} className="flex flex-col gap-y-2">
+              <Grid xs={12} sm={12} md={6} className="flex flex-col gap-y-2">
                 <Controller
                   control={control}
                   name="tags"
                   render={({ field: { onChange } }) => (
                     <Autocomplete
                       multiple
+                      fullWidth
                       size="small"
                       id="tags-filled"
                       onChange={(e, value) => {
@@ -344,10 +290,11 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                   )}
                 />
               </Grid>
+
               {Object.keys(itemExtraFieldList).length !== 0 ? (
                 <>
                   {itemExtraFieldList?.int_field.map((item, index) => (
-                    <Grid xs={6}>
+                    <Grid xs={6} key={index}>
                       <Controller
                         control={control}
                         name={`int_field.${index}.${item.name}`}
@@ -356,6 +303,7 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                           <TextField
                             size="small"
                             fullWidth
+                            type="number"
                             onChange={onChange}
                             label={item.name}
                             variant="outlined"
@@ -370,7 +318,7 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                     </Grid>
                   ))}
                   {itemExtraFieldList?.str_field.map((item, index) => (
-                    <Grid xs={6}>
+                    <Grid xs={6} key={index}>
                       <Controller
                         control={control}
                         name={`str_field.${index}.${item.name}`}
@@ -393,16 +341,17 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                     </Grid>
                   ))}
                   {itemExtraFieldList?.textare_field.map((item, index) => (
-                    <Grid xs={6}>
+                    <Grid xs={6} key={index}>
                       <Controller
                         control={control}
                         name={`textare_field.${index}.${item.name}`}
                         rules={{ required: `${item.name} is required` }}
                         render={({ field: { onChange } }) => (
                           <TextField
+                            multiline
+                            maxRows={4}
                             size="small"
                             fullWidth
-                            name="count"
                             onChange={onChange}
                             label={item.name}
                             variant="outlined"
@@ -416,47 +365,58 @@ function CreateItemModal({ setVisible, visible }: ModalProp) {
                       />
                     </Grid>
                   ))}
-                  {itemExtraFieldList?.checkbox_field.map((item, index) => (
-                    <Grid xs={6}>
-                      <Controller
-                        control={control}
-                        name={`checkbox_field.${index}.${item.name}`}
-                        rules={{ required: `${item.name} is required` }}
-                        render={({ field: { onChange } }) => (
-                          <TextField
-                            size="small"
-                            fullWidth
-                            onChange={onChange}
-                            label={item.name}
-                            variant="outlined"
-                            helperText={
-                              errors.checkbox_field?.[index]?.[item.name] &&
-                              errors.checkbox_field?.[index]?.[item.name]
-                                ?.message
-                            }
-                          />
-                        )}
-                      />
-                    </Grid>
-                  ))}
                   {itemExtraFieldList?.date_field.map((item, index) => (
-                    <Grid xs={6}>
+                    <Grid xs={6} key={index}>
                       <Controller
                         control={control}
                         name={`date_field.${index}.${item.name}`}
                         rules={{ required: `${item.name} is required` }}
-                        render={({ field: { onChange } }) => (
-                          <TextField
-                            size="small"
-                            fullWidth
-                            onChange={onChange}
-                            label={item.name}
-                            variant="outlined"
-                            helperText={
-                              errors.date_field?.[index]?.[item.name] &&
-                              errors.date_field?.[index]?.[item.name]?.message
-                            }
-                          />
+                        render={({ field: { onChange, value } }) => (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DesktopDatePicker
+                              label={item.name}
+                              value={value}
+                              onChange={onChange}
+                              renderInput={(params) => (
+                                <TextField
+                                  size="small"
+                                  {...params}
+                                  helperText={
+                                    errors.date_field?.[index]?.[item.name] &&
+                                    errors.date_field?.[index]?.[item.name]
+                                      ?.message
+                                  }
+                                />
+                              )}
+                            />
+                          </LocalizationProvider>
+                        )}
+                      />
+                    </Grid>
+                  ))}
+
+                  {itemExtraFieldList?.checkbox_field.map((item, index) => (
+                    <Grid xs={6} key={index}>
+                      <Controller
+                        control={control}
+                        name={`checkbox_field.${index}.${item.name}`}
+                        rules={{ required: `${item.name} is required` }}
+                        render={({ field: { onChange, value } }) => (
+                          <>
+                            <FormControlLabel
+                              control={<Checkbox />}
+                              label={item.name}
+                              onChange={onChange}
+                            />
+                            <FormHelperText>
+                              {errors.checkbox_field?.[index]?.[
+                                Object.keys(item)[0]
+                              ] &&
+                                errors.checkbox_field?.[index]?.[
+                                  Object.keys(item)[0]
+                                ]?.message}
+                            </FormHelperText>
+                          </>
                         )}
                       />
                     </Grid>
