@@ -245,6 +245,11 @@ function ViewItem() {
       let commentCopy: any = JSON.parse(
         localStorage.getItem("commentList") || "{}"
       );
+      data = {
+        text: data.text,
+        user_name: data.user_id?.user_name,
+        id: data._id,
+      };
       setCommentList([...commentCopy, data]);
     });
 

@@ -98,29 +98,34 @@ const settings = [
 
 function Navbar() {
   const { t, i18n } = useTranslation();
-
+  const dispatch = useDispatch();
   const colorMode = useContext(ColorModeContext);
+  const theme = useTheme();
+  let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
+
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [userMenuVisible, setUserMenuVisible] = useState<boolean>(false);
   const [language, setLanguage] = useState<string>(
     localStorage.getItem("i18nextLng") || "eng"
   );
 
-  const dispatch = useDispatch();
-  const theme = useTheme();
-  let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
-
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
   const handleOpenUserMenu = () => {
     setUserMenuVisible(true);
   };
 
   const handleCloseUserMenu = (url: string) => {
-    setUserMenuVisible(false);
+    setAnchorEl(null);
     if (url === "/") {
       localStorage.removeItem("access_token");
       localStorage.removeItem("admin_token");
       localStorage.removeItem("user");
     }
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
   const handleDrawerOpen = () => {
@@ -358,7 +363,7 @@ function Navbar() {
             </Typography>
             <Box className="hidden md:block">
               <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <IconButton onClick={handleClick} sx={{ p: 0 }}>
                   <Avatar
                     className="capitalize"
                     alt={loginUser.user_name}
@@ -373,9 +378,10 @@ function Navbar() {
                   vertical: "top",
                   horizontal: "right",
                 }}
-                open={userMenuVisible}
+                open={open}
                 onClose={handleCloseUserMenu}
                 className="hidden md:block"
+                anchorEl={anchorEl}
               >
                 {settings.map((setting) => (
                   <MenuItem

@@ -9,10 +9,10 @@ import Typography from "@mui/material/Typography";
 import api from "../../utils/api";
 import { useParams } from "react-router-dom";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
-import { setConstantValue } from "typescript";
 import delelteAlert from "../../components/SweetAlert/SweetAlert";
 import EditItemModal from "../../components/ViewItem/EditItemModal";
 import CreateItemModal from "../../components/Item/CreateItemModal";
+import TablePagination from "@mui/material/TablePagination";
 
 type ItemListType = {
   item_name: string;
@@ -23,24 +23,15 @@ type ItemListType = {
   tags: string[];
 }[];
 
-type ItemListTableRowType = {
-  item_name: string;
-  collection_name: string;
-  user_name: string;
-  id: string;
-  path: string;
-  tags: string[];
-};
-
 type PagenationType = {
   pageNumber: number;
   pageSize: number;
   total_page_count: number;
+  total_item_count: number;
 };
 
 function CollectionItemTable() {
   let { id } = useParams();
-
   const [itemListTableData, setItemListTableData] = useState<ItemListType>([]);
   const [itemTableLoading, setItemTableLoading] = useState<boolean>(false);
   const [itemId, setItemId] = useState<string>("");
@@ -49,6 +40,12 @@ function CollectionItemTable() {
   const [createItemModalVisible, setCreateItemModalVisible] =
     useState<boolean>(false);
   const tableColumn: GridColDef[] = [
+    {
+      field: "order",
+      headerName: "№",
+      flex: 1,
+      sortable: false,
+    },
     {
       field: "item_name",
       headerName: "Name",
@@ -118,8 +115,9 @@ function CollectionItemTable() {
 
   const [pagenation, setPagenation] = useState({
     pageNumber: 1,
-    pageSize: 1,
-    total_page_count: 1,
+    pageSize: 8,
+    total_page_count: 8,
+    total_item_count: 8,
   } as PagenationType);
 
   function editItemTableRow(id: string) {
@@ -160,13 +158,14 @@ function CollectionItemTable() {
       .then((res) => {
         setPagenation(res.data.pagenation);
         setItemListTableData(
-          res.data.item.map((item: any) => ({
+          res.data.item.map((item: any, index: number) => ({
             item_name: item.item_name,
             collection_name: item.collection_id.collection_name,
             user_name: item.user_id.user_name,
             id: item._id,
             path: item.path,
             tags: item.tags.map((item: any) => item.tag_name),
+            order: index + 1,
           }))
         );
       })
@@ -178,11 +177,26 @@ function CollectionItemTable() {
       });
   };
 
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    pageNumber: number
+  ) => {
+    setPagenation({ ...pagenation, pageNumber: +pageNumber });
+    getItemListByCollectionIdApi(+pageNumber + 1, pagenation.pageSize);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setPagenation({ ...pagenation, pageSize: +event.target.value });
+    getItemListByCollectionIdApi(pagenation.pageNumber, +event.target.value);
+  };
+
   useEffect(() => {
-    getItemListByCollectionIdApi(1, 8);
+    getItemListByCollectionIdApi(1, 7);
     // eslint-disable-next-line
   }, []);
-
+  console.log(pagenation);
   return (
     <Box>
       <Box className="flex justify-between items-center">
@@ -199,11 +213,21 @@ function CollectionItemTable() {
           className="overflow-x-scroll"
           rows={itemListTableData}
           columns={tableColumn}
-          pageSize={5}
           loading={itemTableLoading}
-          rowsPerPageOptions={[5]}
           getRowId={(row: GridValidRowModel) => row.id}
-          experimentalFeatures={{ newEditingApi: true }}
+          components={{
+            Pagination: () => (
+              <TablePagination
+                component="div"
+                count={pagenation.total_item_count}
+                page={pagenation.pageNumber - 1}
+                onPageChange={handleChangePage}
+                rowsPerPage={pagenation.pageSize}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[7, 10, 20]}
+              />
+            ),
+          }}
         />
       </Box>
 

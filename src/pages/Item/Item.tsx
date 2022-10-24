@@ -105,14 +105,14 @@ function Item() {
         {!itemListLoading
           ? itemList.map((item, index) => (
               <Grid xs={12} sm={6} md={4} lg={3} key={item.id}>
-                <ItemCard data={item} />
+                <ItemCard data={item} key={item.id} />
               </Grid>
             ))
           : Array(8)
               .fill(0)
               .map((item, index) => (
                 <Grid xs={12} sm={6} md={4} lg={3} key={index}>
-                  <CardSkeletion />
+                  <CardSkeletion key={index} />
                 </Grid>
               ))}
       </Grid>
