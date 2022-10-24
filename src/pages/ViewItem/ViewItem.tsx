@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, IconButton, TextField } from "@mui/material";
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import { Controller, useForm } from "react-hook-form";
 import api from "../../utils/api";
@@ -24,6 +24,7 @@ export type ItemDataType = {
   collection_id: {
     _id: string;
     collection_name: string;
+    user_id: string;
   };
   path: string;
   _id: string;
@@ -69,7 +70,7 @@ function ViewItem() {
 
   const socket = useMemo(() => io("http://localhost:4000"), []);
   const { id } = useParams();
-  const navigate = useNavigate();
+
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
   const [itemLoading, setItemLoading] = useState<boolean>(false);
   const [collectionLoading, setCollectionLoading] = useState<boolean>(false);
@@ -144,7 +145,7 @@ function ViewItem() {
     api
       .delete(`item/${id}`)
       .then((res) => {
-        navigate("/item");
+        window.history.back();
         toastifyMessage({});
       })
       .catch((err) => {
@@ -218,7 +219,7 @@ function ViewItem() {
 
   let userExist = Object.keys(loginUser).length === 0;
 
-  const checkingRole = () => {
+  const permisionEditItemByOwner = () => {
     if (
       loginUser?.role === "admin" ||
       itemData.user_id?._id === loginUser?._id
@@ -294,20 +295,20 @@ function ViewItem() {
                   </IconButton>
                   {likeCount}
                 </Box>
-                {checkingRole() ? (
-                  <Box className="flex gap-x-2">
+                <Box className="flex gap-x-2">
+                  {permisionEditItemByOwner() ? (
                     <Button variant="contained" onClick={edititemData}>
                       edit
                     </Button>
-                    <Button
-                      variant="contained"
-                      className="bg-red-500 hover:bg-red-600"
-                      onClick={deleteItemOnClick}
-                    >
-                      delete
-                    </Button>
-                  </Box>
-                ) : null}
+                  ) : null}
+                  <Button
+                    variant="contained"
+                    className="bg-red-500 hover:bg-red-600"
+                    onClick={deleteItemOnClick}
+                  >
+                    delete
+                  </Button>
+                </Box>
                 <Box className="flex gap-x-2">
                   <Typography variant="body1" className="font-semibold">
                     Name :{" "}
