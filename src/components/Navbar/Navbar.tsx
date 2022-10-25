@@ -104,16 +104,12 @@ function Navbar() {
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
-  const [userMenuVisible, setUserMenuVisible] = useState<boolean>(false);
   const [language, setLanguage] = useState<string>(
     localStorage.getItem("i18nextLng") || "eng"
   );
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleOpenUserMenu = () => {
-    setUserMenuVisible(true);
-  };
 
   const handleCloseUserMenu = (url: string) => {
     setAnchorEl(null);

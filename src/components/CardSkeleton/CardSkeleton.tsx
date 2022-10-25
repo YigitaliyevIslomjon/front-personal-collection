@@ -1,14 +1,6 @@
 import React from "react";
-import {
-  Button,
-  Card,
-  CardActionArea,
-  CardActions,
-  CardContent,
-} from "@mui/material";
+import { Card, CardActionArea, CardActions, CardContent } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
 
 function CardSkeletion() {
   return (

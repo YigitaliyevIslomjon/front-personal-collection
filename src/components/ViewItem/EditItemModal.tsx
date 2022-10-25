@@ -178,6 +178,7 @@ function EditItemModal({
     getCollectionsList();
     getTagListApi();
     getItemById();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

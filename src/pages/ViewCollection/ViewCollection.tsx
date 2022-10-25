@@ -1,7 +1,7 @@
 import { Button, Box, Typography, Pagination } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import EditCollectionModal from "../../components/Collection/EditCollectionModal";
 import CreateItemExtraFieldModal from "../../components/ViewCollection/CreateItemExtraFieldModal";
 import ReactMarkdown from "react-markdown";
@@ -47,7 +47,6 @@ type PagenationType = {
 
 function ViewCollection() {
   let { id } = useParams();
-  const navigate = useNavigate();
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
   const [collection, setCollection] = useState({} as CollectionType);
   const [collectionItemListLoading, setCollectionItemListLoding] =

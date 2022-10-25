@@ -11,7 +11,7 @@ import { ToastContainer } from "react-toastify";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { useTranslation } from "react-i18next";
 import DownloadIcon from "@mui/icons-material/Download";
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 
 type CollectionListType = {
   collection_name: string;

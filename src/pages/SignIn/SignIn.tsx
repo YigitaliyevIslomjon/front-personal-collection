@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Avatar, Grid, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -12,7 +12,6 @@ import "./SignIn.scss";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { useTranslation } from "react-i18next";
 import { GoogleLogin } from "@react-oauth/google";
-import jwt_decode from "jwt-decode";
 
 type SignInFormValues = {
   email: string;
@@ -48,9 +47,6 @@ function SignIn() {
   };
   const submitSignInForm = (data: SignInFormValues) => {
     signInUser(data);
-  };
-  const handleCallbackResponse = (response: any) => {
-    console.log(response);
   };
 
   <GoogleLogin
