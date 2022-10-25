@@ -188,7 +188,7 @@ function Home() {
         <Typography variant="h6" className="text-base sm:text-xl">
           {t("largeCollections")}
         </Typography>
-        <Link to="/collection" className="no-underline">
+        <Link to="/collection" className="underline-offset-2">
           <Typography variant="body1" className="text-base sm:text-base">
             {" "}
             {t("viewAll")}
@@ -231,7 +231,7 @@ function Home() {
         <Typography variant="h6" className="text-base sm:text-xl">
           {t("lastItem")}
         </Typography>
-        <Link to="/collection" className="no-underline">
+        <Link to="/collection" className="underline-offset-2">
           <Typography variant="body1" className="text-base sm:text-base">
             {" "}
             {t("viewAll")}
