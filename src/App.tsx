@@ -6,7 +6,7 @@ import SignUp from "./pages/SignUp/SignUp";
 import AdminLayout from "./adminComponents/AdminLayout/AdminLayout";
 import User from "./pages/User/User";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import AuthLayout from "./components/Authlayout/AuthLayout";
+import AuthLayout from "./components/Authlayout/Authl4ayout";
 import AdminSignIn from "./pages/AdminSignIn/AdminSignIn";
 import Collection from "./pages/Collection/Collection";
 import Item from "./pages/Item/Item";
