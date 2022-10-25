@@ -2,7 +2,7 @@ import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import "./AuthLayout.scss";
+import "./authLayout.scss";
 
 function AuthLayout() {
   let { t } = useTranslation();
