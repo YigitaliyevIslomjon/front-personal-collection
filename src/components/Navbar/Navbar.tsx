@@ -115,7 +115,6 @@ function Navbar() {
     setAnchorEl(null);
     if (url === "/") {
       localStorage.removeItem("access_token");
-      localStorage.removeItem("admin_token");
       localStorage.removeItem("user");
     }
   };

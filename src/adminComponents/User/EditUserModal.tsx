@@ -33,7 +33,7 @@ type DialogProp = {
   setVisible: (value: boolean) => void;
   visible: boolean;
   userTableRowData: UserTableRowType;
-  getUserTableData: (a: number, b: number) => void;
+  getUserList: (a: number, b: number) => void;
 };
 
 const roleData = ["user", "admin"];
@@ -41,7 +41,7 @@ function EditUserModal({
   setVisible,
   visible,
   userTableRowData,
-  getUserTableData,
+  getUserList,
 }: DialogProp) {
   const {
     handleSubmit,
@@ -59,7 +59,7 @@ function EditUserModal({
       .put(`/user/${userTableRowData._id}`, data)
       .then((res) => {
         setVisible(false);
-        getUserTableData(1, 10);
+        getUserList(1, 7);
         toastifyMessage({});
         if (res.data.user.role === "user") {
           localStorage.setItem("user", JSON.stringify(res.data.user));

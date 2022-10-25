@@ -21,21 +21,25 @@ import Menu from "@mui/material/Menu";
 import Button from "@mui/material/Button";
 
 function AdminLayout() {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
   const navigate = useNavigate();
   const token = localStorage.getItem("access_token");
   const isAdmin =
     JSON.parse(localStorage.getItem("user") || "{}").role === "admin";
 
-  const handleMenuClose = () => {
-    navigate("/");
-    setIsMenuOpen(false);
+  const handleUserMenuClose = () => {
+    setAnchorEl(null);
+  };
+  const logoutUser = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
+    navigate("/");
   };
 
-  const handleOpenUserMenu = () => {
-    setIsMenuOpen(true);
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
   const drawerWidth = 240;
@@ -99,10 +103,11 @@ function AdminLayout() {
               vertical: "top",
               horizontal: "right",
             }}
-            open={isMenuOpen}
-            onClose={handleMenuClose}
+            open={open}
+            onClose={handleUserMenuClose}
+            anchorEl={anchorEl}
           >
-            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+            <MenuItem onClick={logoutUser}>Logout</MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>

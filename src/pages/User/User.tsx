@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import EditUserModal from "../../adminComponents/User/EditUserModal";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import delelteAlert from "../../components/SweetAlert/SweetAlert";
+import TablePagination from "@mui/material/TablePagination";
 
 export type UserTableType = {
   user_name: string;
@@ -38,12 +39,24 @@ export type UserTableRowType = {
   }[];
 };
 
+type PagenationType = {
+  pageNumber: number;
+  pageSize: number;
+  total_page_count: number;
+  total_user_count: number;
+};
+
 function User() {
   const navigate = useNavigate();
-  const [userTableData, setUserTableData] = useState<UserTableType>([]);
+  const [userListTableData, setUserListTableData] = useState<UserTableType>([]);
   const [editUserModalVisible, setEditUserModalVisible] =
     useState<boolean>(false);
-
+  const [pagenation, setPagenation] = useState({
+    pageNumber: 1,
+    pageSize: 8,
+    total_page_count: 8,
+    total_user_count: 8,
+  } as PagenationType);
   const [userTableRowData, setUserTableRowData] = useState(
     {} as UserTableRowType
   );
@@ -134,19 +147,20 @@ function User() {
           localStorage.removeItem("admin_token");
           localStorage.removeItem("admin_user");
         }
-        getUserTableData(1, 10);
+        getUserList(1, 7);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
       });
   }
 
-  const getUserTableData = (pageNumber: any, pageSize: any) => {
+  const getUserList = (pageNumber: number, pageSize: number) => {
     setUserTableLoading(true);
     api
       .get("user", { params: { pageNumber, pageSize } })
       .then((res) => {
-        setUserTableData(res.data);
+        setUserListTableData(res.data.user);
+        setPagenation(res.data.pagenation);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -156,26 +170,53 @@ function User() {
       });
   };
 
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    pageNumber: number
+  ) => {
+    setPagenation({ ...pagenation, pageNumber: +pageNumber });
+    getUserList(+pageNumber + 1, pagenation.pageSize);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setPagenation({ ...pagenation, pageSize: +event.target.value });
+    getUserList(pagenation.pageNumber, +event.target.value);
+  };
+
   useEffect(() => {
-    getUserTableData(1, 10);
+    getUserList(1, 7);
   }, []);
 
   return (
     <div>
       <Box sx={{ height: 500, width: "100%" }}>
         <DataGrid
-          rows={userTableData}
+          rows={userListTableData}
           columns={userTableColumn}
           pageSize={5}
           loading={userTableLoading}
           rowsPerPageOptions={[5]}
           getRowId={(row: GridValidRowModel) => row._id}
-          experimentalFeatures={{ newEditingApi: true }}
+          components={{
+            Pagination: () => (
+              <TablePagination
+                component="div"
+                count={pagenation.total_user_count}
+                page={pagenation.pageNumber - 1}
+                onPageChange={handleChangePage}
+                rowsPerPage={pagenation.pageSize}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[7, 10, 20]}
+              />
+            ),
+          }}
         />
       </Box>
       {editUserModalVisible ? (
         <EditUserModal
-          getUserTableData={getUserTableData}
+          getUserList={getUserList}
           userTableRowData={userTableRowData}
           setVisible={setEditUserModalVisible}
           visible={editUserModalVisible}
