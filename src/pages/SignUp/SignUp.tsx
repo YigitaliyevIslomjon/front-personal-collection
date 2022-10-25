@@ -129,6 +129,7 @@ function SignUp() {
                 rules={{ required: "Password is required" }}
                 render={({ field: { onChange } }) => (
                   <TextField
+                    type="password"
                     size="small"
                     onChange={(e) => {
                       onChange(e);
@@ -162,6 +163,7 @@ function SignUp() {
                     helperText={
                       errors.confirm_password && errors.confirm_password.message
                     }
+                    type="password"
                     label={t("confirm_password")}
                     error={errors.confirm_password ? true : false}
                   />
