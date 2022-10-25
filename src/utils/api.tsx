@@ -4,7 +4,7 @@ const api = axios.create({
   baseURL:
     window.location.port === "3000"
       ? "http://localhost:4000/api/"
-      : "https://user-managment-front.herokuapp.com/api/",
+      : "https://collection-personal.herokuapp.com/api/",
 });
 
 // Add a request interceptor

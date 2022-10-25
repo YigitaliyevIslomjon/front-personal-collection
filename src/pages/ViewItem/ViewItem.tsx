@@ -68,7 +68,15 @@ function ViewItem() {
     reset,
   } = useForm<CommentFormType>();
 
-  const socket = useMemo(() => io("http://localhost:4000"), []);
+  const socket = useMemo(
+    () =>
+      io(
+        window.location.port === "3000"
+          ? "http://localhost:4000"
+          : "https://collection-personal.herokuapp.com"
+      ),
+    []
+  );
   const { id } = useParams();
 
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
