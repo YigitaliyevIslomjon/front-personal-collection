@@ -105,7 +105,7 @@ function Navbar() {
 
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [language, setLanguage] = useState<string>(
-    localStorage.getItem("i18nextLng") || "eng"
+    localStorage.getItem("i18nextLng") || "en-US"
   );
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -304,7 +304,7 @@ function Navbar() {
               value={language}
               onChange={(e) => changeLanguage(e)}
             >
-              <MenuItem value={"en"}>en</MenuItem>
+              <MenuItem value={"en-US"}>en</MenuItem>
               <MenuItem value={"uz"}>uz</MenuItem>
             </Select>
             {Object.keys(loginUser).length === 0 ? (

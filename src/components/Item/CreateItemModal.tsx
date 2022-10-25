@@ -111,6 +111,7 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
         setVisible(false);
         toastifyMessage({});
         getItemListApi(1, 8);
+        reset();
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -162,7 +163,6 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
         form_data.append(key, data[key]);
       }
     }
-    reset();
     createItemApi(form_data);
   };
 
