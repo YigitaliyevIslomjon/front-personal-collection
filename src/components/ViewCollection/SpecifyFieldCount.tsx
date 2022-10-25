@@ -74,9 +74,9 @@ function SpecifyFieldCount({
           <Controller
             control={control}
             name="count"
-            rules={{ max: { value: 3, message: "3 dan oshmasin" } }}
             render={({ field: { onChange } }) => (
               <TextField
+                type="number"
                 size="small"
                 name="count"
                 onChange={onChange}

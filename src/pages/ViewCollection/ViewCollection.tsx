@@ -298,10 +298,7 @@ function ViewCollection() {
           </Box>
         </Grid>
         <Grid xs={12} md={5}>
-          <Typography
-            variant="h6"
-            className="text-base sm:text-lg md:text-xl font-semibold"
-          >
+          <Typography variant="h6" className="text-base sm:text-lg md:text-xl">
             {" "}
             Items of Colleciton
           </Typography>
