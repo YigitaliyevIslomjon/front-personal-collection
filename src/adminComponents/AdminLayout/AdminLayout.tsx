@@ -74,7 +74,10 @@ function AdminLayout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <Box className="flex">
+    <Box
+      className="flex"
+      sx={{ bgcolor: "background.default", color: "text.primary" }}
+    >
       <AppBar
         position="fixed"
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}

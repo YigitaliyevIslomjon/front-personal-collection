@@ -193,6 +193,7 @@ function User() {
     <div>
       <Box sx={{ height: 500, width: "100%" }}>
         <DataGrid
+          sx={{ color: "text.primary" }}
           rows={userListTableData}
           columns={userTableColumn}
           pageSize={5}

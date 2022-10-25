@@ -384,7 +384,9 @@ function Navbar() {
                     onClick={() => handleCloseUserMenu(setting.link)}
                   >
                     <Link className="no-underline" to={setting.link}>
-                      {t(`${setting.title}`)}
+                      <Typography variant="body1" color="textPrimary">
+                        {t(`${setting.title}`)}
+                      </Typography>
                     </Link>
                   </MenuItem>
                 ))}

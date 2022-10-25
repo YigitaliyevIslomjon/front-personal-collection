@@ -189,7 +189,11 @@ function Home() {
           {t("largeCollections")}
         </Typography>
         <Link to="/collection" className="underline-offset-2">
-          <Typography variant="body1" className="text-base sm:text-base">
+          <Typography
+            variant="body1"
+            className="text-base sm:text-base"
+            color="textPrimary"
+          >
             {" "}
             {t("viewAll")}
           </Typography>
@@ -232,7 +236,11 @@ function Home() {
           {t("lastItem")}
         </Typography>
         <Link to="/collection" className="underline-offset-2">
-          <Typography variant="body1" className="text-base sm:text-base">
+          <Typography
+            variant="body1"
+            className="text-base sm:text-base"
+            color="textPrimary"
+          >
             {" "}
             {t("viewAll")}
           </Typography>
