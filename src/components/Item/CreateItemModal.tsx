@@ -281,6 +281,7 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
                   <Controller
                     control={control}
                     name="tags"
+                    rules={{ required: "tag is required" }}
                     render={({ field: { onChange } }) => (
                       <Autocomplete
                         multiple
