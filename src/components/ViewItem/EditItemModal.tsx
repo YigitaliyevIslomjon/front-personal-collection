@@ -456,6 +456,7 @@ function EditItemModal({
                                   <FormControlLabel
                                     control={<Checkbox />}
                                     value={value}
+                                    fullWidth
                                     onChange={onChange}
                                     label={Object.keys(item)[0]}
                                   />
@@ -490,6 +491,7 @@ function EditItemModal({
                                   <DesktopDatePicker
                                     value={value}
                                     onChange={onChange}
+                                    fullWidth
                                     label={Object.keys(item)[0]}
                                     renderInput={(params) => (
                                       <TextField

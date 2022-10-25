@@ -410,6 +410,7 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
                             <DesktopDatePicker
                               label={item.name}
                               value={value}
+                              fullWidth
                               onChange={onChange}
                               renderInput={(params) => (
                                 <TextField
