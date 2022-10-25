@@ -64,8 +64,15 @@ function ItemCard({ data }: ItemCardType) {
               <Typography gutterBottom variant="body2" component="span">
                 tags :
               </Typography>
-              <Typography gutterBottom variant="body2" component="span">
-                {data.tags.map((tag) => tag)}
+              <Typography
+                gutterBottom
+                variant="body2"
+                component="span"
+                className="flex gap-1 flex-wrap"
+              >
+                {data.tags.map((tag) => (
+                  <Box key={tag}>{tag}</Box>
+                ))}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">

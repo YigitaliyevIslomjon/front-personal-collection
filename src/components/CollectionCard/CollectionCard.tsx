@@ -75,7 +75,7 @@ function CollectionCard({ data }: CollectionCardType) {
             className="underline-offset-2"
           >
             <Button size="small" color="primary" onClick={() => {}}>
-              view item
+              view collection
             </Button>
           </Link>
         </CardActions>

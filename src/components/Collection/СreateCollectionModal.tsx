@@ -20,6 +20,7 @@ import "./CreateCollectionModal.scss";
 import UploadImage from "./UploadImage";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 import LoadingButton from "@mui/lab/LoadingButton";
+import Skeleton from "@mui/material/Skeleton";
 
 export type CollectionFormFieldType = {
   collection_name: string;
@@ -56,6 +57,7 @@ function CreateCollectionModal({
   const [markDownContent, setMarkDownContent] = useState<string>("");
   const [markDown, setMarkDown] = useState<boolean>(false);
   const [topicList, setTopicList] = useState([] as TopicListType);
+  const [topicListLoading, setTopicListLoading] = useState<boolean>(false);
   const [images, setImages] = React.useState([]);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
@@ -64,6 +66,7 @@ function CreateCollectionModal({
   };
 
   const getTopisListApi = () => {
+    setTopicListLoading(true);
     api
       .get("topic")
       .then((res) => {
@@ -71,6 +74,9 @@ function CreateCollectionModal({
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setTopicListLoading(false);
       });
   };
 
@@ -154,35 +160,44 @@ function CreateCollectionModal({
                   )}
                 />
               </Grid>
-
-              <Grid xs={12} sm={12} md={6} className="order-2 md:order-none">
-                <Controller
-                  control={control}
-                  name="topic_id"
-                  rules={{ required: "topic is required" }}
-                  render={({ field: { onChange } }) => (
-                    <Autocomplete
-                      fullWidth
-                      onChange={(e, value) => {
-                        onChange(value?._id);
-                      }}
-                      size="small"
-                      getOptionLabel={(option) => option.topic_name}
-                      options={topicList}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          error={!!errors.topic_id}
-                          helperText={
-                            errors.topic_id && errors.topic_id.message
-                          }
-                          label="Topic"
-                        />
-                      )}
-                    />
-                  )}
-                />
-              </Grid>
+              {!topicListLoading ? (
+                <Grid xs={12} sm={12} md={6} className="order-2 md:order-none">
+                  <Controller
+                    control={control}
+                    name="topic_id"
+                    rules={{ required: "topic is required" }}
+                    render={({ field: { onChange } }) => (
+                      <Autocomplete
+                        fullWidth
+                        onChange={(e, value) => {
+                          onChange(value?._id);
+                        }}
+                        size="small"
+                        getOptionLabel={(option) => option.topic_name}
+                        options={topicList}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            error={!!errors.topic_id}
+                            helperText={
+                              errors.topic_id && errors.topic_id.message
+                            }
+                            label="Topic"
+                          />
+                        )}
+                      />
+                    )}
+                  />
+                </Grid>
+              ) : (
+                <Grid xs={12} sm={12} md={6}>
+                  <Skeleton
+                    variant="rectangular"
+                    width={"100%"}
+                    className="h-[40px]"
+                  />
+                </Grid>
+              )}
 
               <Grid xs={12} sm={12} md={6} className="order-4 md:order-none">
                 <Controller

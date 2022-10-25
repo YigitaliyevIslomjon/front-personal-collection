@@ -219,10 +219,24 @@ function ViewItem() {
 
   let userExist = Object.keys(loginUser).length === 0;
 
-  const permisionEditItemByOwner = () => {
+  // item owner can edit item
+  const permisionEditItem = () => {
     if (
       loginUser?.role === "admin" ||
       itemData.user_id?._id === loginUser?._id
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  // delte item owner and collection owner
+  const permisionDeleteItem = () => {
+    if (
+      loginUser?.role === "admin" ||
+      itemData.user_id?._id === loginUser?._id ||
+      itemData.collection_id?.user_id === loginUser?._id
     ) {
       return true;
     } else {
@@ -296,18 +310,20 @@ function ViewItem() {
                   {likeCount}
                 </Box>
                 <Box className="flex gap-x-2">
-                  {permisionEditItemByOwner() ? (
+                  {permisionEditItem() ? (
                     <Button variant="contained" onClick={edititemData}>
                       edit
                     </Button>
                   ) : null}
-                  <Button
-                    variant="contained"
-                    className="bg-red-500 hover:bg-red-600"
-                    onClick={deleteItemOnClick}
-                  >
-                    delete
-                  </Button>
+                  {permisionDeleteItem() ? (
+                    <Button
+                      variant="contained"
+                      className="bg-red-500 hover:bg-red-600"
+                      onClick={deleteItemOnClick}
+                    >
+                      delete
+                    </Button>
+                  ) : null}
                 </Box>
                 <Box className="flex gap-x-2">
                   <Typography variant="body1" className="font-semibold">

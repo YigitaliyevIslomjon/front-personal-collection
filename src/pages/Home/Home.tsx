@@ -115,7 +115,15 @@ function Home() {
       .post(`search/${id}`)
       .then((res) => {
         if (res.data.length === 0) {
-          toastifyMessage({ type: "warn", message: "success" });
+          toastifyMessage({
+            type: "warn",
+            message: "No matching information found",
+          });
+        } else {
+          toastifyMessage({
+            type: "success",
+            message: "Matching data found",
+          });
         }
         dispatch(setSearchUrl("/"));
         dispatch(
@@ -133,7 +141,8 @@ function Home() {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
-      });
+      })
+      .finally(() => {});
   };
 
   const getTagListApi = () => {

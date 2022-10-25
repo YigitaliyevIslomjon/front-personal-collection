@@ -196,7 +196,9 @@ function CollectionItemTable() {
     getItemListByCollectionIdApi(1, 7);
     // eslint-disable-next-line
   }, []);
-  console.log(pagenation);
+
+
+
   return (
     <Box>
       <Box className="flex justify-between items-center">

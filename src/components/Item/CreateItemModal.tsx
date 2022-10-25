@@ -23,6 +23,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import UploadImage from "../Collection/UploadImage";
+import Skeleton from "@mui/material/Skeleton";
 
 export type ItemFormTypes = {
   collection_id: {
@@ -67,7 +68,9 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
   const [images, setImages] = React.useState([]);
   const [tagList, setTagList] = useState([]);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
-
+  const [collectionListLoading, setCollectionListLoading] =
+    useState<boolean>(false);
+  const [tagListLoading, setTagListLoading] = useState<boolean>(false);
   const [collectionList, setCollectionList] = useState(
     [] as CollectionListType
   );
@@ -81,6 +84,7 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
   };
 
   const getCollectionsList = () => {
+    setCollectionListLoading(true);
     api
       .get("collection/list")
       .then((res) => {
@@ -93,6 +97,9 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setCollectionListLoading(false);
       });
   };
 
@@ -114,6 +121,7 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
   };
 
   const getTagListApi = () => {
+    setTagListLoading(true);
     api
       .get("tag/list")
       .then((res) => {
@@ -122,6 +130,9 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setTagListLoading(false);
       });
   };
   const getItemExtraField = (
@@ -209,35 +220,46 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
                 />
               </Grid>
 
-              <Grid xs={12} sm={12} md={6}>
-                <Controller
-                  control={control}
-                  name="collection_id"
-                  rules={{ required: "collection is required" }}
-                  render={({ field: { onChange } }) => (
-                    <Autocomplete
-                      fullWidth
-                      onChange={(e, value) => {
-                        onChange(value);
-                        getItemExtraField(value);
-                      }}
-                      size="small"
-                      getOptionLabel={(option) => option.collection_name}
-                      options={collectionList}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          error={!!errors.collection_id}
-                          helperText={
-                            errors.collection_id && errors.collection_id.message
-                          }
-                          label="Collection"
-                        />
-                      )}
-                    />
-                  )}
-                />
-              </Grid>
+              {!collectionListLoading ? (
+                <Grid xs={12} sm={12} md={6}>
+                  <Controller
+                    control={control}
+                    name="collection_id"
+                    rules={{ required: "collection is required" }}
+                    render={({ field: { onChange } }) => (
+                      <Autocomplete
+                        fullWidth
+                        onChange={(e, value) => {
+                          onChange(value);
+                          getItemExtraField(value);
+                        }}
+                        size="small"
+                        getOptionLabel={(option) => option.collection_name}
+                        options={collectionList}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            error={!!errors.collection_id}
+                            helperText={
+                              errors.collection_id &&
+                              errors.collection_id.message
+                            }
+                            label="Collection"
+                          />
+                        )}
+                      />
+                    )}
+                  />
+                </Grid>
+              ) : (
+                <Grid xs={12} sm={12} md={6}>
+                  <Skeleton
+                    variant="rectangular"
+                    width={"100%"}
+                    className="h-[40px]"
+                  />
+                </Grid>
+              )}
               <Grid xs={12} sm={12} md={6}>
                 <Controller
                   control={control}
@@ -253,43 +275,54 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
                   )}
                 />
               </Grid>
-              <Grid xs={12} sm={12} md={6} className="flex flex-col gap-y-2">
-                <Controller
-                  control={control}
-                  name="tags"
-                  render={({ field: { onChange } }) => (
-                    <Autocomplete
-                      multiple
-                      fullWidth
-                      size="small"
-                      id="tags-filled"
-                      onChange={(e, value) => {
-                        onChange(value);
-                      }}
-                      freeSolo
-                      options={tagList}
-                      renderTags={(value: readonly string[], getTagProps) =>
-                        value.map((option: string, index: number) => (
-                          <Chip
+
+              {!tagListLoading ? (
+                <Grid xs={12} sm={12} md={6} className="flex flex-col gap-y-2">
+                  <Controller
+                    control={control}
+                    name="tags"
+                    render={({ field: { onChange } }) => (
+                      <Autocomplete
+                        multiple
+                        fullWidth
+                        size="small"
+                        id="tags-filled"
+                        onChange={(e, value) => {
+                          onChange(value);
+                        }}
+                        freeSolo
+                        options={tagList}
+                        renderTags={(value: readonly string[], getTagProps) =>
+                          value.map((option: string, index: number) => (
+                            <Chip
+                              variant="outlined"
+                              label={option}
+                              {...getTagProps({ index })}
+                            />
+                          ))
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
                             variant="outlined"
-                            label={option}
-                            {...getTagProps({ index })}
+                            label="tags"
+                            error={!!errors.tags}
+                            helperText={errors.tags && errors.tags.message}
                           />
-                        ))
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          label="tags"
-                          error={!!errors.tags}
-                          helperText={errors.tags && errors.tags.message}
-                        />
-                      )}
-                    />
-                  )}
-                />
-              </Grid>
+                        )}
+                      />
+                    )}
+                  />
+                </Grid>
+              ) : (
+                <Grid xs={12} sm={12} md={6}>
+                  <Skeleton
+                    variant="rectangular"
+                    width={"100%"}
+                    className="h-[40px]"
+                  />
+                </Grid>
+              )}
 
               {Object.keys(itemExtraFieldList).length !== 0 ? (
                 <>
