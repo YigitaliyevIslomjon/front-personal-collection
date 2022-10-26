@@ -189,7 +189,7 @@ function Navbar() {
 
   return (
     <div>
-      <AppBar position="fixed" className="px-6">
+      <AppBar position="fixed" className="px-3 sm:px-3 md:px-7">
         <Toolbar className="flex gap-x-1">
           <Box className="flex md:hidden">
             <IconButton size="large" onClick={handleDrawerOpen} color="inherit">
@@ -204,7 +204,7 @@ function Navbar() {
               }}
               className="block md:hidden"
               open={mobileOpen}
-              onClose={handleDrawerOpen}
+              onClose={handleDrawerClose}
             >
               <Box sx={{ width: 250 }}>
                 <div className="flex justify-end py-2 px-4">
@@ -213,7 +213,19 @@ function Navbar() {
                   </IconButton>
                 </div>
                 <Divider />
-                <List className="blcok md:hidden">
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    onChange={(e) => {
+                      fullTextSearch(e.target.value);
+                    }}
+                    placeholder={t("search")}
+                    inputProps={{ "aria-label": "" }}
+                  />
+                </Search>
+                <List>
                   <ListItem disablePadding>
                     <ListItemButton>
                       <ListItemIcon>
@@ -225,6 +237,7 @@ function Navbar() {
                             <Typography
                               variant="body1"
                               className="capitalize mr-1"
+                              color="textPrimary"
                             >
                               {loginUser.user_name}
                             </Typography>
@@ -243,9 +256,6 @@ function Navbar() {
                       />
                     </ListItemButton>
                   </ListItem>
-                </List>
-
-                <List>
                   {pages.map((item, index) => (
                     <ListItem key={item.title} disablePadding>
                       <ListItemButton>
@@ -255,7 +265,13 @@ function Navbar() {
                         <ListItemText
                           primary={
                             <Link to={item.link} className="no-underline">
-                              {t(`${item.title}`)}
+                              <Typography
+                                variant="body1"
+                                className="capitalize"
+                                color="textPrimary"
+                              >
+                                {t(`${item.title}`)}
+                              </Typography>
                             </Link>
                           }
                         />
@@ -266,7 +282,7 @@ function Navbar() {
               </Box>
             </Drawer>
           </Box>
-          {/* <img src={logo} alt="ram" /> */}
+
           <Box className="hidden md:flex md:gap-x-4">
             {pages.map((page, index) => {
               if (page.title === "personal") {
@@ -313,7 +329,7 @@ function Navbar() {
               <>
                 <Link to={"/sign/in"} className="no-underline">
                   <Button
-                    className="text-base"
+                    className="text-sm sm:text-base"
                     sx={{ my: 2, color: "white", display: "block" }}
                   >
                     {t("signin")}
@@ -321,7 +337,7 @@ function Navbar() {
                 </Link>
                 <Link to={"/sign/up"} className="no-underline">
                   <Button
-                    className="text-base"
+                    className="text-sm sm:text-base"
                     sx={{ my: 2, color: "white", display: "block" }}
                   >
                     {t("signup")}
@@ -330,7 +346,7 @@ function Navbar() {
               </>
             ) : null}
 
-            <Search className="mr-2">
+            <Search className="mr-2 hidden md:block">
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
@@ -359,7 +375,9 @@ function Navbar() {
             >
               {loginUser.user_name}
             </Typography>
-            <Box className="hidden md:block">
+            <Box
+            // className="hidden md:block"
+            >
               <Tooltip title="Open settings">
                 <IconButton onClick={handleClick} sx={{ p: 0 }}>
                   <Avatar
@@ -378,7 +396,7 @@ function Navbar() {
                 }}
                 open={open}
                 onClose={handleCloseUserMenu}
-                className="hidden md:block"
+                // className="hidden md:block"
                 anchorEl={anchorEl}
               >
                 {settings.map((setting) => (
