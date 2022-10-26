@@ -280,7 +280,7 @@ function Home() {
         </Swiper>
       </Grid>
 
-      <Box className="pb-80 pt-12">
+      <Box className="pb-20 pt-12">
         <Box className="flex justify-between mb-4 mt-5">
           <Typography variant="h6" className="text-base sm:text-xl">
             {" "}

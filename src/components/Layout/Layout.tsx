@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
+import Footer from "../Footer/Footer";
 import Navbar from "../Navbar/Navbar";
 
 function Layout() {
@@ -11,7 +12,7 @@ function Layout() {
           <Outlet />
         </Box>
       </Box>
-      {/* <Footer /> */}
+      <Footer />
     </Box>
   );
 }
