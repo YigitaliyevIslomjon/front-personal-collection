@@ -22,5 +22,7 @@
      "clearFilter": "Clear filter",
      "createCollection" : "create  collection",
      "createItem" : "create item",
-     "downloadcsv" :"CSV file"
+     "downloadcsv" :"CSV file",
+     "allItems": "All item list",
+     "allCollections": "All collection list"
 }

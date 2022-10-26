@@ -22,5 +22,7 @@
       "clearFilter": "Filtrni tozalash",
       "createCollection" : "Kolleksiya yaratish",
      "createItem" : "Element yaratish",
-     "downloadcsv" :"CSV fayl"
+     "downloadcsv" :"CSV fayl",
+     "allItems": "Hamma buyumlar ro'yxati",
+     "allCollections": "Hamma kolleksiyalar ro'yxati"
 }

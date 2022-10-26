@@ -64,7 +64,8 @@ function SignUp() {
           alignItems: "center",
           borderRadius: "4px",
           maxWidth: "410px",
-          background: "white",
+          bgcolor: "background.default",
+          color: "text.primary",
         }}
         className="flex flex-col items-center"
       >

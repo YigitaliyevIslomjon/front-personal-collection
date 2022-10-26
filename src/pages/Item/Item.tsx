@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Button, Pagination } from "@mui/material";
+import { Box, Button, Pagination, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import api from "../../utils/api";
 import CreateItemModal from "../../components/Item/CreateItemModal";
@@ -90,7 +90,10 @@ function Item() {
 
   return (
     <Box className="mb-4">
-      <Box className="flex justify-end mb-5">
+      <Box className="flex justify-between mb-5">
+        <Typography variant="h6" className="text-base sm:text-xl">
+          {t("allItems")}
+        </Typography>
         {loginUser.role ? (
           <Button
             onClick={handleOpenModal}

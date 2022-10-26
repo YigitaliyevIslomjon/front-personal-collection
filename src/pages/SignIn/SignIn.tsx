@@ -68,7 +68,8 @@ function SignIn() {
           alignItems: "center",
           borderRadius: "4px",
           maxWidth: "400px",
-          background: "white",
+          bgcolor: "background.default",
+          color: "text.primary",
         }}
         className="flex flex-col items-center"
       >
@@ -142,7 +143,9 @@ function SignIn() {
             <Grid item>
               <Link to="/sign/up" className="no-underline">
                 {" "}
-                {t("signup")}
+                <Typography variant="body2" color="textPrimary">
+                  {t("signup")}
+                </Typography>
               </Link>
             </Grid>
           </Grid>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Button, Pagination } from "@mui/material";
+import { Box, Button, Pagination, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import CreateCollectionModal from "../../components/Collection/СreateCollectionModal";
 import api from "../../utils/api";
@@ -100,20 +100,25 @@ function Collection() {
   return (
     <Box className="mb-4">
       <Box className="flex justify-between mb-5">
-        <CSVLink
-          data={collectionList}
-          headers={headers}
-          className="no-underline"
-        >
-          <Button
-            onClick={downloadCollectionCSV}
-            variant="outlined"
-            className="text-sm sm:text-base"
+        <Box className="flex justify-between items-center gap-x-3">
+          <Typography variant="h6" className="text-base sm:text-xl">
+            {t("allCollections")}
+          </Typography>
+          <CSVLink
+            data={collectionList}
+            headers={headers}
+            className="no-underline"
           >
-            <DownloadIcon />
-            {t("downloadcsv")}
-          </Button>
-        </CSVLink>
+            <Button
+              onClick={downloadCollectionCSV}
+              variant="outlined"
+              className="text-sm sm:text-base"
+            >
+              <DownloadIcon />
+              {t("downloadcsv")}
+            </Button>
+          </CSVLink>
+        </Box>
 
         {loginUser.role ? (
           <Button
