@@ -20,6 +20,7 @@ type CollectionListType = {
   path: string;
   item_count: number;
   topic_name: string;
+  created_at: string;
 }[];
 
 type PagenationType = {
@@ -63,6 +64,7 @@ function Collection() {
             path: item.path,
             item_count: item.item_count,
             topic_name: item.topic_id?.topic_name,
+            created_at: item.created_at,
           }))
         );
       })

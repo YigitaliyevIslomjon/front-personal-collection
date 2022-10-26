@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import moment from "moment";
 export type CollectionCardType = {
   data: {
     collection_name: string;
@@ -18,6 +19,7 @@ export type CollectionCardType = {
     path: string;
     item_count: number;
     topic_name: string;
+    created_at: string;
   };
 };
 
@@ -67,6 +69,14 @@ function CollectionCard({ data }: CollectionCardType) {
                 </Typography>
               </Box>
             ) : null}
+            <Box className="flex gap-x-2">
+              <Typography gutterBottom variant="body2" component="span">
+                created at:
+              </Typography>
+              <Typography gutterBottom variant="body2" component="span">
+                {moment(data.created_at).format("DD-MM-YYYY")}
+              </Typography>
+            </Box>
           </CardContent>
         </CardActionArea>
         <CardActions>

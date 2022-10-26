@@ -145,6 +145,7 @@ function Navbar() {
               path: item.path,
               item_count: item.item_count,
               topic_name: item.topic_id?.topic_name,
+              created_at: item.created_at,
             }))
           )
         );
@@ -157,6 +158,7 @@ function Navbar() {
               id: item._id,
               path: item.path,
               tags: item.tags.map((item: any) => item.tag_name),
+              created_at: item.created_at,
             }))
           )
         );
@@ -167,6 +169,7 @@ function Navbar() {
               item_id: item.item_id?._id,
               text: item.text,
               user_name: item.user_id?.user_name,
+              created_at: item.created_at,
             }))
           )
         );
