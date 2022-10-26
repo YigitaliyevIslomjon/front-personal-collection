@@ -80,7 +80,7 @@ function MobileMenu({ fullTextSearch }: MobileMenuType) {
             />
           </Search>
           <List>
-            <ListItem disablePadding>
+            <ListItem disablePadding onClick={handleDrawerClose}>
               <ListItemButton>
                 <ListItemIcon>
                   <MailIcon />
@@ -110,28 +110,67 @@ function MobileMenu({ fullTextSearch }: MobileMenuType) {
                 />
               </ListItemButton>
             </ListItem>
-            {pages.map((item, index) => (
-              <ListItem key={item.title} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <Link to={item.link} className="no-underline">
-                        <Typography
-                          variant="body1"
-                          className="capitalize"
-                          color="textPrimary"
-                        >
-                          {t(`${item.title}`)}
-                        </Typography>
-                      </Link>
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
+            {pages.map((page, index) => {
+              if (page.title === "personal") {
+                if (loginUser.role) {
+                  return (
+                    <ListItem
+                      key={page.title}
+                      disablePadding
+                      onClick={handleDrawerClose}
+                    >
+                      <ListItemButton>
+                        <ListItemIcon>
+                          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            <Link to={page.link} className="no-underline">
+                              <Typography
+                                variant="body1"
+                                className="capitalize"
+                                color="textPrimary"
+                              >
+                                {t(`${page.title}`)}
+                              </Typography>
+                            </Link>
+                          }
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                } else {
+                  return null;
+                }
+              } else {
+                return (
+                  <ListItem
+                    key={page.title}
+                    disablePadding
+                    onClick={handleDrawerClose}
+                  >
+                    <ListItemButton>
+                      <ListItemIcon>
+                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={
+                          <Link to={page.link} className="no-underline">
+                            <Typography
+                              variant="body1"
+                              className="capitalize"
+                              color="textPrimary"
+                            >
+                              {t(`${page.title}`)}
+                            </Typography>
+                          </Link>
+                        }
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              }
+            })}
           </List>
         </Box>
       </Drawer>

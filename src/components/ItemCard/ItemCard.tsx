@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import "./ItemCard.scss";
 
 export type ItemCardType = {
   data: {
@@ -26,12 +27,16 @@ export type ItemCardType = {
 
 function ItemCard({ data }: ItemCardType) {
   return (
-    <Box className="border-2 border-solid border-indigo-100 rounded p-2">
+    <Box
+      id={"item-card"}
+      className="border-2 border-solid border-indigo-100 rounded p-2"
+    >
       <Card className="h-full">
         <CardActionArea>
           <CardMedia
             component="img"
             height="160"
+            className="card-img"
             image={data.path}
             alt="green iguana"
           />

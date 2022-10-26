@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import "./CollectionCard.scss";
+
 export type CollectionCardType = {
   data: {
     collection_name: string;
@@ -25,15 +27,21 @@ export type CollectionCardType = {
 
 function CollectionCard({ data }: CollectionCardType) {
   return (
-    <div className="border-2 border-solid border-indigo-100 rounded p-2">
+    <div
+      id="collection-card"
+      className="border-2 border-solid border-indigo-100 rounded p-2"
+    >
       <Card className="h-full">
         <CardActionArea>
-          <CardMedia
-            component="img"
-            height="160"
-            image={data.path}
-            alt="green iguana"
-          />
+          <Box className="overflow-hidden">
+            <CardMedia
+              className="card-img"
+              component="img"
+              height="160"
+              image={data.path}
+              alt="green iguana"
+            />
+          </Box>
           <CardContent>
             <Box className="flex gap-x-2">
               <Typography gutterBottom variant="body2" component="span">
