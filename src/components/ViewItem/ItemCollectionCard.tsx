@@ -17,7 +17,7 @@ function ItemCollectionCard({ data }: ItemCollectionCardType) {
     <Box className="flex flex-wrap gap-3">
       <Link
         to={`/collection-view/${data.id}`}
-        className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 cursor-pointer w-[210px] sm:w-[245px] h-[145px]"
+        className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 cursor-pointer w-full sm:w-[245px] h-[145px]"
       >
         <img
           src={data.path}

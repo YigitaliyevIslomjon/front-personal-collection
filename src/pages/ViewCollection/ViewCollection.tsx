@@ -311,7 +311,7 @@ function ViewCollection() {
                     <Skeleton
                       key={index}
                       variant="rounded"
-                      className="w-[200px] sm:w-[245px] h-[145px]"
+                      className="w-full sm:w-[245px] h-[145px]"
                     />
                   ))}
               </Stack>

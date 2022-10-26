@@ -502,7 +502,7 @@ function ViewItem() {
                     <Skeleton
                       key={index}
                       variant="rounded"
-                      className="h-[145px] w-[210px] sm:w-[245px]"
+                      className="h-[145px] w-full sm:w-[245px]"
                     />
                   ))}
               </Stack>
