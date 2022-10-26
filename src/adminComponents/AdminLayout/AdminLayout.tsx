@@ -124,11 +124,9 @@ function AdminLayout() {
         aria-label="mailbox folders"
       >
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        {/* <Drawer
-          container={container}
+        <Drawer
           variant="temporary"
-          open={mobileOpen}
-          // onClose={handleDrawerToggle}
+          open
           ModalProps={{
             keepMounted: true, // Better open performance on mobile.
           }}
@@ -141,7 +139,7 @@ function AdminLayout() {
           }}
         >
           {drawer}
-        </Drawer> */}
+        </Drawer>
         <Drawer
           variant="permanent"
           sx={{
