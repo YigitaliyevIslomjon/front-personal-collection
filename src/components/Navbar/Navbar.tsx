@@ -226,7 +226,7 @@ function Navbar() {
               <Tooltip title="Open settings">
                 <IconButton onClick={handleClick} sx={{ p: 0 }}>
                   <Avatar
-                    className="first-letter:uppercase"
+                    className="uppercase"
                     alt={loginUser.user_name}
                     src="/static/images/avatar/2.jpg"
                   />
