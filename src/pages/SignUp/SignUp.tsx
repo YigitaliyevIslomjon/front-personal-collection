@@ -63,7 +63,7 @@ function SignUp() {
           flexDirection: "column",
           alignItems: "center",
           borderRadius: "4px",
-          maxWidth: "410px",
+          maxWidth: { xs: "300px", sm: "350px", md: "400px" },
           bgcolor: "background.default",
           color: "text.primary",
         }}
@@ -72,7 +72,18 @@ function SignUp() {
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography
+          component="h1"
+          sx={{
+            fontSize: {
+              lg: 24,
+              md: 22,
+              sm: 19,
+              xs: 18,
+            },
+          }}
+          variant="h5"
+        >
           {t("signup")}
         </Typography>
         <Box

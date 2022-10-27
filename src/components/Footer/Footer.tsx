@@ -31,10 +31,18 @@ function Footer() {
               md={4}
               className="flex flex-col gap-y-2 justify-center"
             >
-              <Typography color="white" variant="body2">
+              <Typography
+                color="white"
+                variant="body2"
+                className="cursor-pointer"
+              >
                 PERSONAL COLLECTION
               </Typography>
-              <Typography color="white" variant="body2">
+              <Typography
+                color="white"
+                variant="body2"
+                className="cursor-pointer"
+              >
                 Personal Collection is a direct selling company that provides
                 high quality products and livelihood through its dealership
                 network.
@@ -52,7 +60,7 @@ function Footer() {
                       >
                         <Typography
                           color="white"
-                          className="capitalize"
+                          className="capitalize cursor-pointer"
                           variant="body2"
                         >
                           {t(`${page.title}`)}
@@ -71,7 +79,7 @@ function Footer() {
                     >
                       <Typography
                         color="white"
-                        className="capitalize"
+                        className="capitalize cursor-pointer"
                         variant="body2"
                       >
                         {t(`${page.title}`)}
@@ -83,11 +91,19 @@ function Footer() {
             </Grid>
 
             <Grid xs={12} sm={12} md={4}>
-              <Typography color="white" variant="body2">
+              <Typography
+                color="white"
+                variant="body2"
+                className="cursor-pointer"
+              >
                 Ground Floor, Triumph Building 1610 Quezon Avenue, Diliman,
                 Quezon City, 1104 Metro Manila
               </Typography>
-              <Typography color="white" variant="body1">
+              <Typography
+                color="white"
+                variant="body1"
+                className="cursor-pointer"
+              >
                 (02) 8 376 6888
               </Typography>
             </Grid>
@@ -95,7 +111,7 @@ function Footer() {
         </Toolbar>
       </AppBar>
       <Box
-        className="px-13 sm:px-7 md:px-14"
+        className="px-13 sm:px-7 md:px-14 cursor-pointer"
         sx={{ bgcolor: "#F3F2EF", fontSize: "10px" }}
       >
         Personal Collection Corporation © 2022

@@ -25,7 +25,10 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@mui/material/styles";
 import { ColorModeContext } from "../../App";
 import { pages } from "./Navbar";
-
+import HomeIcon from "@mui/icons-material/Home";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import VideoLabelIcon from "@mui/icons-material/VideoLabel";
+import CollectionsIcon from "@mui/icons-material/Collections";
 type MobileMenuType = {
   fullTextSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
@@ -45,7 +48,17 @@ function MobileMenu({ fullTextSearch }: MobileMenuType) {
   };
 
   const drawerWidth = 240;
-
+  const getMatchPageIcon = (val: string) => {
+    if (val === "personal") {
+      return <AccountCircleIcon />;
+    } else if (val === "home") {
+      return <HomeIcon />;
+    } else if (val === "collections") {
+      return <CollectionsIcon />;
+    } else {
+      return <VideoLabelIcon />;
+    }
+  };
   return (
     <Box className="flex md:hidden">
       <IconButton size="large" onClick={handleDrawerOpen} color="inherit">
@@ -83,7 +96,17 @@ function MobileMenu({ fullTextSearch }: MobileMenuType) {
             <ListItem disablePadding onClick={handleDrawerClose}>
               <ListItemButton>
                 <ListItemIcon>
-                  <MailIcon />
+                  <IconButton
+                    onClick={colorMode.toggleColorMode}
+                    color="inherit"
+                    className="pl-0"
+                  >
+                    {theme.palette.mode === "dark" ? (
+                      <LightModeIcon />
+                    ) : (
+                      <Brightness3Icon />
+                    )}
+                  </IconButton>
                 </ListItemIcon>
                 <ListItemText
                   primary={
@@ -95,16 +118,6 @@ function MobileMenu({ fullTextSearch }: MobileMenuType) {
                       >
                         {loginUser.user_name}
                       </Typography>
-                      <IconButton
-                        onClick={colorMode.toggleColorMode}
-                        color="inherit"
-                      >
-                        {theme.palette.mode === "dark" ? (
-                          <LightModeIcon />
-                        ) : (
-                          <Brightness3Icon />
-                        )}
-                      </IconButton>
                     </Box>
                   }
                 />
@@ -121,7 +134,7 @@ function MobileMenu({ fullTextSearch }: MobileMenuType) {
                     >
                       <ListItemButton>
                         <ListItemIcon>
-                          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                          {getMatchPageIcon(page.title)}
                         </ListItemIcon>
                         <ListItemText
                           primary={
@@ -151,7 +164,7 @@ function MobileMenu({ fullTextSearch }: MobileMenuType) {
                   >
                     <ListItemButton>
                       <ListItemIcon>
-                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                        {getMatchPageIcon(page.title)}{" "}
                       </ListItemIcon>
                       <ListItemText
                         primary={
