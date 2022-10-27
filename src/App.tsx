@@ -16,12 +16,8 @@ import ViewItem from "./pages/ViewItem/ViewItem";
 import Home from "./pages/Home/Home";
 import Personal from "./pages/Personal/Personal";
 import CollectionItemTable from "./pages/CollectionItemTable/CollectionItemTable";
-import { Box } from "@mui/material";
 
-export const ColorModeContext = createContext({
-  toggleColorMode: () => {},
-  mode: "light",
-});
+export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function App() {
   const [mode, setMode] = useState<"light" | "dark">("light");
@@ -49,7 +45,7 @@ function App() {
   );
 
   return (
-    <Box id="app">
+    <div id="App">
       <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
           <Routes>
@@ -80,7 +76,7 @@ function App() {
           </Routes>
         </ThemeProvider>
       </ColorModeContext.Provider>
-    </Box>
+    </div>
   );
 }
 
