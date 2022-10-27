@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Autocomplete,
   Button,
@@ -18,6 +18,7 @@ import api from "../../utils/api";
 import { UserTableRowType } from "../../pages/User/User";
 import { useNavigate } from "react-router-dom";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 export type FormField = {
   user_name: string;
@@ -53,8 +54,10 @@ function EditUserModal({
   const handleCloseDialog = () => {
     setVisible(false);
   };
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const editUserApi = (data: FormField) => {
+    setSaveLoading(true);
     api
       .put(`/user/${userTableRowData._id}`, data)
       .then((res) => {
@@ -68,6 +71,9 @@ function EditUserModal({
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setSaveLoading(false);
       });
   };
   const onFinish = (data: FormField) => {
@@ -93,7 +99,7 @@ function EditUserModal({
       <DialogTitle id="alert-dialog-title">Edit User</DialogTitle>
       <DialogContent id="alert-dialog-description">
         <Box
-          id="countField"
+          id="editUserForm"
           component={"form"}
           className="flex flex-col gap-y-5 pt-2"
           onSubmit={handleSubmit(onFinish)}
@@ -211,9 +217,15 @@ function EditUserModal({
         <Button variant="contained" type="button" onClick={handleCloseDialog}>
           Cancel
         </Button>
-        <Button variant="outlined" type="submit" form="countField" autoFocus>
-          OK
-        </Button>
+
+        <LoadingButton
+          loading={saveLoading}
+          type="submit"
+          form="editUserForm"
+          variant="outlined"
+        >
+          Save
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

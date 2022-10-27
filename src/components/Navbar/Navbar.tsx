@@ -125,7 +125,6 @@ function Navbar() {
   const changeLanguage = (e: SelectChangeEvent) => {
     setLanguage(e.target.value);
     i18n.changeLanguage(e.target.value);
-    // console.log("e", e);
   };
 
   return (
@@ -227,7 +226,7 @@ function Navbar() {
               <Tooltip title="Open settings">
                 <IconButton onClick={handleClick} sx={{ p: 0 }}>
                   <Avatar
-                    className="capitalize"
+                    className="first-letter:uppercase"
                     alt={loginUser.user_name}
                     src="/static/images/avatar/2.jpg"
                   />
@@ -250,7 +249,11 @@ function Navbar() {
                     onClick={() => handleCloseUserMenu(setting.link)}
                   >
                     <Link className="no-underline" to={setting.link}>
-                      <Typography variant="body1" color="textPrimary">
+                      <Typography
+                        variant="body1"
+                        color="textPrimary"
+                        className="first-letter:uppercase"
+                      >
                         {t(`${setting.title}`)}
                       </Typography>
                     </Link>

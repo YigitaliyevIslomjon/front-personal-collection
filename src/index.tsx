@@ -7,7 +7,7 @@ import App from "./App";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import "react-toastify/dist/ReactToastify.css";
-import "./index.css";
+import "./index.scss";
 import "./i18n";
 import "sweetalert2/src/sweetalert2.scss";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";

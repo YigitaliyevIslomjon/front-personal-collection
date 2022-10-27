@@ -27,29 +27,52 @@ function CollectionItemCard({ data }: CollectionItemCardType) {
       </Link>
       <Box className="flex flex-col gap-y-1 sm:mt-2">
         <Box className="flex gap-x-1">
-          <Typography variant="body2" className="font-medium">
+          <Typography
+            variant="body2"
+            className="font-medium first-letter:capitalize"
+          >
             item :{" "}
           </Typography>
-          <Typography variant="body2">{data?.item_name}</Typography>
+          <Typography variant="body2" className="first-letter:capitalize">
+            {data?.item_name}
+          </Typography>
         </Box>
         <Box className="flex gap-x-1">
-          <Typography variant="body2" className="font-medium">
+          <Typography
+            variant="body2"
+            className="font-medium first-letter:capitalize"
+          >
             collection :{" "}
           </Typography>
-          <Typography variant="body2">{data.collection_name}</Typography>
+          <Typography variant="body2" className="first-letter:capitalize">
+            {data.collection_name}
+          </Typography>
         </Box>
         <Box className="flex gap-x-1">
-          <Typography variant="body2" className="font-medium">
+          <Typography
+            variant="body2"
+            className="font-medium first-letter:capitalize"
+          >
             auther :{" "}
           </Typography>
-          <Typography variant="body2">{data?.user_name}</Typography>
+          <Typography variant="body2" className="first-letter:capitalize">
+            {data?.user_name}
+          </Typography>
         </Box>
         <Box className="flex gap-x-1">
-          <Typography variant="body2" className="font-medium">
+          <Typography
+            variant="body2"
+            className="font-medium first-letter:capitalize"
+          >
             tags :{" "}
           </Typography>
-          <Typography variant="body2">
-            {data?.tags.map((tag) => tag)}
+          <Typography
+            variant="body2"
+            className="first-letter:capitalize flex gap-2 flex-wrap"
+          >
+            {data?.tags.map((tag) => (
+              <Box>{tag}</Box>
+            ))}
           </Typography>
         </Box>
       </Box>

@@ -9,13 +9,16 @@
 @tailwind utilities;
 
 
-#root {
-    height: 100%;
+html, body, #root, #app, #app > div {
+  height: 100%
 }
+
 .swal2-container{
   z-index: 10000!important;
 }
 
+
+/* scoll style */
 *::-webkit-scrollbar {
   width: 16px;
  

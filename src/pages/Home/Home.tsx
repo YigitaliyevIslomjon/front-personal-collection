@@ -202,7 +202,7 @@ function Home() {
         </Link>
       </Box>
 
-      <Grid container className="h-[400px]">
+      <Grid container>
         <Swiper
           breakpoints={breakpointsSwiper}
           slidesPerView={4}
@@ -215,7 +215,7 @@ function Home() {
           }}
           navigation={false}
           modules={[Pagination, Navigation]}
-          className="home-swiper"
+          className="pb-10"
         >
           {!collectionListLoading
             ? collectionList.map((item) => (
@@ -249,7 +249,7 @@ function Home() {
         </Link>
       </Box>
 
-      <Grid container className="h-[400px]">
+      <Grid container>
         <Swiper
           breakpoints={breakpointsSwiper}
           slidesPerView={4}
@@ -262,7 +262,7 @@ function Home() {
           }}
           navigation={false}
           modules={[Pagination, Navigation]}
-          className="home-swiper"
+          className="pb-10"
         >
           {!itemListLoading
             ? itemList.map((item) => (
@@ -287,8 +287,9 @@ function Home() {
             Tag cloud
           </Typography>
         </Box>
-        <Box className="bg-slate-900 px-12 py-12 rounded-[20px]">
+        <Box className="bg-slate-900 px-24 py-12 rounded-[20px]">
           <TagCloud
+            className="simple-cloud"
             minSize={12}
             maxSize={35}
             tags={tagList}

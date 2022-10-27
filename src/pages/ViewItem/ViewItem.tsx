@@ -225,7 +225,7 @@ function ViewItem() {
     window.history.back();
   };
 
-  let userExist = Object.keys(loginUser).length === 0;
+  let isUserExist = Object.keys(loginUser).length !== 0;
 
   // item owner can edit item
   const permisionEditItem = () => {
@@ -288,7 +288,9 @@ function ViewItem() {
         <Grid xs={12} md={7}>
           <Button className="mb-2" onClick={getBackPerviewUrl}>
             <ArrowBackIcon />
-            <Typography variant="body1">back</Typography>
+            <Typography variant="body1" className="first-letter:capitalize">
+              back
+            </Typography>
           </Button>
           <div className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 h-[200px] sm:h-[250px] md:h-[330px]">
             {!itemLoading ? (
@@ -309,7 +311,7 @@ function ViewItem() {
               <>
                 <Box className="mb-1">
                   <IconButton
-                    disabled={userExist ? true : false}
+                    disabled={isUserExist ? false : true}
                     className="cursor-pointer"
                     onClick={() => pressLikeButton(likeStatus)}
                   >
@@ -334,32 +336,55 @@ function ViewItem() {
                   ) : null}
                 </Box>
                 <Box className="flex gap-x-2">
-                  <Typography variant="body1" className="font-semibold">
+                  <Typography
+                    variant="body1"
+                    className="first-letter:capitalize font-semibold"
+                  >
                     Name :{" "}
                   </Typography>
-                  <Typography variant="body1">{itemData.item_name}</Typography>
+                  <Typography
+                    variant="body1"
+                    className="first-letter:capitalize"
+                  >
+                    {itemData.item_name}
+                  </Typography>
                 </Box>
                 <Box className="flex gap-x-2">
-                  <Typography variant="body1" className="font-semibold">
+                  <Typography
+                    variant="body1"
+                    className="first-letter:capitalize font-semibold"
+                  >
                     Collection :{" "}
                   </Typography>
-                  <Typography variant="body1">
+                  <Typography
+                    variant="body1"
+                    className="first-letter:capitalize"
+                  >
                     {itemData.collection_id?.collection_name}
                   </Typography>
                 </Box>
                 <Box className="flex gap-x-2">
-                  <Typography variant="body1" className="font-semibold">
-                    Auther :{" "}
+                  <Typography
+                    variant="body1"
+                    className="first-letter:capitalize font-semibold"
+                  >
+                    Author :{" "}
                   </Typography>
-                  <Typography variant="body1">
+                  <Typography
+                    variant="body1"
+                    className="first-letter:capitalize"
+                  >
                     {itemData?.user_id?.user_name}
                   </Typography>
                 </Box>
                 <Box className="flex gap-x-2">
-                  <Typography variant="body1" className="font-semibold">
+                  <Typography
+                    variant="body1"
+                    className="first-letter:capitalize font-semibold"
+                  >
                     tags :
                   </Typography>
-                  <Box>
+                  <Box className="flex gap-1 flex-wrap">
                     {itemData.tags?.map((tag) => (
                       <Typography key={tag} variant="body1">
                         {tag}
@@ -385,111 +410,128 @@ function ViewItem() {
 
             {itemExtraFieldList.int_field?.map((item, index) => (
               <Box className="flex gap-x-2" key={index}>
-                <Typography variant="body1" className="font-semibold">
+                <Typography
+                  variant="body1"
+                  className="first-letter:capitalize font-semibold"
+                >
                   {Object.keys(item)[0]} :
                 </Typography>
 
-                <Typography variant="body1">
+                <Typography variant="body1" className="first-letter:capitalize">
                   {Object.values(item)[0]}
                 </Typography>
               </Box>
             ))}
             {itemExtraFieldList.str_field?.map((item, index) => (
               <Box className="flex gap-x-2" key={index}>
-                <Typography variant="body1" className="font-semibold">
+                <Typography
+                  variant="body1"
+                  className="first-letter:capitalize font-semibold"
+                >
                   {Object.keys(item)[0]} :
                 </Typography>
 
-                <Typography variant="body1">
+                <Typography variant="body1" className="first-letter:capitalize">
                   {Object.values(item)[0]}
                 </Typography>
               </Box>
             ))}
             {itemExtraFieldList.checkbox_field?.map((item, index) => (
               <Box className="flex gap-x-2" key={index}>
-                <Typography variant="body1" className="font-semibold">
+                <Typography
+                  variant="body1"
+                  className="first-letter:capitalize font-semibold"
+                >
                   {Object.keys(item)[0]} :
                 </Typography>
 
-                <Typography variant="body1">
+                <Typography variant="body1" className="first-letter:capitalize">
                   {Object.values(item)[0]}
                 </Typography>
               </Box>
             ))}
             {itemExtraFieldList.textare_field?.map((item, index) => (
               <Box className="flex gap-x-2" key={index}>
-                <Typography variant="body1" className="font-semibold">
+                <Typography
+                  variant="body1"
+                  className="first-letter:capitalize font-semibold"
+                >
                   {Object.keys(item)[0]} :
                 </Typography>
 
-                <Typography variant="body1">
+                <Typography variant="body1" className="first-letter:capitalize">
                   {Object.values(item)[0]}
                 </Typography>
               </Box>
             ))}
             {itemExtraFieldList.date_field?.map((item, index) => (
               <Box className="flex gap-x-2" key={index}>
-                <Typography variant="body1" className="font-semibold">
+                <Typography
+                  variant="body1"
+                  className="first-letter:capitalize font-semibold"
+                >
                   {Object.keys(item)[0]} :
                 </Typography>
 
-                <Typography variant="body1">
+                <Typography variant="body1" className="first-letter:capitalize">
                   {moment(Object.values(item)[0]).format("YYYY-MM-DD")}
                 </Typography>
               </Box>
             ))}
           </Box>
-          <Box className="mt-3">
-            <Box className="flex gap-x-2">
-              <Avatar className="capitalize self-end cursor-pointer">
-                {userExist ? "Z" : loginUser.user_name.slice(0, 1)}
-              </Avatar>
-              <Box
-                className="flex-1"
-                component={"form"}
-                id="comment_form"
-                onSubmit={handleSubmit(submitComment)}
-              >
-                <Controller
-                  control={control}
-                  name="text"
-                  defaultValue=""
-                  rules={{ required: "comment is required" }}
-                  render={({ field: { onChange, value } }) => (
-                    <TextField
-                      size="small"
-                      value={value}
-                      fullWidth
-                      className="text-sm"
-                      onChange={onChange}
-                      label="add a comment"
-                      variant="standard"
-                      error={!!errors.text}
-                      helperText={errors.text && errors.text.message}
-                    />
-                  )}
-                />
+          {isUserExist ? (
+            <Box className="mt-3">
+              <Box className="flex gap-x-2">
+                <Avatar className="capitalize self-end cursor-pointer">
+                  {isUserExist ? loginUser.user_name.slice(0, 1) : "Z"}
+                </Avatar>
+                <Box
+                  className="flex-1"
+                  component={"form"}
+                  id="comment_form"
+                  onSubmit={handleSubmit(submitComment)}
+                >
+                  <Controller
+                    control={control}
+                    name="text"
+                    defaultValue=""
+                    rules={{ required: "comment is required" }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        size="small"
+                        value={value}
+                        fullWidth
+                        className="text-sm"
+                        onChange={onChange}
+                        label="add a comment"
+                        variant="standard"
+                        error={!!errors.text}
+                        helperText={errors.text && errors.text.message}
+                      />
+                    )}
+                  />
+                </Box>
+              </Box>
+              <Box className="flex justify-end gap-x-1 mt-1">
+                <Button type="reset" form={"comment_form"}>
+                  cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-gray-100 hover:bg-gray-200"
+                  form={"comment_form"}
+                  disabled={isUserExist ? false : true}
+                >
+                  comment
+                </Button>
+              </Box>
+              <Box className="flex flex-col gap-y-4">
+                {commentList.map((item: any) => {
+                  return <CommentText key={item.id} data={item} />;
+                })}
               </Box>
             </Box>
-            <Box className="flex justify-end gap-x-1 mt-1">
-              <Button type="reset" form={"comment_form"}>
-                cancel
-              </Button>
-              <Button
-                type="submit"
-                className="bg-gray-100 hover:bg-gray-200"
-                form={"comment_form"}
-                disabled={userExist ? true : false}
-              >
-                comment
-              </Button>
-            </Box>
-            <Box className="flex flex-col gap-y-4">
-              {commentList.map((item: any) => {
-                return <CommentText key={item.id} data={item} />;
-              })}
-            </Box>
-          </Box>
+          ) : null}
         </Grid>
         <Grid xs={12} md={5}>
           <Typography variant="h6"> Collection of item</Typography>
@@ -507,7 +549,9 @@ function ViewItem() {
                   ))}
               </Stack>
             ) : Object.keys(itemCollection).length === 0 ? (
-              <Typography variant="body1">there is no Collection</Typography>
+              <Typography variant="body1" className="first-letter:capitalize">
+                there is no Collection
+              </Typography>
             ) : (
               <ItemCollectionCard data={itemCollection} />
             )}

@@ -31,7 +31,7 @@ function Footer() {
               md={4}
               className="flex flex-col gap-y-2 justify-center"
             >
-              <Typography color="white" variant="h6">
+              <Typography color="white" variant="body2">
                 PERSONAL COLLECTION
               </Typography>
               <Typography color="white" variant="body2">

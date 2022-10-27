@@ -42,34 +42,35 @@ function ItemCard({ data }: ItemCardType) {
           />
           <CardContent>
             <Box className="flex gap-x-2">
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
                 Name :
               </Typography>
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
                 {data.item_name}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
                 Author :
               </Typography>
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
                 {data.user_name}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
                 Collection :
               </Typography>
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
                 {data.collection_name}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
                 tags :
               </Typography>
               <Typography
+              
                 gutterBottom
                 variant="body2"
                 component="span"
@@ -81,10 +82,10 @@ function ItemCard({ data }: ItemCardType) {
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
                 created at:
               </Typography>
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
                 {moment(data.created_at).format("DD-MM-YYYY")}
               </Typography>
             </Box>

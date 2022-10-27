@@ -28,29 +28,52 @@ function ItemCollectionCard({ data }: ItemCollectionCardType) {
 
       <Box className="flex flex-col gap-y-1 sm:mt-2">
         <Box className="flex gap-x-1">
-          <Typography variant="body2" className="font-medium">
+          <Typography
+            variant="body2"
+            className="font-medium first-letter:capitalize"
+          >
             Name :{" "}
           </Typography>
-          <Typography variant="body2"> {data.collection_name}</Typography>
+          <Typography variant="body2" className="first-letter:capitalize">
+            {" "}
+            {data.collection_name}
+          </Typography>
         </Box>
         <Box className="flex gap-x-1">
-          <Typography variant="body2" className="font-medium">
+          <Typography
+            variant="body2"
+            className="font-medium first-letter:capitalize"
+          >
             Author :
           </Typography>
-          <Typography variant="body2"> {data.user_name}</Typography>
+          <Typography variant="body2" className="first-letter:capitalize">
+            {" "}
+            {data.user_name}
+          </Typography>
         </Box>
         <Box className="flex gap-x-1">
-          <Typography variant="body2" className="font-medium">
+          <Typography
+            variant="body2"
+            className="font-medium first-letter:capitalize"
+          >
             topic :
           </Typography>
-          <Typography variant="body2"> {data.topic_name}</Typography>
+          <Typography variant="body2" className="first-letter:capitalize">
+            {" "}
+            {data.topic_name}
+          </Typography>
         </Box>
         {data.item_count ? (
           <Box className="flex gap-x-1">
-            <Typography variant="body2" className="font-medium">
+            <Typography
+              variant="body2"
+              className="font-medium first-letter:capitalize"
+            >
               items :{" "}
             </Typography>
-            <Typography variant="body2">{data.item_count}</Typography>
+            <Typography variant="body2" className="first-letter:capitalize">
+              {data.item_count}
+            </Typography>
           </Box>
         ) : null}
       </Box>

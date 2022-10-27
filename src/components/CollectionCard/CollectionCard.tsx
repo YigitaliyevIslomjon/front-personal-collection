@@ -27,7 +27,7 @@ export type CollectionCardType = {
 
 function CollectionCard({ data }: CollectionCardType) {
   return (
-    <div
+    <Box
       id="collection-card"
       className="border-2 border-solid border-indigo-100 rounded p-2"
     >
@@ -44,44 +44,89 @@ function CollectionCard({ data }: CollectionCardType) {
           </Box>
           <CardContent>
             <Box className="flex gap-x-2">
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography
+                gutterBottom
+                variant="body2"
+                component="span"
+                className="first-letter:capitalize"
+              >
                 Name :
               </Typography>
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography
+                gutterBottom
+                variant="body2"
+                component="span"
+                className="first-letter:capitalize"
+              >
                 {data.collection_name}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography
+                gutterBottom
+                variant="body2"
+                component="span"
+                className="first-letter:capitalize"
+              >
                 Author :
               </Typography>
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography
+                gutterBottom
+                variant="body2"
+                component="span"
+                className="first-letter:capitalize"
+              >
                 {data.user_name}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
-              <Typography gutterBottom variant="body2" component="span">
-                topic :
+              <Typography
+                gutterBottom
+                variant="body2"
+                component="span"
+                className="first-letter:capitalize"
+              >
+                Topic :
               </Typography>
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography
+                gutterBottom
+                variant="body2"
+                component="span"
+                className="first-letter:capitalize"
+              >
                 {data.topic_name}
               </Typography>
             </Box>
             {data.item_count ? (
               <Box className="flex gap-x-2">
                 <Typography gutterBottom variant="body2" component="span">
-                  items :
+                  Items :
                 </Typography>
-                <Typography gutterBottom variant="body2" component="span">
+                <Typography
+                  gutterBottom
+                  variant="body2"
+                  component="span"
+                  className="first-letter:capitalize"
+                >
                   {data.item_count}
                 </Typography>
               </Box>
             ) : null}
             <Box className="flex gap-x-2">
-              <Typography gutterBottom variant="body2" component="span">
-                created at:
+              <Typography
+                gutterBottom
+                variant="body2"
+                component="span"
+                className="first-letter:capitalize"
+              >
+                Created at:
               </Typography>
-              <Typography gutterBottom variant="body2" component="span">
+              <Typography
+                gutterBottom
+                variant="body2"
+                component="span"
+                className="first-letter:capitalize"
+              >
                 {moment(data.created_at).format("DD-MM-YYYY")}
               </Typography>
             </Box>
@@ -98,7 +143,7 @@ function CollectionCard({ data }: CollectionCardType) {
           </Link>
         </CardActions>
       </Card>
-    </div>
+    </Box>
   );
 }
 

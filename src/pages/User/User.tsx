@@ -60,7 +60,6 @@ function User() {
   const [userTableRowData, setUserTableRowData] = useState(
     {} as UserTableRowType
   );
-
   const [userTableLoading, setUserTableLoading] = useState<boolean>(false);
 
   const userTableColumn: GridColDef[] = [

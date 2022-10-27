@@ -228,43 +228,58 @@ function ViewCollection() {
                   ) : null}
                 </Box>
                 <Box className="flex gap-x-2">
-                  <Typography variant="body1" className="font-semibold">
+                  <Typography
+                    className="font-semibold first-letter:capitalize"
+                    variant="body1"
+                  >
                     Name :{" "}
                   </Typography>
-                  <Typography variant="body1">
+                  <Typography
+                    className="first-letter:capitalize"
+                    variant="body1"
+                  >
                     {collection?.collection_name}
                   </Typography>
                 </Box>
-
                 <Box className="flex gap-x-2">
-                  <Typography variant="body1" className="font-semibold">
-                    Mark down :{" "}
-                  </Typography>
-                  <Typography variant="body1">
-                    {String(collection?.mark_down)}
-                  </Typography>
-                </Box>
-                <Box className="flex gap-x-2">
-                  <Typography variant="body1" className="font-semibold">
+                  <Typography
+                    className="font-semibold first-letter:capitalize"
+                    variant="body1"
+                  >
                     Topic :{" "}
                   </Typography>
-                  <Typography variant="body1">
+                  <Typography
+                    className="first-letter:capitalize"
+                    variant="body1"
+                  >
                     {collection?.topic_id?.topic_name}
                   </Typography>
                 </Box>
                 <Box className="flex gap-x-2">
-                  <Typography variant="body1" className="font-semibold">
-                    Auther :{" "}
+                  <Typography
+                    className="font-semibold first-letter:capitalize"
+                    variant="body1"
+                  >
+                    Author :{" "}
                   </Typography>
-                  <Typography variant="body1">
+                  <Typography
+                    className="first-letter:capitalize"
+                    variant="body1"
+                  >
                     {collection?.user_id?.user_name}
                   </Typography>
                 </Box>
                 <Box className="flex gap-x-2 items-center ">
-                  <Typography variant="body1" className="font-semibold">
+                  <Typography
+                    className="font-semibold first-letter:capitalize"
+                    variant="body1"
+                  >
                     Description :{" "}
                   </Typography>
-                  <Typography variant="body1">
+                  <Typography
+                    className="first-letter:capitalize"
+                    variant="body1"
+                  >
                     {collection?.mark_down ? (
                       <ReactMarkdown>{collection?.description}</ReactMarkdown>
                     ) : (
@@ -273,10 +288,16 @@ function ViewCollection() {
                   </Typography>
                 </Box>
                 <Box className="flex gap-x-2">
-                  <Typography variant="body1" className="font-semibold">
+                  <Typography
+                    className="font-semibold first-letter:capitalize"
+                    variant="body1"
+                  >
                     Number of items :{" "}
                   </Typography>
-                  <Typography variant="body1">
+                  <Typography
+                    className="first-letter:capitalize"
+                    variant="body1"
+                  >
                     {collectionItemList.length}
                   </Typography>
                 </Box>

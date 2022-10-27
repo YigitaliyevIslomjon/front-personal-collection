@@ -31,7 +31,7 @@ function HomeSearch() {
     dispatch(setSerachItemList([]));
   };
   return (
-    <Box className="mb-20">
+    <Box className="mb-20 min-h-[400px]">
       {searchCollectionList.length > 0 ? (
         <Box className="flex justify-between mb-4 mt-5">
           <Typography variant="h6" className="text-base sm:text-xl">
