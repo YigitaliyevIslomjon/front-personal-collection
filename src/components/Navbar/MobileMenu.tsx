@@ -13,8 +13,6 @@ import {
 import React, { useContext, useState } from "react";
 import Brightness3Icon from "@mui/icons-material/Brightness3";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
