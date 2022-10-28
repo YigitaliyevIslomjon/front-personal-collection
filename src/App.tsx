@@ -16,6 +16,7 @@ import ViewItem from "./pages/ViewItem/ViewItem";
 import Home from "./pages/Home/Home";
 import Personal from "./pages/Personal/Personal";
 import CollectionItemTable from "./pages/CollectionItemTable/CollectionItemTable";
+import { Box } from "@mui/material";
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
@@ -45,7 +46,7 @@ function App() {
   );
 
   return (
-    <div id="App">
+    <Box id="app">
       <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
           <Routes>
@@ -76,7 +77,7 @@ function App() {
           </Routes>
         </ThemeProvider>
       </ColorModeContext.Provider>
-    </div>
+    </Box>
   );
 }
 

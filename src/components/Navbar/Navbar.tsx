@@ -1,15 +1,19 @@
 import { useState, useContext } from "react";
-import Box from "@mui/material/Box";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import { Select } from "@mui/material";
+import {
+  Box,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+  Menu,
+  Container,
+  Select,
+} from "@mui/material";
+
 import SearchIcon from "@mui/icons-material/Search";
 import { ColorModeContext } from "../../App";
 import { useTheme } from "@mui/material/styles";
@@ -128,14 +132,33 @@ function Navbar() {
   };
 
   return (
-    <div>
-      <AppBar position="fixed" className="px-3 sm:px-3 md:px-7">
-        <Toolbar className="flex gap-x-1">
-          <MobileMenu fullTextSearch={fullTextSearch} />
-          <Box className="hidden md:flex md:gap-x-4">
-            {pages.map((page, index) => {
-              if (page.title === "personal") {
-                if (loginUser.role) {
+    <Box>
+      <AppBar
+        position="fixed"
+        // className="px-3 sm:px-3 md:px-7"
+      >
+        <Container maxWidth="xl">
+          <Toolbar className="flex gap-x-1">
+            <MobileMenu fullTextSearch={fullTextSearch} />
+            <Box className="hidden md:flex md:gap-x-4">
+              {pages.map((page, index) => {
+                if (page.title === "personal") {
+                  if (loginUser.role) {
+                    return (
+                      <NavLink
+                        to={page.link}
+                        key={index}
+                        className="no-underline"
+                      >
+                        <Button className="text-base text-white">
+                          {t(`${page.title}`)}
+                        </Button>
+                      </NavLink>
+                    );
+                  } else {
+                    return null;
+                  }
+                } else {
                   return (
                     <NavLink
                       to={page.link}
@@ -147,126 +170,117 @@ function Navbar() {
                       </Button>
                     </NavLink>
                   );
-                } else {
-                  return null;
                 }
-              } else {
-                return (
-                  <NavLink to={page.link} key={index} className="no-underline">
-                    <Button className="text-base text-white">
-                      {t(`${page.title}`)}
-                    </Button>
-                  </NavLink>
-                );
-              }
-            })}
-          </Box>
-          <Box className="flex items-center ml-auto">
-            <Select
-              className="text-white"
-              sx={{
-                ".MuiOutlinedInput-notchedOutline": { border: 0 },
-              }}
-              size="small"
-              value={language}
-              onChange={(e) => changeLanguage(e)}
-            >
-              <MenuItem value={"en-US"}>en</MenuItem>
-              <MenuItem value={"uz"}>uz</MenuItem>
-            </Select>
-            {Object.keys(loginUser).length === 0 ? (
-              <>
-                <Link to={"/sign/in"} className="no-underline">
-                  <Button
-                    className="text-sm sm:text-base"
-                    sx={{ my: 2, color: "white", display: "block" }}
-                  >
-                    {t("signin")}
-                  </Button>
-                </Link>
-                <Link to={"/sign/up"} className="no-underline">
-                  <Button
-                    className="text-sm sm:text-base"
-                    sx={{ my: 2, color: "white", display: "block" }}
-                  >
-                    {t("signup")}
-                  </Button>
-                </Link>
-              </>
-            ) : null}
-
-            <Search className="mr-2 hidden md:block">
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                onChange={fullTextSearch}
-                placeholder={t("search")}
-                inputProps={{ "aria-label": "" }}
-              />
-            </Search>
-            <IconButton
-              onClick={colorMode.toggleColorMode}
-              color="inherit"
-              className="hidden md:block"
-            >
-              {theme.palette.mode === "dark" ? (
-                <LightModeIcon />
-              ) : (
-                <Brightness3Icon />
-              )}
-            </IconButton>
-            <Typography
-              variant="body1"
-              className="capitalize mr-1 hidden md:block"
-            >
-              {loginUser.user_name}
-            </Typography>
-            <Box>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleClick} sx={{ p: 0 }}>
-                  <Avatar
-                    className="uppercase"
-                    alt={loginUser.user_name}
-                    src="/static/images/avatar/2.jpg"
-                  />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={open}
-                onClose={handleCloseUserMenu}
-                anchorEl={anchorEl}
-              >
-                {settings.map((setting) => (
-                  <MenuItem
-                    key={setting.title}
-                    onClick={() => handleCloseUserMenu(setting.link)}
-                  >
-                    <Link className="no-underline" to={setting.link}>
-                      <Typography
-                        variant="body1"
-                        color="textPrimary"
-                        className="first-letter:uppercase"
-                      >
-                        {t(`${setting.title}`)}
-                      </Typography>
-                    </Link>
-                  </MenuItem>
-                ))}
-              </Menu>
+              })}
             </Box>
-          </Box>
-        </Toolbar>
+            <Box className="flex items-center ml-auto">
+              <Select
+                className="text-white"
+                sx={{
+                  ".MuiOutlinedInput-notchedOutline": { border: 0 },
+                }}
+                size="small"
+                value={language}
+                onChange={(e) => changeLanguage(e)}
+              >
+                <MenuItem value={"en-US"}>en</MenuItem>
+                <MenuItem value={"uz"}>uz</MenuItem>
+              </Select>
+              {Object.keys(loginUser).length === 0 ? (
+                <>
+                  <Link to={"/sign/in"} className="no-underline">
+                    <Button
+                      className="text-sm sm:text-base"
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      {t("signin")}
+                    </Button>
+                  </Link>
+                  <Link to={"/sign/up"} className="no-underline">
+                    <Button
+                      className="text-sm sm:text-base"
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      {t("signup")}
+                    </Button>
+                  </Link>
+                </>
+              ) : null}
+
+              <Search className="mr-2 hidden md:block">
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  onChange={fullTextSearch}
+                  placeholder={t("search")}
+                  inputProps={{ "aria-label": "" }}
+                />
+              </Search>
+              <IconButton
+                onClick={colorMode.toggleColorMode}
+                color="inherit"
+                className="hidden md:block"
+              >
+                {theme.palette.mode === "dark" ? (
+                  <LightModeIcon />
+                ) : (
+                  <Brightness3Icon />
+                )}
+              </IconButton>
+              <Typography
+                variant="body1"
+                className="capitalize mr-1 hidden md:block"
+              >
+                {loginUser.user_name}
+              </Typography>
+              <Box>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleClick} sx={{ p: 0 }}>
+                    <Avatar
+                      className="uppercase"
+                      alt={loginUser.user_name}
+                      src="/static/images/avatar/2.jpg"
+                    />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={open}
+                  onClose={handleCloseUserMenu}
+                  anchorEl={anchorEl}
+                >
+                  {settings.map((setting) => (
+                    <MenuItem
+                      key={setting.title}
+                      onClick={() => handleCloseUserMenu(setting.link)}
+                    >
+                      <Link className="no-underline" to={setting.link}>
+                        <Typography
+                          variant="body1"
+                          color="textPrimary"
+                          className="first-letter:uppercase"
+                        >
+                          {t(`${setting.title}`)}
+                        </Typography>
+                      </Link>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+            </Box>
+          </Toolbar>
+        </Container>
       </AppBar>
       <Toolbar />
+
       <ToastContainer />
-    </div>
+    </Box>
   );
 }
 

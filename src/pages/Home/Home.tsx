@@ -287,7 +287,7 @@ function Home() {
             Tag cloud
           </Typography>
         </Box>
-        <Box className="bg-slate-900 px-24 py-12 rounded-[20px]">
+        <Box className="bg-slate-900 px-5 py-5 md:px-24 md:py-12 rounded-[20px]">
           <TagCloud
             className="simple-cloud"
             minSize={12}
