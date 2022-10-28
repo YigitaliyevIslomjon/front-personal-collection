@@ -10,11 +10,7 @@ function Layout() {
       className="flex flex-col"
     >
       <Navbar />
-      <Container
-        maxWidth="xl"
-        className="px-14"
-        // className="px-10 py-7 sm:px-10 sm:py-7 md:px-14 md:py-9"
-      >
+      <Container maxWidth="xl" className="px-14 py-7 sm:py-7 md:py-9">
         <Outlet />
       </Container>
       <Footer />

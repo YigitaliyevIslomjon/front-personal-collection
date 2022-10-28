@@ -109,7 +109,7 @@ function Footer() {
         </Container>
       </AppBar>
       <Box sx={{ bgcolor: "#F3F2EF", fontSize: "10px" }}>
-        <Container maxWidth="xl" className="px-14">
+        <Container maxWidth="xl" className="px-20">
           Personal Collection Corporation © 2022
         </Container>
       </Box>

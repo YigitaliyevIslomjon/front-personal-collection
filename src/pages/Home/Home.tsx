@@ -287,11 +287,11 @@ function Home() {
             Tag cloud
           </Typography>
         </Box>
-        <Box className="bg-slate-900 px-5 py-5 md:px-24 md:py-12 rounded-[20px]">
+        <Box className="bg-slate-900 px-5 py-5 md:px-12 md:py-12 rounded-[20px]">
           <TagCloud
             className="simple-cloud"
             minSize={12}
-            maxSize={35}
+            maxSize={40}
             tags={tagList}
             onClick={(tag: any) => getSearchTag(tag.id)}
           />
