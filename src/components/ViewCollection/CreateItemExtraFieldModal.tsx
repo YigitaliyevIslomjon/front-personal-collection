@@ -21,12 +21,12 @@ import { CollectionType } from "../../pages/ViewCollection/ViewCollection";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 
-interface DialogProp {
+type ModalPropType = {
   setVisible: (value: boolean) => void;
   visible: boolean;
   collection: CollectionType;
-}
-type FormField = {
+};
+type FormFieldType = {
   selectedField?: string;
   int_field: { name: string }[];
   str_field: { name: string }[];
@@ -36,19 +36,28 @@ type FormField = {
   collection_id?: string;
 };
 
+type ItemFieldCountProp = {
+  integer: string;
+  string: string;
+  textare: string;
+  date: string;
+  checkbox: string;
+};
+
 function CreateItemExtraFieldModal({
   setVisible,
   visible,
   collection,
-}: DialogProp) {
+}: ModalPropType) {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FormField>({});
+  } = useForm<FormFieldType>({});
 
-  const [fieldCountDioVisible, setFieldCountDioVisible] = useState(false);
-  const [itemFieldCount, setItemFieldCount] = useState({
+  const [specifyFieldCountModVisible, setSpecifyFieldCountModVisible] =
+    useState<boolean>(false);
+  const [itemFieldCount, setItemFieldCount] = useState<ItemFieldCountProp>({
     integer: "0",
     string: "0",
     textare: "0",
@@ -70,7 +79,7 @@ function CreateItemExtraFieldModal({
     { name: "Checkbox field", field: "checkbox" },
   ];
 
-  const createExtraItemFieldApi = (body: FormField) => {
+  const createExtraItemFieldApi = (body: FormFieldType) => {
     setSaveLoading(true);
     api
       .post(`/item-extra-field/${collection._id}`, body)
@@ -85,7 +94,7 @@ function CreateItemExtraFieldModal({
         setSaveLoading(false);
       });
   };
-  const onFinish = (data: FormField) => {
+  const onSubmit = (data: FormFieldType) => {
     data.collection_id = collection._id;
     createExtraItemFieldApi(data);
   };
@@ -106,7 +115,7 @@ function CreateItemExtraFieldModal({
             id="createItemField"
             component={"form"}
             className="flex flex-col gap-y-5 pt-2"
-            onSubmit={handleSubmit(onFinish)}
+            onSubmit={handleSubmit(onSubmit)}
           >
             <Controller
               control={control}
@@ -128,7 +137,7 @@ function CreateItemExtraFieldModal({
                           value={item.field}
                           onClick={() => {
                             setPropertyName(item.field);
-                            setFieldCountDioVisible(true);
+                            setSpecifyFieldCountModVisible(true);
                           }}
                         >
                           {item.name}
@@ -337,13 +346,13 @@ function CreateItemExtraFieldModal({
           </LoadingButton>
         </DialogActions>
       </Dialog>
-      {fieldCountDioVisible ? (
+      {specifyFieldCountModVisible ? (
         <SpecifyFieldCount
           propertyName={propertyName}
           itemFieldCount={itemFieldCount}
           setItemFieldCount={setItemFieldCount}
-          setVisible={setFieldCountDioVisible}
-          visible={fieldCountDioVisible}
+          setVisible={setSpecifyFieldCountModVisible}
+          visible={specifyFieldCountModVisible}
         />
       ) : null}
     </Box>

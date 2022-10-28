@@ -18,17 +18,17 @@ type FieldType = {
   checkbox: string;
 };
 
-type FormField = {
+type FormFieldType = {
   count: string;
 };
 
-interface DialogProp {
+type ModalPropType = {
   setVisible: (value: boolean) => void;
   visible: boolean;
   propertyName: string;
   itemFieldCount: FieldType;
   setItemFieldCount: (value: FieldType) => void;
-}
+};
 
 function SpecifyFieldCount({
   setVisible,
@@ -36,18 +36,18 @@ function SpecifyFieldCount({
   setItemFieldCount,
   itemFieldCount,
   propertyName,
-}: DialogProp) {
+}: ModalPropType) {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FormField>();
+  } = useForm<FormFieldType>();
 
   const handleClose = () => {
     setVisible(false);
   };
 
-  const onFinish = (data: FormField) => {
+  const onSubmit = (data: FormFieldType) => {
     setItemFieldCount({
       ...itemFieldCount,
       [propertyName]: data.count,
@@ -69,7 +69,7 @@ function SpecifyFieldCount({
           id="countField"
           component={"form"}
           className="flex flex-col gap-y-5 pt-2"
-          onSubmit={handleSubmit(onFinish)}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <Controller
             control={control}
@@ -78,7 +78,6 @@ function SpecifyFieldCount({
               <TextField
                 type="number"
                 size="small"
-                name="count"
                 onChange={onChange}
                 label="Field Count"
                 variant="outlined"
