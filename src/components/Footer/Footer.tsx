@@ -20,7 +20,7 @@ function Footer() {
     <Box className="mt-auto">
       <AppBar position="static">
         <Container maxWidth="xl" className="px-14">
-          <Toolbar className="flex gap-x-1">
+          <Toolbar className="flex gap-x-1 pb-7 pt-5">
             <Grid container spacing={5}>
               <Grid
                 xs={12}
@@ -108,11 +108,10 @@ function Footer() {
           </Toolbar>
         </Container>
       </AppBar>
-      <Box
-        className="px-13 sm:px-7 md:px-14 cursor-pointer"
-        sx={{ bgcolor: "#F3F2EF", fontSize: "10px" }}
-      >
-        Personal Collection Corporation © 2022
+      <Box sx={{ bgcolor: "#F3F2EF", fontSize: "10px" }}>
+        <Container maxWidth="xl" className="px-14">
+          Personal Collection Corporation © 2022
+        </Container>
       </Box>
     </Box>
   );
