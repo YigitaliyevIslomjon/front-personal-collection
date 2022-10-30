@@ -12,22 +12,8 @@ import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyN
 import { useTranslation } from "react-i18next";
 import DownloadIcon from "@mui/icons-material/Download";
 import { CSVLink } from "react-csv";
-
-type CollectionListType = {
-  collection_name: string;
-  user_name: string;
-  id: string;
-  path: string;
-  item_count: number;
-  topic_name: string;
-  created_at: string;
-}[];
-
-type PagenationType = {
-  pageNumber: number;
-  pageSize: number;
-  total_page_count: number;
-};
+import { CollectionList } from "../../types/collection.types";
+import { PagenationType } from "../../types/pagenation.types";
 
 function Collection() {
   let { t } = useTranslation();
@@ -38,14 +24,12 @@ function Collection() {
     pageSize: 1,
     total_page_count: 1,
   } as PagenationType);
+
   const [createCollModalVisible, setCreateCollModalVisible] =
     useState<boolean>(false);
-  const [collectionList, setCollectionList] = useState<CollectionListType | []>(
-    []
-  );
+  const [collectionList, setCollectionList] = useState<CollectionList | []>([]);
   const [collectionListLoading, setCollectionListLoading] =
     useState<boolean>(false);
-
   const handleOpenModal = () => {
     setCreateCollModalVisible(true);
   };
@@ -56,17 +40,7 @@ function Collection() {
       .get("collection/list", { params: { pageNumber, pageSize } })
       .then((res) => {
         setPagenation(res.data.pagenation);
-        setCollectionList(
-          res.data.collection.map((item: any, index: any) => ({
-            collection_name: item.collection_name,
-            user_name: item.user_id?.user_name,
-            id: item._id,
-            path: item.path,
-            item_count: item.item_count,
-            topic_name: item.topic_id?.topic_name,
-            created_at: item.created_at,
-          }))
-        );
+        setCollectionList(res.data.collection);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -95,8 +69,8 @@ function Collection() {
   let headers = [
     { label: "Collection Name", key: "collection_name" },
     { label: "a number of collection items", key: "item_count" },
-    { label: "topic name", key: "topic_name" },
-    { label: "user name", key: "user_name" },
+    { label: "topic name", key: "topic_id.topic_name" },
+    { label: "user name", key: "user_id.user_name" },
   ];
 
   return (
@@ -135,7 +109,7 @@ function Collection() {
       <Grid container spacing={{ xs: 2, md: 3 }} className="min-h-[400px]">
         {!collectionListLoading
           ? collectionList.map((item, index) => (
-              <Grid xs={12} sm={6} md={4} lg={3} key={item.id}>
+              <Grid xs={12} sm={6} md={4} lg={3} key={item._id}>
                 <CollectionCard data={item} />
               </Grid>
             ))

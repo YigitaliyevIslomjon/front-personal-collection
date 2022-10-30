@@ -13,37 +13,9 @@ import Stack from "@mui/material/Stack";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { ToastContainer } from "react-toastify";
 import delelteAlert from "../../components/SweetAlert/SweetAlert";
-
-export type CollectionType = {
-  collection_name: string;
-  description: string;
-  mark_down: boolean;
-  path: string;
-  topic_id: {
-    topic_name: string;
-    _id: string;
-  };
-  user_id: {
-    user_name: string;
-    _id: string;
-  };
-  _id: string;
-};
-
-type CollectionItemListType = {
-  item_name: string;
-  collection_name: string;
-  user_name: string;
-  id: string;
-  path: string;
-  tags: string[];
-}[];
-
-type PagenationType = {
-  pageNumber: number;
-  pageSize: number;
-  total_page_count: number;
-};
+import { CollectionType } from "../../types/collection.types";
+import { ItemList } from "../../types/item.types";
+import { PagenationType } from "../../types/pagenation.types";
 
 function ViewCollection() {
   let { id } = useParams();
@@ -60,9 +32,7 @@ function ViewCollection() {
 
   const [editCollecModalVisible, setEditCollecModalVisible] =
     useState<boolean>(false);
-  const [collectionItemList, setCollectionItemList] = useState(
-    [] as CollectionItemListType
-  );
+  const [collectionItemList, setCollectionItemList] = useState([] as ItemList);
   const [itemExtraFieldModalVisible, setItemExtraFieldModalVisible] =
     useState<boolean>(false);
 
@@ -92,16 +62,7 @@ function ViewCollection() {
       })
       .then((res) => {
         setPagenation(res.data.pagenation);
-        setCollectionItemList(
-          res.data.item.map((item: any) => ({
-            item_name: item.item_name,
-            collection_name: item.collection_id.collection_name,
-            user_name: item.user_id.user_name,
-            id: item._id,
-            path: item.path,
-            tags: item.tags.map((item: any) => item.tag_name),
-          }))
-        );
+        setCollectionItemList(res.data.item);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -238,7 +199,7 @@ function ViewCollection() {
                     className="first-letter:capitalize"
                     variant="body1"
                   >
-                    {collection?.collection_name}
+                    {collection.collection_name}
                   </Typography>
                 </Box>
                 <Box className="flex gap-x-2">
@@ -252,7 +213,7 @@ function ViewCollection() {
                     className="first-letter:capitalize"
                     variant="body1"
                   >
-                    {collection?.topic_id?.topic_name}
+                    {collection.topic_id?.topic_name}
                   </Typography>
                 </Box>
                 <Box className="flex gap-x-2">
@@ -266,7 +227,7 @@ function ViewCollection() {
                     className="first-letter:capitalize"
                     variant="body1"
                   >
-                    {collection?.user_id?.user_name}
+                    {collection.user_id?.user_name}
                   </Typography>
                 </Box>
                 <Box className="flex gap-x-2 items-center ">
@@ -280,7 +241,7 @@ function ViewCollection() {
                     className="first-letter:capitalize"
                     variant="body1"
                   >
-                    {collection?.mark_down ? (
+                    {collection.mark_down ? (
                       <ReactMarkdown>{collection?.description}</ReactMarkdown>
                     ) : (
                       collection?.description
@@ -340,7 +301,7 @@ function ViewCollection() {
               <Typography variant="body1">there is no items</Typography>
             ) : (
               collectionItemList.map((item) => (
-                <CollectionItemCard key={item.id} data={item} />
+                <CollectionItemCard key={item._id} data={item} />
               ))
             )}
           </Box>

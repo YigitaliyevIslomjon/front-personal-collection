@@ -12,20 +12,9 @@ import {
 import { Link } from "react-router-dom";
 import moment from "moment";
 import "./ItemCard.scss";
+import { ItemCardProp, Tag } from "../../types/item.types";
 
-export type ItemCardType = {
-  data: {
-    item_name: string;
-    collection_name: string;
-    user_name: string;
-    id: string;
-    path: string;
-    tags: string[];
-    created_at: string;
-  };
-};
-
-function ItemCard({ data }: ItemCardType) {
+function ItemCard({ data }: ItemCardProp) {
   return (
     <Box
       id={"item-card"}
@@ -42,57 +31,101 @@ function ItemCard({ data }: ItemCardType) {
           />
           <CardContent>
             <Box className="flex gap-x-2">
-              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
+              <Typography
+                className="first-letter:capitalize"
+                gutterBottom
+                variant="body2"
+                component="span"
+              >
                 Name :
               </Typography>
-              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
+              <Typography
+                className="first-letter:capitalize"
+                gutterBottom
+                variant="body2"
+                component="span"
+              >
                 {data.item_name}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
-              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
+              <Typography
+                className="first-letter:capitalize"
+                gutterBottom
+                variant="body2"
+                component="span"
+              >
                 Author :
               </Typography>
-              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
-                {data.user_name}
+              <Typography
+                className="first-letter:capitalize"
+                gutterBottom
+                variant="body2"
+                component="span"
+              >
+                {data.user_id?.user_name}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
-              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
+              <Typography
+                className="first-letter:capitalize"
+                gutterBottom
+                variant="body2"
+                component="span"
+              >
                 Collection :
               </Typography>
-              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
-                {data.collection_name}
+              <Typography
+                className="first-letter:capitalize"
+                gutterBottom
+                variant="body2"
+                component="span"
+              >
+                {data.collection_id?.collection_name}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
-              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
+              <Typography
+                className="first-letter:capitalize"
+                gutterBottom
+                variant="body2"
+                component="span"
+              >
                 tags :
               </Typography>
               <Typography
-              
                 gutterBottom
                 variant="body2"
                 component="span"
                 className="flex gap-1 flex-wrap"
               >
-                {data.tags.map((tag) => (
-                  <Box key={tag}>{tag}</Box>
+                {data.tags.map((tag: Tag) => (
+                  <Box key={tag._id}>{tag.tag_name}</Box>
                 ))}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
-              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
+              <Typography
+                className="first-letter:capitalize"
+                gutterBottom
+                variant="body2"
+                component="span"
+              >
                 created at:
               </Typography>
-              <Typography   className="first-letter:capitalize" gutterBottom variant="body2" component="span">
+              <Typography
+                className="first-letter:capitalize"
+                gutterBottom
+                variant="body2"
+                component="span"
+              >
                 {moment(data.created_at).format("DD-MM-YYYY")}
               </Typography>
             </Box>
           </CardContent>
         </CardActionArea>
         <CardActions>
-          <Link to={`/item-view/${data.id}`} className="underline-offset-2">
+          <Link to={`/item-view/${data._id}`} className="underline-offset-2">
             <Button size="small" color="primary" onClick={() => {}}>
               view item
             </Button>

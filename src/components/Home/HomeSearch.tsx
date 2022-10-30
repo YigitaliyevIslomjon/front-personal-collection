@@ -10,19 +10,17 @@ import {
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ItemListType } from "../../pages/Home/Home";
 import CollectionCard from "../CollectionCard/CollectionCard";
 import ItemCard from "../ItemCard/ItemCard";
 import CloseIcon from "@mui/icons-material/Close";
 import { setSerachItemList } from "../../store/slice/searchSlice";
 import { useTranslation } from "react-i18next";
+import { ItemList } from "../../types/item.types";
 
 function HomeSearch() {
   let { t } = useTranslation();
   const dispatch = useDispatch();
-  let searchItemList: ItemListType = useSelector(
-    (state: any) => state.search.item
-  );
+  let searchItemList: ItemList = useSelector((state: any) => state.search.item);
   let searchCollectionList = useSelector(
     (state: any) => state.search.collection
   );

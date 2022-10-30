@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Button,
   Dialog,
@@ -9,45 +8,29 @@ import {
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
+import {
+  SpecifyFieldCountForm,
+  SpecifyFieldCountModalProp,
+} from "../../types/collection.types";
 
-type FieldType = {
-  integer: string;
-  string: string;
-  textare: string;
-  date: string;
-  checkbox: string;
-};
-
-type FormFieldType = {
-  count: string;
-};
-
-type ModalPropType = {
-  setVisible: (value: boolean) => void;
-  visible: boolean;
-  propertyName: string;
-  itemFieldCount: FieldType;
-  setItemFieldCount: (value: FieldType) => void;
-};
-
-function SpecifyFieldCount({
+function SpecifyFieldCountModal({
   setVisible,
   visible,
   setItemFieldCount,
   itemFieldCount,
   propertyName,
-}: ModalPropType) {
+}: SpecifyFieldCountModalProp) {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FormFieldType>();
+  } = useForm<SpecifyFieldCountForm>();
 
   const handleClose = () => {
     setVisible(false);
   };
 
-  const onSubmit = (data: FormFieldType) => {
+  const submitSpecifyFieldCountForm = (data: SpecifyFieldCountForm) => {
     setItemFieldCount({
       ...itemFieldCount,
       [propertyName]: data.count,
@@ -69,7 +52,7 @@ function SpecifyFieldCount({
           id="countField"
           component={"form"}
           className="flex flex-col gap-y-5 pt-2"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(submitSpecifyFieldCountForm)}
         >
           <Controller
             control={control}
@@ -100,4 +83,4 @@ function SpecifyFieldCount({
   );
 }
 
-export default SpecifyFieldCount;
+export default SpecifyFieldCountModal;

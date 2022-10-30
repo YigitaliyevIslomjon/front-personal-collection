@@ -1,12 +1,8 @@
 import { Avatar, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import { CommentTextProp } from "../../types/comment.types";
 
-type CommentTextType = {
-  data: {
-    text: string;
-  };
-};
-function CommentText({ data }: CommentTextType) {
+function CommentText({ data }: CommentTextProp) {
   let color = "#" + (((1 << 24) * Math.random()) | 0).toString(16);
   return (
     <Box className="flex gap-x-2 items-center">
@@ -15,7 +11,7 @@ function CommentText({ data }: CommentTextType) {
       </Avatar>
       <Box>
         <Typography variant="body2">username</Typography>
-        <Typography variant="body2">{data.text}</Typography>
+        <Typography variant="body2">{data?.text}</Typography>
       </Box>
     </Box>
   );

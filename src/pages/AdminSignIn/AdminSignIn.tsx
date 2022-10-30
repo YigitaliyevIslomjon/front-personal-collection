@@ -11,11 +11,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import "./AdminSignIn.scss";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { useTranslation } from "react-i18next";
-
-type SignInFormValues = {
-  email: string;
-  password: string;
-};
+import { SigninForm } from "../../types/user.types";
 
 function AdminSignIn() {
   let { t } = useTranslation();
@@ -23,14 +19,14 @@ function AdminSignIn() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<SignInFormValues>();
+  } = useForm<SigninForm>();
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("access_token");
   const isAdmin =
     JSON.parse(localStorage.getItem("user") || "{}").role === "admin";
 
-  const signInUser = (body: SignInFormValues) => {
+  const signInUser = (body: SigninForm) => {
     setLoadingButton(true);
     api
       .post("/user/login/admin", body)
@@ -47,7 +43,7 @@ function AdminSignIn() {
         setLoadingButton(false);
       });
   };
-  const submitSignInForm = (data: SignInFormValues) => {
+  const submitSignInForm = (data: SigninForm) => {
     signInUser(data);
   };
 

@@ -6,7 +6,6 @@ import { Controller, useForm } from "react-hook-form";
 import api from "../../utils/api";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Typography from "@mui/material/Typography";
-
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import io from "socket.io-client";
 import ItemCollectionCard from "../../components/ViewItem/ItemCollectionCard";
@@ -18,47 +17,9 @@ import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyN
 import { ToastContainer } from "react-toastify";
 import delelteAlert from "../../components/SweetAlert/SweetAlert";
 import moment from "moment";
-
-export type ItemDataType = {
-  item_name: string;
-  collection_id: {
-    _id: string;
-    collection_name: string;
-    user_id: string;
-  };
-  path: string;
-  _id: string;
-  tags: any[];
-  user_id: {
-    user_name: string;
-    _id: string;
-  };
-};
-
-type ItemExtraFieldList = {
-  int_field: { [key: string]: string }[];
-  str_field: { [key: string]: string }[];
-  textare_field: { [key: string]: string }[];
-  checkbox_field: { [key: string]: boolean }[];
-  date_field: { [key: string]: string }[];
-};
-type ItemCollectionCardType = {
-  collection_name: string;
-  user_name: string;
-  id: string;
-  path: string;
-  item_count: number;
-  topic_name: string;
-};
-type CommentFormType = {
-  text: string;
-};
-
-type CommentListType = {
-  text: string;
-  user_name: string;
-  id: string;
-}[];
+import { Comment, CommentForm, CommentList } from "../../types/comment.types";
+import { ItemExtraFieldType, ItemType, Tag } from "../../types/item.types";
+import { CollectionType } from "../../types/collection.types";
 
 function ViewItem() {
   const {
@@ -66,7 +27,7 @@ function ViewItem() {
     control,
     handleSubmit,
     reset,
-  } = useForm<CommentFormType>();
+  } = useForm<CommentForm>();
 
   const socket = useMemo(
     () =>
@@ -82,36 +43,26 @@ function ViewItem() {
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
   const [itemLoading, setItemLoading] = useState<boolean>(false);
   const [collectionLoading, setCollectionLoading] = useState<boolean>(false);
-  const [itemData, setItemData] = useState({} as ItemDataType);
+  const [itemData, setItemData] = useState({} as ItemType);
 
-  const [itemCollection, setItemCollection] = useState(
-    {} as ItemCollectionCardType
-  );
+  const [itemCollection, setItemCollection] = useState({} as CollectionType);
 
   const [itemExtraFieldList, setItemExtraFieldList] = useState(
-    {} as ItemExtraFieldList
+    {} as ItemExtraFieldType
   );
 
   const [editItemModalVisible, setEditItemModalVisible] =
     useState<boolean>(false);
   const [likeStatus, setLikeStatus] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
-  const [commentList, setCommentList] = useState([] as CommentListType);
+  const [commentList, setCommentList] = useState([] as CommentList);
 
-  const getItemCollection = (item_list: any) => {
-    let id = item_list.collection_id?._id;
+  const getItemCollection = (item: ItemType) => {
+    let id = item.collection_id?._id;
     api
       .get(`collection/${id}`)
       .then((res) => {
-        let collection = res.data;
-        setItemCollection({
-          collection_name: collection.collection_name,
-          user_name: collection.user_id.user_name,
-          id: collection._id,
-          path: collection.path,
-          item_count: collection.item_count,
-          topic_name: collection.topic_id.topic_name,
-        });
+        setItemCollection(res.data);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -129,10 +80,8 @@ function ViewItem() {
       .then((res) => {
         try {
           setItemExtraFieldList(res.data.item_extra_field);
-          let item = res.data.item;
-          item.tags = item.tags.map((tag: any) => tag.tag_name);
-          setItemData(item);
-          getItemCollection(item);
+          setItemData(res.data.item);
+          getItemCollection(res.data.item);
         } catch (err) {
           console.log(err);
         }
@@ -195,20 +144,14 @@ function ViewItem() {
     api
       .get(`/comment/list/${id}`)
       .then((res) => {
-        setCommentList(
-          res.data.map((item: any) => ({
-            text: item.text,
-            user_name: item.user_id.user_name,
-            id: item._id,
-          }))
-        );
+        setCommentList(res.data);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
 
-  const submitComment = (data: any) => {
+  const submitComment = (data: CommentForm) => {
     data.item_id = id;
     api
       .post("comment", data)
@@ -264,16 +207,11 @@ function ViewItem() {
   });
 
   useEffect(() => {
-    socket.on("send-comment", (data) => {
-      let commentCopy: any = JSON.parse(
+    socket.on("send-comment", (data: Comment) => {
+      let commentListCopy: CommentList = JSON.parse(
         localStorage.getItem("commentList") || "{}"
       );
-      data = {
-        text: data.text,
-        user_name: data.user_id?.user_name,
-        id: data._id,
-      };
-      setCommentList([...commentCopy, data]);
+      setCommentList([...commentListCopy, data]);
     });
 
     return () => {
@@ -282,6 +220,7 @@ function ViewItem() {
     // eslint-disable-next-line
   }, []);
 
+  console.log(itemExtraFieldList);
   return (
     <Box className="mb-10 sm:mb-40">
       <Grid container columnSpacing={4} rowSpacing={30}>
@@ -385,9 +324,9 @@ function ViewItem() {
                     tags :
                   </Typography>
                   <Box className="flex gap-1 flex-wrap">
-                    {itemData.tags?.map((tag) => (
-                      <Typography key={tag} variant="body1">
-                        {tag}
+                    {itemData.tags?.map((tag: Tag) => (
+                      <Typography key={tag._id} variant="body1">
+                        {tag.tag_name}
                       </Typography>
                     ))}
                   </Box>
@@ -446,7 +385,7 @@ function ViewItem() {
                 </Typography>
 
                 <Typography variant="body1" className="first-letter:capitalize">
-                  {Object.values(item)[0]}
+                  {String(Object.values(item)[0])}
                 </Typography>
               </Box>
             ))}
@@ -479,59 +418,58 @@ function ViewItem() {
               </Box>
             ))}
           </Box>
-          {isUserExist ? (
-            <Box className="mt-3">
-              <Box className="flex gap-x-2">
-                <Avatar className="capitalize self-end cursor-pointer">
-                  {isUserExist ? loginUser.user_name.slice(0, 1) : "Z"}
-                </Avatar>
-                <Box
-                  className="flex-1"
-                  component={"form"}
-                  id="comment_form"
-                  onSubmit={handleSubmit(submitComment)}
-                >
-                  <Controller
-                    control={control}
-                    name="text"
-                    defaultValue=""
-                    rules={{ required: "comment is required" }}
-                    render={({ field: { onChange, value } }) => (
-                      <TextField
-                        size="small"
-                        value={value}
-                        fullWidth
-                        className="text-sm"
-                        onChange={onChange}
-                        label="add a comment"
-                        variant="standard"
-                        error={!!errors.text}
-                        helperText={errors.text && errors.text.message}
-                      />
-                    )}
-                  />
-                </Box>
-              </Box>
-              <Box className="flex justify-end gap-x-1 mt-1">
-                <Button type="reset" form={"comment_form"}>
-                  cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-gray-100 hover:bg-gray-200"
-                  form={"comment_form"}
-                  disabled={isUserExist ? false : true}
-                >
-                  comment
-                </Button>
-              </Box>
-              <Box className="flex flex-col gap-y-4">
-                {commentList.map((item: any) => {
-                  return <CommentText key={item.id} data={item} />;
-                })}
+
+          <Box className="mt-3">
+            <Box className="flex gap-x-2">
+              <Avatar className="capitalize self-end cursor-pointer">
+                {isUserExist ? loginUser.user_name.slice(0, 1) : "Z"}
+              </Avatar>
+              <Box
+                className="flex-1"
+                component={"form"}
+                id="comment_form"
+                onSubmit={handleSubmit(submitComment)}
+              >
+                <Controller
+                  control={control}
+                  name="text"
+                  defaultValue=""
+                  rules={{ required: "comment is required" }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextField
+                      size="small"
+                      value={value}
+                      fullWidth
+                      className="text-sm"
+                      onChange={onChange}
+                      label="add a comment"
+                      variant="standard"
+                      error={!!errors.text}
+                      helperText={errors.text && errors.text.message}
+                    />
+                  )}
+                />
               </Box>
             </Box>
-          ) : null}
+            <Box className="flex justify-end gap-x-1 mt-1">
+              <Button type="reset" form={"comment_form"}>
+                cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-gray-100 hover:bg-gray-200"
+                form={"comment_form"}
+                disabled={isUserExist ? false : true}
+              >
+                comment
+              </Button>
+            </Box>
+            <Box className="flex flex-col gap-y-4">
+              {commentList.map((item: Comment) => {
+                return <CommentText key={item._id} data={item} />;
+              })}
+            </Box>
+          </Box>
         </Grid>
         <Grid xs={12} md={5}>
           <Typography variant="h6"> Collection of item</Typography>

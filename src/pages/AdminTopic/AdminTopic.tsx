@@ -6,32 +6,20 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridColDef, GridValidRowModel } from "@mui/x-data-grid";
 import api from "../../utils/api";
-import EditCollectTopicModal from "../../adminComponents/AdminCollecation/EditCollectTopicModal";
-import CreateCollectTopicModal from "../../adminComponents/AdminCollecation/CreateCollectTopicModal";
+import EditCollectTopicModal from "../../adminComponents/AdminTopic/EditTopicModal";
+import CreateTopicModal from "../../adminComponents/AdminTopic/CreateTopicModal";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { ToastContainer } from "react-toastify";
 import delelteAlert from "../../components/SweetAlert/SweetAlert";
-
-export type TopicTableType = {
-  topic_name: string;
-  _id: string;
-}[];
-
-export type TopicTableRowType = {
-  topic_name: string;
-  _id: string;
-};
+import { Topic, TopicList } from "../../types/topic.types";
 
 function AdminCollection() {
-  const [collectTopicModalVisible, setCollectTopicModalVisible] =
-    useState<boolean>(false);
-  const [topicTableData, setTopicTableData] = useState<TopicTableType>([]);
+  const [topicModalVisible, setTopicModalVisible] = useState<boolean>(false);
+  const [topicTableData, setTopicTableData] = useState<TopicList>([]);
   const [editTopicModalVisible, setEditTopicModalVisible] =
     useState<boolean>(false);
 
-  const [topicTableRowData, setTopicTableRowData] = useState(
-    {} as TopicTableRowType
-  );
+  const [topicTableRowData, setTopicTableRowData] = useState({} as Topic);
 
   const [topicTableLoading, setTopicTableLoading] = useState<boolean>(false);
 
@@ -72,16 +60,16 @@ function AdminCollection() {
     },
   ];
 
-  function editTopicTableRow(data: TopicTableRowType) {
+  function editTopicTableRow(data: Topic) {
     setEditTopicModalVisible(true);
     setTopicTableRowData(data);
   }
 
-  function deleteTopicTableRow(data: TopicTableRowType) {
+  function deleteTopicTableRow(data: Topic) {
     delelteAlert(deleteTopicApi, data);
   }
 
-  function deleteTopicApi(data: TopicTableRowType) {
+  function deleteTopicApi(data: Topic) {
     api
       .delete(`/topic/${data._id}`)
       .then((res) => {
@@ -93,7 +81,7 @@ function AdminCollection() {
       });
   }
 
-  const getTopicTableData = (pageNumber: any, pageSize: any) => {
+  const getTopicTableData = (pageNumber: number, pageSize: number) => {
     setTopicTableLoading(true);
     api
       .get("topic", { params: { pageNumber, pageSize } })
@@ -109,7 +97,7 @@ function AdminCollection() {
   };
 
   const handleOpenModal = () => {
-    setCollectTopicModalVisible(true);
+    setTopicModalVisible(true);
   };
   useEffect(() => {
     getTopicTableData(1, 10);
@@ -135,11 +123,11 @@ function AdminCollection() {
           />
         </Box>
       </Grid>
-      {collectTopicModalVisible ? (
-        <CreateCollectTopicModal
+      {topicModalVisible ? (
+        <CreateTopicModal
           getTopicTableData={getTopicTableData}
-          setVisible={setCollectTopicModalVisible}
-          visible={collectTopicModalVisible}
+          setVisible={setTopicModalVisible}
+          visible={topicModalVisible}
         />
       ) : null}
       {editTopicModalVisible ? (

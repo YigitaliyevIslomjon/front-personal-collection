@@ -10,6 +10,7 @@ type PositionType =
 
 type TostType = "info" | "success" | "warn" | "error";
 type ThemeType = "light" | "dark" | "colored";
+
 export let toastifyMessage = ({
   type = "success",
   message = "successfully",

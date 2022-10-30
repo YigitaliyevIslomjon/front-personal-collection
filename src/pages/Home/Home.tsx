@@ -20,63 +20,27 @@ import { ToastContainer } from "react-toastify";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
 import { useTranslation } from "react-i18next";
-
-type TagListType = {
-  value: string;
-  id: string;
-  count: number;
-}[];
-
-export type ItemListType = {
-  item_name: string;
-  collection_name: string;
-  user_name: string;
-  id: string;
-  path: string;
-  tags: string[];
-  created_at: string;
-}[];
-
-export type CollectionListType = {
-  collection_name: string;
-  user_name: string;
-  id: string;
-  path: string;
-  item_count: number;
-  topic_name: string;
-  created_at: string;
-}[];
+import { CollectionList } from "../../types/collection.types";
+import { ItemList, Tag, TagColudList } from "../../types/item.types";
 
 function Home() {
   const dispatch = useDispatch();
   let { t } = useTranslation();
   const searchData = useSelector((state: any) => state.search);
 
-  const [tagList, setTagList] = useState([] as TagListType);
-  const [itemList, setItemList] = useState([] as ItemListType);
+  const [tagList, setTagList] = useState([] as TagColudList);
+  const [itemList, setItemList] = useState([] as ItemList);
   const [itemListLoading, setItemListLoading] = useState<boolean>(false);
   const [collectionListLoading, setCollectionListLoading] =
     useState<boolean>(false);
-  const [collectionList, setCollectionList] = useState(
-    [] as CollectionListType
-  );
+  const [collectionList, setCollectionList] = useState([] as CollectionList);
 
   const getItemListApi = (pageSize: number, pageNumber: number) => {
     setItemListLoading(true);
     api
       .get("item/list", { params: { pageNumber, pageSize } })
       .then((res) => {
-        setItemList(
-          res.data.item.map((item: any) => ({
-            item_name: item.item_name,
-            collection_name: item.collection_id?.collection_name,
-            user_name: item.user_id?.user_name,
-            id: item._id,
-            path: item.path,
-            tags: item.tags.map((item: any) => item.tag_name),
-            created_at: item.created_at,
-          }))
-        );
+        setItemList(res.data.item);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -91,17 +55,7 @@ function Home() {
     api
       .get("collection/large")
       .then((res) => {
-        setCollectionList(
-          res.data.map((item: any, index: any) => ({
-            collection_name: item.collection_name,
-            user_name: item.user_id.user_name,
-            id: item._id,
-            path: item.path,
-            item_count: item.item_count,
-            topic_name: item.topic_id.topic_name,
-            created_at: item.created_at,
-          }))
-        );
+        setCollectionList(res.data);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -127,19 +81,7 @@ function Home() {
           });
         }
         dispatch(setSearchUrl("/"));
-        dispatch(
-          setSerachItemList(
-            res.data.map((item: any) => ({
-              item_name: item.item_name,
-              collection_name: item.collection_id?.collection_name,
-              user_name: item.user_id?.user_name,
-              id: item._id,
-              path: item.path,
-              tags: item.tags.map((item: any) => item?.tag_name),
-              created_at: item.created_at,
-            }))
-          )
-        );
+        dispatch(setSerachItemList(res.data));
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -152,7 +94,7 @@ function Home() {
       .get("/tag/list")
       .then((res) => {
         setTagList(
-          res.data.map((item: any, index: any) => ({
+          res.data.map((item: Tag, index: number) => ({
             value: item.tag_name,
             id: item._id,
             count: 5 * (index + 1),
@@ -219,7 +161,7 @@ function Home() {
         >
           {!collectionListLoading
             ? collectionList.map((item) => (
-                <SwiperSlide key={item.id}>
+                <SwiperSlide key={item._id}>
                   <CollectionCard data={item} />
                 </SwiperSlide>
               ))
@@ -266,7 +208,7 @@ function Home() {
         >
           {!itemListLoading
             ? itemList.map((item) => (
-                <SwiperSlide key={item.id}>
+                <SwiperSlide key={item._id}>
                   <ItemCard data={item} />
                 </SwiperSlide>
               ))

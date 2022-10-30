@@ -15,49 +15,30 @@ import {
 import Grid from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
-import SpecifyFieldCount from "./SpecifyFieldCount";
+import SpecifyFieldCount from "./SpecifyFieldCountModal";
 import api from "../../utils/api";
-import { CollectionType } from "../../pages/ViewCollection/ViewCollection";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
-
-type ModalPropType = {
-  setVisible: (value: boolean) => void;
-  visible: boolean;
-  collection: CollectionType;
-};
-type FormFieldType = {
-  selectedField?: string;
-  int_field: { name: string }[];
-  str_field: { name: string }[];
-  textare_field: { name: string }[];
-  checkbox_field: { name: string }[];
-  date_field: { name: string }[];
-  collection_id?: string;
-};
-
-type ItemFieldCountProp = {
-  integer: string;
-  string: string;
-  textare: string;
-  date: string;
-  checkbox: string;
-};
+import {
+  CreateItemExtraFieldModalProp,
+  ItemExtraFieldForm,
+  ItemFieldCount,
+} from "../../types/collection.types";
 
 function CreateItemExtraFieldModal({
   setVisible,
   visible,
   collection,
-}: ModalPropType) {
+}: CreateItemExtraFieldModalProp) {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FormFieldType>({});
+  } = useForm<ItemExtraFieldForm>({});
 
   const [specifyFieldCountModVisible, setSpecifyFieldCountModVisible] =
     useState<boolean>(false);
-  const [itemFieldCount, setItemFieldCount] = useState<ItemFieldCountProp>({
+  const [itemFieldCount, setItemFieldCount] = useState<ItemFieldCount>({
     integer: "0",
     string: "0",
     textare: "0",
@@ -79,7 +60,7 @@ function CreateItemExtraFieldModal({
     { name: "Checkbox field", field: "checkbox" },
   ];
 
-  const createExtraItemFieldApi = (body: FormFieldType) => {
+  const createExtraItemFieldApi = (body: ItemExtraFieldForm) => {
     setSaveLoading(true);
     api
       .post(`/item-extra-field/${collection._id}`, body)
@@ -94,7 +75,7 @@ function CreateItemExtraFieldModal({
         setSaveLoading(false);
       });
   };
-  const onSubmit = (data: FormFieldType) => {
+  const submitItemExtraFieldFrom = (data: ItemExtraFieldForm) => {
     data.collection_id = collection._id;
     createExtraItemFieldApi(data);
   };
@@ -115,7 +96,7 @@ function CreateItemExtraFieldModal({
             id="createItemField"
             component={"form"}
             className="flex flex-col gap-y-5 pt-2"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(submitItemExtraFieldFrom)}
           >
             <Controller
               control={control}

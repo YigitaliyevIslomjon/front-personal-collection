@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CollectionListType, ItemListType } from "../../pages/Home/Home";
+import { CollectionList } from "../../types/collection.types";
+import { CommentList } from "../../types/comment.types";
+import { ItemList } from "../../types/item.types";
 
 export type SearchSliceType = {
-  item: ItemListType;
-  collection: CollectionListType;
-  comment: any[];
+  item: ItemList;
+  collection: CollectionList;
+  comment: CommentList;
   url: "string";
 };
 

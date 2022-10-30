@@ -13,13 +13,7 @@ import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { useTranslation } from "react-i18next";
-
-type SignUpFormValues = {
-  email: string;
-  password: string;
-  user_name: string;
-  confirm_password?: string;
-};
+import { SignUpForm } from "../../types/user.types";
 
 function SignUp() {
   let { t } = useTranslation();
@@ -27,12 +21,12 @@ function SignUp() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<SignUpFormValues>();
+  } = useForm<SignUpForm>();
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
-  const createUserApi = (body: SignUpFormValues) => {
+  const createUserApi = (body: SignUpForm) => {
     setLoadingButton(true);
     api
       .post("/user/sign-up", body)
@@ -49,7 +43,7 @@ function SignUp() {
       });
   };
 
-  const submitSignUpForm = (data: SignUpFormValues) => {
+  const submitSignUpForm = (data: SignUpForm) => {
     delete data.confirm_password;
     createUserApi(data);
   };

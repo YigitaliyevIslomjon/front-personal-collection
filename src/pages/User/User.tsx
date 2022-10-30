@@ -11,44 +11,14 @@ import EditUserModal from "../../adminComponents/User/EditUserModal";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import delelteAlert from "../../components/SweetAlert/SweetAlert";
 import TablePagination from "@mui/material/TablePagination";
-
-export type UserTableType = {
-  user_name: string;
-  email: string;
-  status: string;
-  role: string;
-  created_at: Date;
-  updated_at: Date;
-  permissions: {
-    block: boolean;
-    view: boolean;
-  }[];
-}[];
-
-export type UserTableRowType = {
-  user_name: string;
-  email: string;
-  status: string;
-  role: string;
-  created_at: Date;
-  updated_at: Date;
-  _id: string;
-  permissions: {
-    block: boolean;
-    view: boolean;
-  }[];
-};
-
-type PagenationType = {
-  pageNumber: number;
-  pageSize: number;
-  total_page_count: number;
-  total_user_count: number;
-};
+import { UserList, UserType } from "../../types/user.types";
+import { UserPagenation } from "../../types/pagenation.types";
 
 function User() {
   const navigate = useNavigate();
-  const [userListTableData, setUserListTableData] = useState<UserTableType>([]);
+
+  const [userListTableData, setUserListTableData] = useState<UserList>([]);
+
   const [editUserModalVisible, setEditUserModalVisible] =
     useState<boolean>(false);
   const [pagenation, setPagenation] = useState({
@@ -56,10 +26,8 @@ function User() {
     pageSize: 8,
     total_page_count: 8,
     total_user_count: 8,
-  } as PagenationType);
-  const [userTableRowData, setUserTableRowData] = useState(
-    {} as UserTableRowType
-  );
+  } as UserPagenation);
+  const [userTableRowData, setUserTableRowData] = useState({} as UserType);
   const [userTableLoading, setUserTableLoading] = useState<boolean>(false);
 
   const userTableColumn: GridColDef[] = [
@@ -127,16 +95,16 @@ function User() {
     },
   ];
 
-  function editUserTableRow(data: UserTableRowType) {
+  function editUserTableRow(data: UserType) {
     setEditUserModalVisible(true);
     setUserTableRowData(data);
   }
 
-  function deleteUserTableRow(data: UserTableRowType) {
+  function deleteUserTableRow(data: UserType) {
     delelteAlert(deleteUserApi, data);
   }
 
-  function deleteUserApi(data: UserTableRowType) {
+  function deleteUserApi(data: UserType) {
     api
       .delete(`/user/${data._id}`)
       .then((res) => {

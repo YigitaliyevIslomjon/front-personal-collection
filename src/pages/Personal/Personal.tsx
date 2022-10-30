@@ -1,31 +1,15 @@
 import { useState, useEffect } from "react";
 import { Box, Button, Pagination } from "@mui/material";
-
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import CreateCollectionModal from "../../components/Collection/СreateCollectionModal";
 import api from "../../utils/api";
-
 import CollectionCard from "../../components/CollectionCard/CollectionCard";
 import HomeSearch from "../../components/Home/HomeSearch";
 import { useSelector } from "react-redux";
 import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
-
-type CollectionListType = {
-  collection_name: string;
-  user_name: string;
-  id: string;
-  path: string;
-  item_count: number;
-  topic_name: string;
-  created_at: string;
-}[];
-
-type PagenationType = {
-  pageNumber: number;
-  pageSize: number;
-  total_page_count: number;
-};
+import { CollectionList } from "../../types/collection.types";
+import { PagenationType } from "../../types/pagenation.types";
 
 function Personal() {
   const searchData = useSelector((state: any) => state.search);
@@ -39,9 +23,7 @@ function Personal() {
     total_page_count: 1,
   } as PagenationType);
 
-  const [collectionList, setCollectionList] = useState<CollectionListType | []>(
-    []
-  );
+  const [collectionList, setCollectionList] = useState<CollectionList | []>([]);
   const [collectionListLoading, setCollectionListLoading] =
     useState<boolean>(false);
   const handleOpenModal = () => {
@@ -54,17 +36,7 @@ function Personal() {
       .get("collection/list/by-user", { params: { pageNumber, pageSize } })
       .then((res) => {
         setPagenation(res.data.pagenation);
-        setCollectionList(
-          res.data.collection.map((item: any, index: any) => ({
-            collection_name: item.collection_name,
-            user_name: item.user_id.user_name,
-            id: item._id,
-            path: item.path,
-            item_count: item.item_count,
-            topic_name: item.topic_id.topic_name,
-            created_at: item.created_at,
-          }))
-        );
+        setCollectionList(res.data.collection);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -104,7 +76,7 @@ function Personal() {
       <Grid container spacing={{ xs: 2, md: 3 }} className="min-h-[400px]">
         {!collectionListLoading
           ? collectionList.map((item, index) => (
-              <Grid xs={12} sm={6} md={4} lg={3} key={item.id}>
+              <Grid xs={12} sm={6} md={4} lg={3} key={item._id}>
                 <CollectionCard data={item} />
               </Grid>
             ))

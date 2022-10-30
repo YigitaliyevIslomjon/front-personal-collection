@@ -1,21 +1,12 @@
 import { Typography, Box } from "@mui/material";
 import { Link } from "react-router-dom";
+import { ItemCollectionCardProp } from "../../types/item.types";
 
-type ItemCollectionCardType = {
-  data: {
-    collection_name: string;
-    user_name: string;
-    id: string;
-    path: string;
-    item_count: number;
-    topic_name: string;
-  };
-};
-function ItemCollectionCard({ data }: ItemCollectionCardType) {
+function ItemCollectionCard({ data }: ItemCollectionCardProp) {
   return (
     <Box className="flex flex-wrap gap-3">
       <Link
-        to={`/collection-view/${data.id}`}
+        to={`/collection-view/${data._id}`}
         className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 cursor-pointer w-full sm:w-[245px] h-[145px]"
       >
         <img
@@ -47,7 +38,7 @@ function ItemCollectionCard({ data }: ItemCollectionCardType) {
           </Typography>
           <Typography variant="body2" className="first-letter:capitalize">
             {" "}
-            {data.user_name}
+            {data.user_id.user_name}
           </Typography>
         </Box>
         <Box className="flex gap-x-1">
@@ -59,7 +50,7 @@ function ItemCollectionCard({ data }: ItemCollectionCardType) {
           </Typography>
           <Typography variant="body2" className="first-letter:capitalize">
             {" "}
-            {data.topic_name}
+            {data.topic_id.topic_name}
           </Typography>
         </Box>
         {data.item_count ? (

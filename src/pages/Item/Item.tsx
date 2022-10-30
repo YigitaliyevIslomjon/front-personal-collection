@@ -10,22 +10,8 @@ import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { ToastContainer } from "react-toastify";
 import { useTranslation } from "react-i18next";
-
-type itemListType = {
-  item_name: string;
-  collection_name: string;
-  user_name: string;
-  id: string;
-  path: string;
-  tags: string[];
-  created_at: string;
-}[];
-
-type PagenationType = {
-  pageNumber: number;
-  pageSize: number;
-  total_page_count: number;
-};
+import { ItemList } from "../../types/item.types";
+import { PagenationType } from "../../types/pagenation.types";
 
 function Item() {
   let { t } = useTranslation();
@@ -41,7 +27,9 @@ function Item() {
     pageSize: 1,
     total_page_count: 1,
   } as PagenationType);
-  const [itemList, setItemList] = useState<itemListType | []>([]);
+
+  const [itemList, setItemList] = useState<ItemList | []>([]);
+
   const [itemListLoading, setItemListLoading] = useState<boolean>(false);
   const handleOpenModal = () => {
     setCreateItemModalVisible(true);
@@ -53,16 +41,7 @@ function Item() {
       .get("item/list", { params: { pageNumber, pageSize } })
       .then((res) => {
         setPagenation(res.data.pagenation);
-        setItemList(
-          res.data.item.map((item: any) => ({
-            item_name: item?.item_name,
-            collection_name: item.collection_id?.collection_name,
-            user_name: item.user_id?.user_name,
-            id: item._id,
-            path: item.path,
-            tags: item.tags.map((item: any) => item?.tag_name),
-          }))
-        );
+        setItemList(res.data.item);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -107,8 +86,8 @@ function Item() {
       <Grid container spacing={{ xs: 2, md: 3 }} className="min-h-[400px]">
         {!itemListLoading
           ? itemList.map((item, index) => (
-              <Grid xs={12} sm={6} md={4} lg={3} key={item.id}>
-                <ItemCard data={item} key={item.id} />
+              <Grid xs={12} sm={6} md={4} lg={3} key={item._id}>
+                <ItemCard data={item} key={item._id} />
               </Grid>
             ))
           : Array(8)

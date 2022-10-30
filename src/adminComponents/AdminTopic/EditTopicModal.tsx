@@ -11,35 +11,27 @@ import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
 import api from "../../utils/api";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { EditTopicModalProp, TopicForm } from "../../types/topic.types";
 
-export type TopicFormField = {
-  topic_name: string;
-};
-
-type ModalProp = {
-  setVisible: (value: boolean) => void;
-  visible: boolean;
-  getTopicTableData: (a: number, b: number) => void;
-};
-
-function CreateCollectTopicModal({
+function EditTopicModal({
   setVisible,
   visible,
+  topicTableRowData,
   getTopicTableData,
-}: ModalProp) {
+}: EditTopicModalProp) {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<TopicFormField>();
+  } = useForm<TopicForm>();
 
-  const colseModal = () => {
+  const coloseModal = () => {
     setVisible(false);
   };
 
-  const createTopicApi = (body: TopicFormField) => {
+  const updateTopicApi = (body: TopicForm) => {
     api
-      .post("/topic", body)
+      .put(`topic/${topicTableRowData._id}`, body)
       .then((res) => {
         getTopicTableData(1, 10);
         setVisible(false);
@@ -50,13 +42,13 @@ function CreateCollectTopicModal({
       });
   };
 
-  const submitTopicForm = (data: TopicFormField) => {
-    createTopicApi(data);
+  const submitTopicForm = (data: TopicForm) => {
+    updateTopicApi(data);
   };
 
   return (
-    <Dialog onClose={colseModal} open={visible} fullWidth maxWidth="sm">
-      <DialogTitle>Create Collecation Topic</DialogTitle>
+    <Dialog onClose={coloseModal} open={visible} fullWidth maxWidth="sm">
+      <DialogTitle>Edit collecation topic</DialogTitle>
       <DialogContent>
         <Box
           id="createTopic"
@@ -67,11 +59,13 @@ function CreateCollectTopicModal({
           <Controller
             control={control}
             name="topic_name"
+            defaultValue={topicTableRowData.topic_name}
             rules={{ required: "topic is required" }}
-            render={({ field: { onChange } }) => (
+            render={({ field: { onChange, value } }) => (
               <TextField
                 size="small"
                 onChange={onChange}
+                value={value}
                 label="Topic"
                 variant="outlined"
                 error={!!errors.topic_name}
@@ -82,7 +76,7 @@ function CreateCollectTopicModal({
         </Box>
       </DialogContent>
       <DialogActions className="flex gap-x-1 pr-6 pb-3">
-        <Button variant="contained" type="button" onClick={colseModal}>
+        <Button variant="contained" type="button" onClick={coloseModal}>
           Cancel
         </Button>
         <Button variant="outlined" type="submit" form="createTopic" autoFocus>
@@ -93,4 +87,4 @@ function CreateCollectTopicModal({
   );
 }
 
-export default CreateCollectTopicModal;
+export default EditTopicModal;

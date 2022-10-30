@@ -12,24 +12,20 @@ import "./SignIn.scss";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { useTranslation } from "react-i18next";
 import { GoogleLogin } from "@react-oauth/google";
-
-type SignInFormValues = {
-  email: string;
-  password: string;
-};
+import { SigninForm } from "../../types/user.types";
 
 function SignIn() {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<SignInFormValues>();
+  } = useForm<SigninForm>();
 
   let { t } = useTranslation();
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const signInUser = (body: SignInFormValues) => {
+  const signInUser = (body: SigninForm) => {
     setLoadingButton(true);
     api
       .post("/user/login", body)
@@ -45,7 +41,7 @@ function SignIn() {
         setLoadingButton(false);
       });
   };
-  const submitSignInForm = (data: SignInFormValues) => {
+  const submitSignInForm = (data: SigninForm) => {
     signInUser(data);
   };
 

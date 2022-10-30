@@ -1,15 +1,9 @@
 import React from "react";
-import { Button, FormHelperText } from "@mui/material";
+import { Box, Button, FormHelperText } from "@mui/material";
 import ImageUploading, { ImageListType } from "react-images-uploading";
+import { UploadImageProp } from "../../types/collection.types";
 
-type UploadImageType = {
-  setImages: any;
-  images: any;
-  onChange: any;
-  errors: any;
-};
-
-function UploadImage({ setImages, images, onChange, errors }: UploadImageType) {
+function UploadImage({ setImages, images, onChange, errors }: UploadImageProp) {
   const onChangeImg = (
     imageList: ImageListType,
     addUpdateIndex: number[] | undefined
@@ -28,8 +22,8 @@ function UploadImage({ setImages, images, onChange, errors }: UploadImageType) {
       maxNumber={1}
     >
       {({ imageList, onImageUpload, onImageRemoveAll, dragProps }) => (
-        <div className="flex flex-col gap-y-2 items-start w-full">
-          <div className="uplaod_img h-[220px] w-full sm:w-[260px] md:w-[330px] md:h-[220px]">
+        <Box className="flex flex-col gap-y-2 items-start w-full">
+          <Box className="uplaod_img h-[220px] w-full sm:w-[260px] md:w-[330px] md:h-[220px]">
             {imageList.map((image, index) => (
               <img
                 key={image.dataURL}
@@ -38,7 +32,7 @@ function UploadImage({ setImages, images, onChange, errors }: UploadImageType) {
                 className="object-cover  w-full h-full"
               />
             ))}
-          </div>
+          </Box>
           <FormHelperText className="text-red-500">
             {errors.img && errors.img.message}
           </FormHelperText>
@@ -64,7 +58,7 @@ function UploadImage({ setImages, images, onChange, errors }: UploadImageType) {
               remove image
             </Button>
           ) : null}
-        </div>
+        </Box>
       )}
     </ImageUploading>
   );

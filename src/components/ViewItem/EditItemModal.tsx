@@ -14,8 +14,6 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
 import api from "../../utils/api";
-import { ItemDataType } from "../../pages/ViewItem/ViewItem";
-import { ItemExtraFieldListType, ItemFormTypes } from "../Item/CreateItemModal";
 import { imgURlToFile } from "../Collection/ConvertImgURltoFile";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -26,48 +24,43 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import UploadImage from "../Collection/UploadImage";
 import CircularProgress from "@mui/material/CircularProgress";
-
-type ModalProp = {
-  setVisible: (value: boolean) => void;
-  visible: boolean;
-  itemId: string | undefined;
-  getItemDataByIdApi: (a: number, b: number) => void;
-};
-
-type CollectionListType = {
-  collection_name: string;
-  _id: string;
-}[];
+import {
+  EditItemModalProp,
+  ItemExtraFieldType,
+  ItemForm,
+  ItemType,
+  Tag,
+  TagMapList,
+} from "../../types/item.types";
+import { CollectionList, ImageType } from "../../types/collection.types";
 
 function EditItemModal({
   setVisible,
   visible,
   itemId,
   getItemDataByIdApi,
-}: ModalProp) {
+}: EditItemModalProp) {
   const {
     handleSubmit,
     control,
     reset,
     formState: { errors },
-  } = useForm<ItemFormTypes>();
+  } = useForm<ItemForm>();
 
-  const [images, setImages] = useState<any>([]);
-  const [tagList, setTagList] = useState([]);
-  const [itemData, setItemData] = useState({} as ItemDataType);
-  const [collectionList, setCollectionList] = useState(
-    [] as CollectionListType
-  );
+  const [images, setImages] = useState<ImageType>([]);
+  const [tagList, setTagList] = useState<TagMapList>([]);
+  const [itemData, setItemData] = useState({} as ItemType);
+  const [collectionList, setCollectionList] = useState([] as CollectionList);
 
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const [itemExtraField, setItemExtraField] = useState(
-    {} as ItemExtraFieldListType
+    {} as ItemExtraFieldType
   );
   const [itemExtraFieldDefValue, setItemExtraFieldDefValue] = useState(
-    {} as ItemExtraFieldListType
+    {} as ItemExtraFieldType
   );
-  const [decitionItemField, setDesctionItemField] = useState(true);
+  const [decitionItemField, setDesctionItemField] = useState<boolean>(true);
 
   const handleClose = () => {
     setVisible(false);
@@ -77,18 +70,14 @@ function EditItemModal({
     api
       .get("collection/list")
       .then((res) => {
-        setCollectionList(
-          res.data.map((item: any) => ({
-            collection_name: item.collection_name,
-            _id: item._id,
-          }))
-        );
+        setCollectionList(res.data);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
       });
   };
 
+  // becouse of tsx problem, given any type
   const editItemApi = (body: any) => {
     setSaveLoading(true);
     api
@@ -111,8 +100,7 @@ function EditItemModal({
     api
       .get("tag/list")
       .then((res) => {
-        let tagList = res.data.map((item: any) => item.tag_name);
-
+        let tagList = res.data.map((item: Tag) => item.tag_name);
         setTagList(tagList);
       })
       .catch((err) => {
@@ -142,8 +130,9 @@ function EditItemModal({
         });
     }
   };
+  // becouse of tsx problem, given any type
 
-  const onSubmit = (data: any) => {
+  const submitItemForm = (data: any) => {
     data.img = images[0].file;
     data.collection_id = data.collection_id._id;
     let form_data = new FormData();
@@ -164,11 +153,8 @@ function EditItemModal({
       .then((res) => {
         setItemExtraFieldDefValue(res.data.item_extra_field);
         setItemExtraField(res.data.item_extra_field);
-
-        let item = res.data.item;
-        item.tags = item.tags.map((tag: any) => tag.tag_name);
-        setItemData(item);
-        imgURlToFile(item.path, setImages);
+        setItemData(res.data.item);
+        imgURlToFile(res.data.item.path, setImages);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -187,9 +173,6 @@ function EditItemModal({
         setVisible(false);
       }}
       open={visible}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-      fullWidth
       maxWidth="lg"
       PaperProps={{
         sx: {
@@ -207,7 +190,7 @@ function EditItemModal({
             component={"form"}
             className="flex flex-col gap-y-5 pt-2"
             encType="multipart/form-data"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(submitItemForm)}
           >
             <Box>
               <Grid container spacing={2}>
@@ -290,7 +273,9 @@ function EditItemModal({
                   <Controller
                     control={control}
                     name="tags"
-                    defaultValue={itemData?.tags}
+                    defaultValue={itemData?.tags.map(
+                      (tag: Tag) => tag.tag_name
+                    )}
                     render={({ field: { onChange, value } }) => (
                       <Autocomplete
                         value={value}

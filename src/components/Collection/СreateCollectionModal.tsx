@@ -21,44 +21,29 @@ import UploadImage from "./UploadImage";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Skeleton from "@mui/material/Skeleton";
-
-export type CollectionFormFieldType = {
-  collection_name: string;
-  description: string;
-  topic_id: string;
-  img: {
-    dataUrl: string;
-    file: any[];
-  }[];
-  file?: any;
-  mark_down: boolean;
-};
-type ModalProp = {
-  setVisible: (value: boolean) => void;
-  visible: boolean;
-  getCollectionListApi: (a: number, b: number) => void;
-};
-type TopicListType = {
-  topic_name: string;
-  _id: string;
-}[];
+import {
+  CollectionForm,
+  CreateCollectionModalProp,
+  ImageType,
+} from "../../types/collection.types";
+import { TopicList } from "../../types/topic.types";
 
 function CreateCollectionModal({
   setVisible,
   visible,
   getCollectionListApi,
-}: ModalProp) {
+}: CreateCollectionModalProp) {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<CollectionFormFieldType>();
+  } = useForm<CollectionForm>();
 
   const [markDownContent, setMarkDownContent] = useState<string>("");
   const [markDown, setMarkDown] = useState<boolean>(false);
-  const [topicList, setTopicList] = useState([] as TopicListType);
+  const [topicList, setTopicList] = useState([] as TopicList);
   const [topicListLoading, setTopicListLoading] = useState<boolean>(false);
-  const [images, setImages] = React.useState([]);
+  const [images, setImages] = useState<ImageType>([]);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const closeModal = () => {
@@ -99,7 +84,7 @@ function CreateCollectionModal({
   };
 
   //  becouse of tsx problem , given any type
-  const onSubmit = (data: any) => {
+  const submitCollectionForm = (data: any) => {
     data.img = data.img[0].file;
     let form_data = new FormData();
 
@@ -136,7 +121,7 @@ function CreateCollectionModal({
           component={"form"}
           className="flex flex-col gap-y-5 pt-2"
           encType="multipart/form-data"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(submitCollectionForm)}
         >
           <Box>
             <Grid container spacing={2}>

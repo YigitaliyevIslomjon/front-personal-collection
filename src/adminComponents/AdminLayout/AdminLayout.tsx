@@ -52,7 +52,7 @@ function AdminLayout() {
       <List>
         {[
           { title: "Users", icon: <People />, link: "user" },
-          { title: "Collection", icon: <People />, link: "collection" },
+          { title: "Topic", icon: <People />, link: "topic" },
         ].map((text, index) => (
           <NavLink className="no-underline" key={index} to={text.link}>
             <ListItem key={text.title} disablePadding>

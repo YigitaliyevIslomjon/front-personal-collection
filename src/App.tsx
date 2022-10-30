@@ -10,7 +10,7 @@ import AuthLayout from "./components/AuthLayout/AuthLayout";
 import AdminSignIn from "./pages/AdminSignIn/AdminSignIn";
 import Collection from "./pages/Collection/Collection";
 import Item from "./pages/Item/Item";
-import AdminCollection from "./pages/AdminCollection/AdminCollection";
+import AdminCollection from "./pages/AdminTopic/AdminTopic";
 import ViewCollection from "./pages/ViewCollection/ViewCollection";
 import ViewItem from "./pages/ViewItem/ViewItem";
 import Home from "./pages/Home/Home";
@@ -71,7 +71,7 @@ function App() {
 
             <Route path="/admin" element={<AdminLayout />}>
               <Route path="user" element={<User />} />
-              <Route path="collection" element={<AdminCollection />} />
+              <Route path="topic" element={<AdminCollection />} />
               <Route path="*" element={<div>Not found</div>} />
             </Route>
           </Routes>

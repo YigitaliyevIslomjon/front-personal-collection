@@ -27,9 +27,12 @@ import HomeIcon from "@mui/icons-material/Home";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import VideoLabelIcon from "@mui/icons-material/VideoLabel";
 import CollectionsIcon from "@mui/icons-material/Collections";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+
 type MobileMenuType = {
   fullTextSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
+
 function MobileMenu({ fullTextSearch }: MobileMenuType) {
   const { t } = useTranslation();
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -91,20 +94,11 @@ function MobileMenu({ fullTextSearch }: MobileMenuType) {
             />
           </Search>
           <List>
-            <ListItem disablePadding onClick={handleDrawerClose}>
+            {Object.keys(loginUser).length > 0 ? <>
+              <ListItem disablePadding onClick={handleDrawerClose}>
               <ListItemButton>
                 <ListItemIcon>
-                  <IconButton
-                    onClick={colorMode.toggleColorMode}
-                    color="inherit"
-                    className="pl-0"
-                  >
-                    {theme.palette.mode === "dark" ? (
-                      <LightModeIcon />
-                    ) : (
-                      <Brightness3Icon />
-                    )}
-                  </IconButton>
+                  <AccountBoxIcon />
                 </ListItemIcon>
                 <ListItemText
                   primary={
@@ -121,6 +115,39 @@ function MobileMenu({ fullTextSearch }: MobileMenuType) {
                 />
               </ListItemButton>
             </ListItem>
+            <ListItem disablePadding onClick={handleDrawerClose}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <IconButton
+                  
+                    color="inherit"
+                    className="pl-0"
+                  >
+                    {theme.palette.mode === "dark" ? (
+                      <LightModeIcon />
+                    ) : (
+                      <Brightness3Icon />
+                    )}
+                  </IconButton>
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                      <Typography
+                      onClick={colorMode.toggleColorMode}
+                        variant="body1"
+                        className="capitalize mr-1"
+                        color="textPrimary"
+                      >
+                        {theme.palette.mode === "dark" ? "lignt" : "dark" }
+                      </Typography>
+                    
+                  }
+                />
+              </ListItemButton>
+            </ListItem>
+            </> : null}
+      
+          
             {pages.map((page, index) => {
               if (page.title === "personal") {
                 if (loginUser.role) {

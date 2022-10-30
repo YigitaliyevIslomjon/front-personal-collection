@@ -21,61 +21,29 @@ import UploadImage from "./UploadImage";
 import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 import LoadingButton from "@mui/lab/LoadingButton";
 import CircularProgress from "@mui/material/CircularProgress";
-
-export type ColletionFormField = {
-  collection_name: string;
-  description: string;
-  topic_id: {
-    topic_name: string;
-    _id: string;
-  };
-  img: string;
-  file?: any;
-  mark_down: boolean;
-};
-
-type ModalProp = {
-  setVisible: (value: boolean) => void;
-  visible: boolean;
-  collection: {
-    collection_name: string;
-    description: string;
-    mark_down: boolean;
-    path: string;
-    topic_id: {
-      topic_name: string;
-      _id: string;
-    };
-    user_id: {
-      user_name: string;
-      _id: string;
-    };
-    _id: string;
-  };
-  getCollectionByIdApi: () => void;
-};
-
-type TopicListType = {
-  topic_name: string;
-  _id: string;
-}[];
+import {
+  CollectionForm,
+  EditCollectionModalProp,
+  ImageType,
+} from "../../types/collection.types";
+import { TopicList } from "../../types/topic.types";
 
 function EditCollectionModal({
   setVisible,
   visible,
   collection,
   getCollectionByIdApi,
-}: ModalProp) {
+}: EditCollectionModalProp) {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<ColletionFormField>();
+  } = useForm<CollectionForm>();
 
   const [markDownContent, setMarkDownContent] = useState<string>("");
   const [markDown, setMarkDown] = useState<boolean>(false);
-  const [topicList, setTopicList] = useState([] as TopicListType);
-  const [images, setImages] = useState<any>([]);
+  const [topicList, setTopicList] = useState([] as TopicList);
+  const [images, setImages] = useState<ImageType>([]);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const handleClose = () => {
@@ -93,6 +61,7 @@ function EditCollectionModal({
       });
   };
 
+  //  becouse of tsx problem , given any type
   const editColleactionApi = (body: any) => {
     setSaveLoading(true);
     api
@@ -110,7 +79,8 @@ function EditCollectionModal({
       });
   };
 
-  const onSubmit = (data: any) => {
+  //  becouse of tsx problem , given any type
+  const submitCollectionForm = (data: any) => {
     data.img = images[0].file;
     data.topic_id = data.topic_id._id;
     let form_data = new FormData();
@@ -153,7 +123,7 @@ function EditCollectionModal({
             component={"form"}
             className="flex flex-col gap-y-5 pt-2"
             encType="multipart/form-data"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(submitCollectionForm)}
           >
             <Box>
               <Grid container spacing={2}>

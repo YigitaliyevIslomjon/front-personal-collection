@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import { DataGrid, GridColDef, GridValidRowModel } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -13,26 +12,12 @@ import delelteAlert from "../../components/SweetAlert/SweetAlert";
 import EditItemModal from "../../components/ViewItem/EditItemModal";
 import CreateItemModal from "../../components/Item/CreateItemModal";
 import TablePagination from "@mui/material/TablePagination";
-
-type ItemListType = {
-  item_name: string;
-  collection_name: string;
-  user_name: string;
-  id: string;
-  path: string;
-  tags: string[];
-}[];
-
-type PagenationType = {
-  pageNumber: number;
-  pageSize: number;
-  total_page_count: number;
-  total_item_count: number;
-};
+import { ItemPagenation } from "../../types/pagenation.types";
+import { ItemListTable, ItemType, Tag } from "../../types/item.types";
 
 function CollectionItemTable() {
   let { id } = useParams();
-  const [itemListTableData, setItemListTableData] = useState<ItemListType>([]);
+  const [itemListTableData, setItemListTableData] = useState<ItemListTable>([]);
   const [itemTableLoading, setItemTableLoading] = useState<boolean>(false);
   const [itemId, setItemId] = useState<string>("");
   const [editItemModalVisible, setEditItemModalVisible] =
@@ -118,7 +103,7 @@ function CollectionItemTable() {
     pageSize: 8,
     total_page_count: 8,
     total_item_count: 8,
-  } as PagenationType);
+  } as ItemPagenation);
 
   function editItemTableRow(id: string) {
     setEditItemModalVisible(true);
@@ -157,14 +142,15 @@ function CollectionItemTable() {
       })
       .then((res) => {
         setPagenation(res.data.pagenation);
+        res.data.item.tags = res.data.item.tags.map((tag: Tag) => tag.tag_name);
         setItemListTableData(
-          res.data.item.map((item: any, index: number) => ({
+          res.data.item.map((item: ItemType, index: number) => ({
             item_name: item.item_name,
             collection_name: item.collection_id.collection_name,
             user_name: item.user_id.user_name,
             id: item._id,
             path: item.path,
-            tags: item.tags.map((item: any) => item.tag_name),
+            tags: item.tags,
             order: index + 1,
           }))
         );
@@ -196,8 +182,6 @@ function CollectionItemTable() {
     getItemListByCollectionIdApi(1, 7);
     // eslint-disable-next-line
   }, []);
-
-
 
   return (
     <Box>

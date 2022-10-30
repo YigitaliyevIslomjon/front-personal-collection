@@ -1,22 +1,13 @@
 import { Typography, Box } from "@mui/material";
-import React from "react";
 import { Link } from "react-router-dom";
+import { CollectionItemCardProp } from "../../types/collection.types";
+import { Tag } from "../../types/item.types";
 
-type CollectionItemCardType = {
-  data: {
-    item_name: string;
-    collection_name: string;
-    user_name: string;
-    id: string;
-    path: string;
-    tags: string[];
-  };
-};
-function CollectionItemCard({ data }: CollectionItemCardType) {
+function CollectionItemCard({ data }: CollectionItemCardProp) {
   return (
     <Box className="flex flex-wrap gap-3">
       <Link
-        to={`/item-view/${data.id}`}
+        to={`/item-view/${data._id}`}
         className="border-2 border-solid border-indigo-100 rounded p-2 pb-1 cursor-pointer w-full sm:w-[245px] h-[145px]"
       >
         <img
@@ -45,7 +36,7 @@ function CollectionItemCard({ data }: CollectionItemCardType) {
             collection :{" "}
           </Typography>
           <Typography variant="body2" className="first-letter:capitalize">
-            {data.collection_name}
+            {data.collection_id?.collection_name}
           </Typography>
         </Box>
         <Box className="flex gap-x-1">
@@ -56,7 +47,7 @@ function CollectionItemCard({ data }: CollectionItemCardType) {
             auther :{" "}
           </Typography>
           <Typography variant="body2" className="first-letter:capitalize">
-            {data?.user_name}
+            {data.user_id?.user_name}
           </Typography>
         </Box>
         <Box className="flex gap-x-1">
@@ -70,8 +61,8 @@ function CollectionItemCard({ data }: CollectionItemCardType) {
             variant="body2"
             className="first-letter:capitalize flex gap-2 flex-wrap"
           >
-            {data?.tags.map((tag) => (
-              <Box>{tag}</Box>
+            {data?.tags.map((tag: Tag) => (
+              <Box key={tag._id}>{tag.tag_name}</Box>
             ))}
           </Typography>
         </Box>

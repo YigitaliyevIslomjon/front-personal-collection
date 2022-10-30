@@ -24,59 +24,37 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import UploadImage from "../Collection/UploadImage";
 import Skeleton from "@mui/material/Skeleton";
+import {
+  CreateItemModalProp,
+  ItemExtraFieldType,
+  ItemForm,
+  Tag,
+  TagMapList,
+} from "../../types/item.types";
+import { CollectionList, ImageType } from "../../types/collection.types";
 
-export type ItemFormTypes = {
-  collection_id: {
-    collection_name: string;
-    _id: string;
-  };
-  item_name: string;
-  tags: any[];
-  img: string;
-  int_field: { [key: string]: string }[];
-  str_field: { [key: string]: string }[];
-  textare_field: { [key: string]: string }[];
-  checkbox_field: { [key: string]: boolean }[];
-  date_field: { [key: string]: string }[];
-};
-type ModalProp = {
-  setVisible: (value: boolean) => void;
-  visible: boolean;
-  getItemListApi: (a: number, b: number) => void;
-};
-type CollectionListType = {
-  collection_name: string;
-  _id: string;
-}[];
-
-export type ItemExtraFieldListType = {
-  int_field: { [key: string]: string }[];
-  str_field: { [key: string]: string }[];
-  textare_field: { [key: string]: string }[];
-  checkbox_field: { [key: string]: boolean }[];
-  date_field: { [key: string]: string }[];
-};
-
-function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
+function CreateItemModal({
+  setVisible,
+  visible,
+  getItemListApi,
+}: CreateItemModalProp) {
   const {
     handleSubmit,
     control,
     reset,
     formState: { errors },
-  } = useForm<ItemFormTypes>();
+  } = useForm<ItemForm>();
 
-  const [images, setImages] = React.useState([]);
-  const [tagList, setTagList] = useState([]);
+  const [images, setImages] = useState<ImageType>([]);
+  const [tagList, setTagList] = useState<TagMapList>([]);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [collectionListLoading, setCollectionListLoading] =
     useState<boolean>(false);
   const [tagListLoading, setTagListLoading] = useState<boolean>(false);
-  const [collectionList, setCollectionList] = useState(
-    [] as CollectionListType
-  );
+  const [collectionList, setCollectionList] = useState([] as CollectionList);
 
   const [itemExtraFieldList, setItemExtraFieldList] = useState(
-    {} as ItemExtraFieldListType
+    {} as ItemExtraFieldType
   );
 
   const handleClose = () => {
@@ -126,7 +104,7 @@ function CreateItemModal({ setVisible, visible, getItemListApi }: ModalProp) {
     api
       .get("tag/list")
       .then((res) => {
-        let tagList = res.data.map((item: any) => item.tag_name);
+        let tagList = res.data.map((item: Tag) => item.tag_name);
         setTagList(tagList);
       })
       .catch((err) => {

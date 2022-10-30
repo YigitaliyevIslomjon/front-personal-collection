@@ -10,7 +10,11 @@ function Layout() {
       className="flex flex-col"
     >
       <Navbar />
-      <Container maxWidth="xl" className="px-14 py-7 sm:py-7 md:py-9">
+      <Container
+        maxWidth="xl"
+        className="px-14 py-7 sm:py-7 md:py-9"
+        sx={{ bgcolor: "background.default", color: "text.primary" }}
+      >
         <Outlet />
       </Container>
       <Footer />

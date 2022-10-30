@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   Button,
@@ -12,20 +11,9 @@ import {
 import { Link } from "react-router-dom";
 import moment from "moment";
 import "./CollectionCard.scss";
+import { CollectionCardProp } from "../../types/collection.types";
 
-export type CollectionCardType = {
-  data: {
-    collection_name: string;
-    user_name: string;
-    id: string;
-    path: string;
-    item_count: number;
-    topic_name: string;
-    created_at: string;
-  };
-};
-
-function CollectionCard({ data }: CollectionCardType) {
+function CollectionCard({ data }: CollectionCardProp) {
   return (
     <Box
       id="collection-card"
@@ -76,7 +64,7 @@ function CollectionCard({ data }: CollectionCardType) {
                 component="span"
                 className="first-letter:capitalize"
               >
-                {data.user_name}
+                {data.user_id?.user_name}
               </Typography>
             </Box>
             <Box className="flex gap-x-2">
@@ -94,7 +82,7 @@ function CollectionCard({ data }: CollectionCardType) {
                 component="span"
                 className="first-letter:capitalize"
               >
-                {data.topic_name}
+                {data.topic_id.topic_name}
               </Typography>
             </Box>
             {data.item_count ? (
@@ -134,7 +122,7 @@ function CollectionCard({ data }: CollectionCardType) {
         </CardActionArea>
         <CardActions>
           <Link
-            to={`/collection-view/${data.id}`}
+            to={`/collection-view/${data._id}`}
             className="underline-offset-2"
           >
             <Button size="small" color="primary" onClick={() => {}}>
