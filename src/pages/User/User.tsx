@@ -110,9 +110,9 @@ function User() {
       .then((res) => {
         toastifyMessage({});
         if (res.data.isInValidUser) {
-          navigate("/sign/in/admin");
-          localStorage.removeItem("admin_token");
-          localStorage.removeItem("admin_user");
+          navigate("/");
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("user");
         }
         getUserList(1, 7);
       })
