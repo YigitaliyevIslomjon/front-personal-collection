@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Avatar, Grid, Box } from "@mui/material";
+import { Avatar, Grid, Box, Button } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useForm, Controller } from "react-hook-form";
@@ -11,8 +11,11 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import "./SignIn.scss";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { useTranslation } from "react-i18next";
+import { SigninForm, UserType } from "../../types/user.types";
+import jwt_decode from "jwt-decode";
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import { GoogleLogin } from "@react-oauth/google";
-import { SigninForm } from "../../types/user.types";
+import FacebookIcon from "@mui/icons-material/Facebook";
 
 function SignIn() {
   const {
@@ -25,14 +28,18 @@ function SignIn() {
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const navigate = useNavigate();
 
+  const storeUserAndNavigate = (data: { user: UserType; token: string }) => {
+    localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("access_token", data.token);
+    navigate("/");
+  };
+
   const signInUser = (body: SigninForm) => {
     setLoadingButton(true);
     api
       .post("/user/login", body)
       .then((res) => {
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        localStorage.setItem("access_token", res.data.token);
-        navigate("/");
+        storeUserAndNavigate(res.data);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -45,15 +52,32 @@ function SignIn() {
     signInUser(data);
   };
 
-  <GoogleLogin
-    onSuccess={(credentialResponse) => {
-      console.log(credentialResponse);
-    }}
-    onError={() => {
-      console.log("Login Failed");
-    }}
-  />;
+  const loginUserByGoogleApi = (data: { user_name: string; email: string }) => {
+    api
+      .post("user/socil/login", data)
+      .then((res) => {
+        storeUserAndNavigate(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
+  const responseFacebook = (response: any) => {
+    api.get("/", response);
+    const { email, name }: { email: string; name: string } = response;
+    loginUserByGoogleApi({ user_name: name, email });
+  };
+
+  const responseGoogle = (response: any) => {
+    const { email, name }: { email: string; name: string } = jwt_decode(
+      response.credential
+    );
+    loginUserByGoogleApi({ user_name: name, email });
+  };
+  const responseGoogleError = () => {
+    console.log("failed arror");
+  };
   return (
     <div className="flex justify-center items-center h-full">
       <Box
@@ -133,6 +157,7 @@ function SignIn() {
               />
             )}
           />
+
           <LoadingButton
             type="submit"
             loading={loadingButton}
@@ -143,7 +168,28 @@ function SignIn() {
           >
             {t("signin")}
           </LoadingButton>
-          <Grid container>
+          <Box className="flex gap-2 flex-wrap">
+            <GoogleLogin
+              onSuccess={responseGoogle}
+              onError={responseGoogleError}
+              type="icon"
+            />
+            <FacebookLogin
+              appId="525126759045460"
+              fields="name,email,picture"
+              callback={responseFacebook}
+              render={(renderProps: any) => (
+                <Button
+                  key={"new"}
+                  variant="outlined"
+                  className="px-[7px] min-w-0"
+                >
+                  <FacebookIcon onClick={renderProps.onClick} />
+                </Button>
+              )}
+            />
+          </Box>
+          <Grid container className="mt-3">
             <Grid item xs>
               {t("no-account")}
             </Grid>

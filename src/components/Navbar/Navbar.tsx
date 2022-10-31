@@ -13,7 +13,7 @@ import {
   Container,
   Select,
 } from "@mui/material";
-
+import { googleLogout } from "@react-oauth/google";
 import SearchIcon from "@mui/icons-material/Search";
 import { ColorModeContext } from "../../App";
 import { useTheme } from "@mui/material/styles";
@@ -67,6 +67,7 @@ function Navbar() {
     if (url === "/") {
       localStorage.removeItem("access_token");
       localStorage.removeItem("user");
+      googleLogout();
     }
   };
 

@@ -130,7 +130,7 @@ function CreateItemModal({
       });
   };
 
-  const onSubmit = (data: any) => {
+  const submitItemForm = (data: any) => {
     data.img = data.img[0].file;
     data.collection_id = data.collection_id._id;
     let form_data = new FormData();
@@ -174,7 +174,7 @@ function CreateItemModal({
           component={"form"}
           className="flex flex-col gap-y-5 pt-2"
           encType="multipart/form-data"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(submitItemForm)}
         >
           <Box>
             <Grid container spacing={2}>
