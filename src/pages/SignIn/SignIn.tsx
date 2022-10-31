@@ -13,7 +13,6 @@ import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyN
 import { useTranslation } from "react-i18next";
 import { SigninForm, UserType } from "../../types/user.types";
 import jwt_decode from "jwt-decode";
-// import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import { GoogleLogin } from "@react-oauth/google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import FacebookLogin from "@greatsumini/react-facebook-login";
@@ -63,11 +62,11 @@ function SignIn() {
       });
   };
 
-  // const responseFacebook = (response: any) => {
-  //   api.get("/", response);
-  //   const { email, name }: { email: string; name: string } = response;
-  //   loginUserByGoogleApi({ user_name: name, email });
-  // };
+  const responseFacebook = (response: any) => {
+    console.log("rs", response);
+    const { email, name }: { email: string; name: string } = response;
+    loginUserByGoogleApi({ user_name: name, email });
+  };
 
   const responseGoogle = (response: any) => {
     const { email, name }: { email: string; name: string } = jwt_decode(
@@ -176,15 +175,10 @@ function SignIn() {
             />
             <FacebookLogin
               appId="525126759045460"
-              onSuccess={(response) => {
-                console.log("Login Success!", response);
-              }}
               onFail={(error) => {
                 console.log("Login Failed!", error);
               }}
-              onProfileSuccess={(response) => {
-                console.log("Get Profile Success!", response);
-              }}
+              onProfileSuccess={responseFacebook}
               render={({ onClick }) => (
                 <Button
                   key={"new"}
@@ -195,21 +189,6 @@ function SignIn() {
                 </Button>
               )}
             />
-
-            {/* <FacebookLogin
-              appId="525126759045460"
-              fields="name,email,picture"
-              callback={responseFacebook}
-              render={(renderProps: any) => (
-                <Button
-                  key={"new"}
-                  variant="outlined"
-                  className="px-[7px] min-w-0"
-                >
-                  <FacebookIcon onClick={renderProps.onClick} />
-                </Button>
-              )}
-            /> */}
           </Box>
           <Grid container className="mt-3">
             <Grid item xs>
