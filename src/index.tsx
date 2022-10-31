@@ -28,7 +28,7 @@ root.render(
       <StyledEngineProvider injectFirst>
         <BrowserRouter>
           <React.Suspense fallback={fallback}>
-            <GoogleOAuthProvider clientId="27936494952-6cgdv5us3p90poajtnpbl309j9ruqbqu.apps.googleusercontent.com">
+            <GoogleOAuthProvider clientId="27936494952-huat9ne9b00mqgkr962sfqj3239f5edv.apps.googleusercontent.com">
               <App />
             </GoogleOAuthProvider>
           </React.Suspense>
