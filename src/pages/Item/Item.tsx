@@ -68,7 +68,7 @@ function Item() {
   }
 
   return (
-    <Box className="mb-4">
+    <Box className="mb-12">
       <Box className="flex justify-between mb-5">
         <Typography variant="h6" className="text-base sm:text-xl">
           {t("allItems")}

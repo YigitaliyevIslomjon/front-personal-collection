@@ -127,7 +127,7 @@ function Home() {
   }
 
   return (
-    <Box id="home" className="flex flex-col">
+    <Box id="home" className="flex flex-col mb-10">
       <Box className="flex justify-between items-center mb-4 mt-5">
         <Typography variant="h6" className="text-base sm:text-xl">
           {t("largeCollections")}
