@@ -63,7 +63,7 @@ function Personal() {
   }
 
   return (
-    <Box className="mb-12">
+    <Box className="mb-10">
       <Box className="flex justify-end mb-5">
         <Button
           onClick={handleOpenModal}

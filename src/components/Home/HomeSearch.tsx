@@ -22,14 +22,18 @@ import { CollectionType } from "../../types/collection.types";
 function HomeSearch() {
   let { t } = useTranslation();
   const dispatch = useDispatch();
+ 
   let searchItemList: ItemList = useSelector((state: any) => state.search.item);
+  
   let searchCollectionList = useSelector(
     (state: any) => state.search.collection
   );
+
   let searchCommentList = useSelector((state: any) => state.search.comment);
   const clearTagFilter = () => {
     dispatch(setSerachItemList([]));
   };
+
   return (
     <Box className="mb-20 min-h-[400px]">
       {searchCollectionList.length > 0 ? (
