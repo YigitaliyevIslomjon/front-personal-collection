@@ -95,6 +95,22 @@ function User() {
     },
   ];
 
+  const getUserList = (pageNumber: number, pageSize: number) => {
+    setUserTableLoading(true);
+    api
+      .get("user", { params: { pageNumber, pageSize } })
+      .then((res) => {
+        setUserListTableData(res.data.user);
+        setPagenation(res.data.pagenation);
+      })
+      .catch((err) => {
+        toastifyMessage({ type: "error", message: err.response.data.error });
+      })
+      .finally(() => {
+        setUserTableLoading(false);
+      });
+  };
+
   function editUserTableRow(data: UserType) {
     setEditUserModalVisible(true);
     setUserTableRowData(data);
@@ -120,22 +136,6 @@ function User() {
         toastifyMessage({ type: "error", message: err.response.data.error });
       });
   }
-
-  const getUserList = (pageNumber: number, pageSize: number) => {
-    setUserTableLoading(true);
-    api
-      .get("user", { params: { pageNumber, pageSize } })
-      .then((res) => {
-        setUserListTableData(res.data.user);
-        setPagenation(res.data.pagenation);
-      })
-      .catch((err) => {
-        toastifyMessage({ type: "error", message: err.response.data.error });
-      })
-      .finally(() => {
-        setUserTableLoading(false);
-      });
-  };
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
