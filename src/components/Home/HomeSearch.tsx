@@ -15,7 +15,9 @@ import ItemCard from "../ItemCard/ItemCard";
 import CloseIcon from "@mui/icons-material/Close";
 import { setSerachItemList } from "../../store/slice/searchSlice";
 import { useTranslation } from "react-i18next";
-import { ItemList } from "../../types/item.types";
+import { ItemType, ItemList } from "../../types/item.types";
+import { Comment } from "../../types/comment.types";
+import { CollectionType } from "../../types/collection.types";
 
 function HomeSearch() {
   let { t } = useTranslation();
@@ -38,8 +40,8 @@ function HomeSearch() {
         </Box>
       ) : null}
       <Grid container spacing={{ xs: 4, md: 3 }}>
-        {searchCollectionList.map((item: any) => (
-          <Grid xs={12} sm={6} md={3} key={item.id}>
+        {searchCollectionList.map((item: CollectionType) => (
+          <Grid xs={12} sm={6} md={3} key={item._id}>
             <CollectionCard data={item} />
           </Grid>
         ))}
@@ -60,8 +62,8 @@ function HomeSearch() {
         </Box>
       ) : null}
       <Grid container spacing={{ xs: 4, md: 3 }}>
-        {searchItemList.map((item: any) => (
-          <Grid xs={12} sm={6} md={3} key={item.id}>
+        {searchItemList.map((item: ItemType) => (
+          <Grid xs={12} sm={6} md={3} key={item._id}>
             <ItemCard data={item} />
           </Grid>
         ))}
@@ -74,8 +76,8 @@ function HomeSearch() {
         </Box>
       ) : null}
       <Grid container spacing={{ xs: 4, md: 3 }}>
-        {searchCommentList.map((item: any) => (
-          <Grid xs={12} sm={6} md={3} key={item.id}>
+        {searchCommentList.map((item: Comment) => (
+          <Grid xs={12} sm={6} md={3} key={item._id}>
             <Box className="border-2 border-solid border-indigo-100 rounded p-2">
               <Card className="h-full">
                 <CardActionArea>
@@ -86,7 +88,7 @@ function HomeSearch() {
                       </Typography>
 
                       <Link
-                        to={`item-view/${item.item_id}`}
+                        to={`item-view/${item.item_id._id}`}
                         className="underline-offset-2"
                       >
                         {" "}
@@ -95,7 +97,7 @@ function HomeSearch() {
                           variant="body2"
                           component="span"
                         >
-                          {item.item_name}
+                          {item.item_id?.item_name}
                         </Typography>
                       </Link>
                     </Box>
@@ -104,7 +106,7 @@ function HomeSearch() {
                         Author :
                       </Typography>
                       <Typography gutterBottom variant="body2" component="span">
-                        {item.user_name}
+                        {item.user_id?.user_name}
                       </Typography>
                     </Box>
                     <Box className="flex gap-x-2">

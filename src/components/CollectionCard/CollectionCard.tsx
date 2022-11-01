@@ -82,7 +82,7 @@ function CollectionCard({ data }: CollectionCardProp) {
                 component="span"
                 className="first-letter:capitalize"
               >
-                {data.topic_id.topic_name}
+                {data.topic_id?.topic_name}
               </Typography>
             </Box>
             {data.item_count ? (
