@@ -180,7 +180,6 @@ function SignUp() {
           <LoadingButton
             type="submit"
             loading={loadingButton}
-            loadingPosition="start"
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
             fullWidth

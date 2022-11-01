@@ -16,6 +16,7 @@ import jwt_decode from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import FacebookLogin from "@greatsumini/react-facebook-login";
+
 function SignIn() {
   const {
     handleSubmit,
@@ -27,7 +28,10 @@ function SignIn() {
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const storeUserAndNavigate = (data: { user: UserType; token: string }) => {
+  const storeUserAndTokenAndNavigate = (data: {
+    user: UserType;
+    token: string;
+  }) => {
     localStorage.setItem("user", JSON.stringify(data.user));
     localStorage.setItem("access_token", data.token);
     navigate("/");
@@ -38,7 +42,7 @@ function SignIn() {
     api
       .post("/user/login", body)
       .then((res) => {
-        storeUserAndNavigate(res.data);
+        storeUserAndTokenAndNavigate(res.data);
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
@@ -55,7 +59,7 @@ function SignIn() {
     api
       .post("user/socil/login", data)
       .then((res) => {
-        storeUserAndNavigate(res.data);
+        storeUserAndTokenAndNavigate(res.data);
       })
       .catch((err) => {
         console.log(err);

@@ -142,15 +142,15 @@ function CollectionItemTable() {
       })
       .then((res) => {
         setPagenation(res.data.pagenation);
-        res.data.item.tags = res.data.item.tags.map((tag: Tag) => tag.tag_name);
+
         setItemListTableData(
           res.data.item.map((item: ItemType, index: number) => ({
             item_name: item.item_name,
-            collection_name: item.collection_id.collection_name,
-            user_name: item.user_id.user_name,
-            id: item._id,
+            collection_name: item.collection_id?.collection_name,
+            user_name: item.user_id?.user_name,
+            id: item?._id,
             path: item.path,
-            tags: item.tags,
+            tags: item.tags.map((tag: Tag) => tag.tag_name),
             order: index + 1,
           }))
         );
