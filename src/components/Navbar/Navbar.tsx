@@ -83,43 +83,9 @@ function Navbar() {
       })
       .then((res) => {
         dispatch(setSearchUrl(res.data.searchUrl));
-        dispatch(
-          setSerachCollectionList(
-            res.data.collection.map((item: any, index: any) => ({
-              collection_name: item.collection_name,
-              user_name: item.user_id?.user_name,
-              id: item._id,
-              path: item.path,
-              item_count: item.item_count,
-              topic_name: item.topic_id?.topic_name,
-              created_at: item.created_at,
-            }))
-          )
-        );
-        dispatch(
-          setSerachItemList(
-            res.data.item.map((item: any) => ({
-              item_name: item.item_name,
-              collection_name: item.collection_id?.collection_name,
-              user_name: item.user_id?.user_name,
-              id: item._id,
-              path: item.path,
-              tags: item.tags.map((item: any) => item.tag_name),
-              created_at: item.created_at,
-            }))
-          )
-        );
-        dispatch(
-          setSerachCommentList(
-            res.data.comment.map((item: any) => ({
-              item_name: item.item_id.item_name,
-              item_id: item.item_id?._id,
-              text: item.text,
-              user_name: item.user_id?.user_name,
-              created_at: item.created_at,
-            }))
-          )
-        );
+        dispatch(setSerachCollectionList(res.data.collection));
+        dispatch(setSerachItemList(res.data.item));
+        dispatch(setSerachCommentList(res.data.comment));
       })
       .catch((err) => {
         toastifyMessage({ type: "error", message: err.response.data.error });
