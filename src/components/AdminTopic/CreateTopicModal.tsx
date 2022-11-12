@@ -10,7 +10,7 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
 import api from "../../utils/api";
-import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 import { CreateTopicModalProp, TopicForm } from "../../types/topic.types";
 
 function EditTopicModal({

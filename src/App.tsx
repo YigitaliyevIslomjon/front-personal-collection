@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import SignIn from "./pages/SignIn/SignIn";
 import SignUp from "./pages/SignUp/SignUp";
-import AdminLayout from "./adminComponents/AdminLayout/AdminLayout";
+import AdminLayout from "./components/AdminLayout/AdminLayout";
 import User from "./pages/User/User";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AuthLayout from "./components/AuthLayout/AuthLayout";

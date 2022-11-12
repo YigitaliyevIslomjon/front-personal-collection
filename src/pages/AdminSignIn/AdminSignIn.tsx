@@ -32,7 +32,6 @@ function AdminSignIn() {
       .post("/user/login/admin", body)
       .then((res) => {
         localStorage.setItem("access_token", res.data.token);
-        // localStorage.setItem("admin_token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         navigate("/admin/user");
       })

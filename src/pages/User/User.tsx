@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import EditUserModal from "../../adminComponents/User/EditUserModal";
+import EditUserModal from "../../components/User/EditUserModal";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import delelteAlert from "../../components/SweetAlert/SweetAlert";
 import TablePagination from "@mui/material/TablePagination";

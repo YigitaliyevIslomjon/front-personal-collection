@@ -3,8 +3,8 @@ import axios from "axios";
 const api = axios.create({
   baseURL:
     window.location.port === "3000"
-      ? "http://localhost:4000/api/"
-      : "https://collection-personal.herokuapp.com/api/",
+      ? process.env.REACT_APP_URL_LOCAL
+      : process.env.REACT_APP_URL,
 });
 
 // Add a request interceptor

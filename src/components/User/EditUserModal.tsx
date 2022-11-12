@@ -16,7 +16,7 @@ import { Box } from "@mui/system";
 import Grid from "@mui/material/Unstable_Grid2";
 import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
-import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
+import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { EditUserModalProp, UserForm } from "../../types/user.types";
 
