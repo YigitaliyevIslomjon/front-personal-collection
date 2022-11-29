@@ -15,14 +15,14 @@ import {
 import Grid from "@mui/material/Unstable_Grid2";
 import { Controller, useForm } from "react-hook-form";
 import { Box } from "@mui/system";
-import api from "../../utils/api";
-import { toastifyMessage } from "../ToastifyNotification/ToastifyNotification";
+import api from "../../../utils/api";
+import { toastifyMessage } from "../../../components/ToastifyNotification/ToastifyNotification";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import UploadImage from "../Collection/UploadImage";
+import UploadImage from "../../../components/Collection/UploadImage";
 import Skeleton from "@mui/material/Skeleton";
 import {
   CreateItemModalProp,
@@ -30,8 +30,8 @@ import {
   ItemForm,
   Tag,
   TagMapList,
-} from "../../types/item.types";
-import { CollectionList, ImageType } from "../../types/collection.types";
+} from "../../../types/item.types";
+import { CollectionList, ImageType } from "../../../types/collection.types";
 
 function CreateItemModal({
   setVisible,
@@ -172,7 +172,7 @@ function CreateItemModal({
         <Box
           id="itemForm"
           component={"form"}
-          className="flex flex-col gap-y-5 pt-2"
+          className="flex flex-col pt-2 gap-y-5"
           encType="multipart/form-data"
           onSubmit={handleSubmit(submitItemForm)}
         >
@@ -440,7 +440,7 @@ function CreateItemModal({
           </Box>
         </Box>
       </DialogContent>
-      <DialogActions className="flex gap-x-1 pr-6 pb-3">
+      <DialogActions className="flex pb-3 pr-6 gap-x-1">
         <Button variant="contained" type="button" onClick={handleClose}>
           Cancel
         </Button>

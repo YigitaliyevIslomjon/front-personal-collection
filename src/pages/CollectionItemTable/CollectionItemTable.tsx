@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import delelteAlert from "../../components/SweetAlert/SweetAlert";
 import EditItemModal from "../../components/ViewItem/EditItemModal";
-import CreateItemModal from "../../components/Item/CreateItemModal";
+import CreateItemModal from "../Item/components/CreateItemModal";
 import TablePagination from "@mui/material/TablePagination";
 import { ItemPagenation } from "../../types/pagenation.types";
 import { ItemListTable, ItemType, Tag } from "../../types/item.types";

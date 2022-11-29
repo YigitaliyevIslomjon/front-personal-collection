@@ -1,121 +1,36 @@
 import { Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { TagCloud } from "react-tagcloud";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper";
 import { Link } from "react-router-dom";
-import HomeSearch from "../../components/Home/HomeSearch";
-import { useDispatch, useSelector } from "react-redux";
-import { setSearchUrl, setSerachItemList } from "../../store/slice/searchSlice";
+import HomeSearch from "../../components/Search/Search";
+import { useSelector } from "react-redux";
 import CollectionCard from "../../components/CollectionCard/CollectionCard";
 import ItemCard from "../../components/ItemCard/ItemCard";
-import api from "../../utils/api";
 import "./Home.scss";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "swiper/css";
 import { ToastContainer } from "react-toastify";
-import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
 import { useTranslation } from "react-i18next";
-import { CollectionList } from "../../types/collection.types";
-import { ItemList, Tag, TagColudList } from "../../types/item.types";
+import { useGetTagList, useGetSearchTag } from "./hooks/useTagData";
+import { useGetitemList } from "./hooks/useItemData";
+import { useGetLargCollectionList } from "./hooks/useCollectionData";
+import { breakpointsSwiper } from "./data/constant";
 
 function Home() {
-  const dispatch = useDispatch();
   let { t } = useTranslation();
   const searchData = useSelector((state: any) => state.search);
 
-  const [tagList, setTagList] = useState([] as TagColudList);
-  const [itemList, setItemList] = useState([] as ItemList);
-  const [itemListLoading, setItemListLoading] = useState<boolean>(false);
-  const [collectionListLoading, setCollectionListLoading] =
-    useState<boolean>(false);
-  const [collectionList, setCollectionList] = useState([] as CollectionList);
-
-  const getItemListApi = (pageSize: number, pageNumber: number) => {
-    setItemListLoading(true);
-    api
-      .get("item/list", { params: { pageNumber, pageSize } })
-      .then((res) => {
-        setItemList(res.data.item);
-      })
-      .catch((err) => {
-        toastifyMessage({ type: "error", message: err.response.data.error });
-      })
-      .finally(() => {
-        setItemListLoading(false);
-      });
-  };
-
-  const getLargetCollectionListApi = () => {
-    setCollectionListLoading(true);
-    api
-      .get("collection/large")
-      .then((res) => {
-        setCollectionList(res.data);
-      })
-      .catch((err) => {
-        toastifyMessage({ type: "error", message: err.response.data.error });
-      })
-      .finally(() => {
-        setCollectionListLoading(false);
-      });
-  };
-
-  const getSearchTag = (id: string) => {
-    api
-      .post(`search/${id}`)
-      .then((res) => {
-        if (res.data.length === 0) {
-          toastifyMessage({
-            type: "warn",
-            message: "No matching information found",
-          });
-        } else {
-          toastifyMessage({
-            type: "success",
-            message: "Matching data found",
-          });
-        }
-        dispatch(setSearchUrl("/"));
-        dispatch(setSerachItemList(res.data));
-      })
-      .catch((err) => {
-        toastifyMessage({ type: "error", message: err.response.data.error });
-      })
-      .finally(() => {});
-  };
-
-  const getTagListApi = () => {
-    api
-      .get("/tag/list")
-      .then((res) => {
-        setTagList(
-          res.data.map((item: Tag, index: number) => ({
-            value: item.tag_name,
-            id: item._id,
-            count: 5 * (index + 1),
-          }))
-        );
-      })
-      .catch((err) => {
-        toastifyMessage({ type: "error", message: err.response.data.error });
-      });
-  };
-  const breakpointsSwiper = {
-    0: { slidesPerView: 1, spaceBetween: 0 },
-    480: { slidesPerView: 2, spaceBetween: 20 },
-    768: { slidesPerView: 3, spaceBetween: 20 },
-    1024: { slidesPerView: 4, spaceBetween: 30 },
-  };
-  useEffect(() => {
-    getTagListApi();
-    getItemListApi(5, 1);
-    getLargetCollectionListApi();
-  }, []);
+  const { data: tagList } = useGetTagList();
+  const { mutate: getSearchTag } = useGetSearchTag();
+  const { data: itemList, isLoading: itemListLoading } = useGetitemList();
+  const { data: collectionList, isLoading: collectionListLoading } =
+    useGetLargCollectionList();
 
   if (
     (searchData.item.length > 0 ||
@@ -128,7 +43,7 @@ function Home() {
 
   return (
     <Box id="home" className="flex flex-col mb-10">
-      <Box className="flex justify-between items-center mb-4 mt-5">
+      <Box className="flex items-center justify-between mt-5 mb-4">
         <Typography variant="h6" className="text-base sm:text-xl">
           {t("largeCollections")}
         </Typography>
@@ -160,7 +75,7 @@ function Home() {
           className="pb-10"
         >
           {!collectionListLoading
-            ? collectionList.map((item) => (
+            ? collectionList?.map((item) => (
                 <SwiperSlide key={item._id}>
                   <CollectionCard data={item} />
                 </SwiperSlide>
@@ -175,7 +90,7 @@ function Home() {
         </Swiper>
       </Grid>
 
-      <Box className="flex justify-between items-center mb-4 mt-6">
+      <Box className="flex items-center justify-between mt-6 mb-4">
         <Typography variant="h6" className="text-base sm:text-xl">
           {t("lastItem")}
         </Typography>
@@ -207,7 +122,7 @@ function Home() {
           className="pb-10"
         >
           {!itemListLoading
-            ? itemList.map((item) => (
+            ? itemList?.map((item) => (
                 <SwiperSlide key={item._id}>
                   <ItemCard data={item} />
                 </SwiperSlide>
@@ -222,8 +137,8 @@ function Home() {
         </Swiper>
       </Grid>
 
-      <Box className="pb-20 pt-12">
-        <Box className="flex justify-between mb-4 mt-5">
+      <Box className="pt-12 pb-20">
+        <Box className="flex justify-between mt-5 mb-4">
           <Typography variant="h6" className="text-base sm:text-xl">
             {" "}
             Tag cloud

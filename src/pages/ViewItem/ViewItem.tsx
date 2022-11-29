@@ -236,7 +236,7 @@ function ViewItem() {
               <img
                 alt="rasm"
                 src={itemData?.path}
-                className="object-cover  w-full h-full cursor-pointer"
+                className="object-cover w-full h-full cursor-pointer"
               />
             ) : (
               <Skeleton
@@ -245,7 +245,7 @@ function ViewItem() {
               />
             )}
           </div>
-          <Box className="flex flex-col gap-y-1 mt-2">
+          <Box className="flex flex-col mt-2 gap-y-1">
             {!itemLoading ? (
               <>
                 <Box className="mb-1">
@@ -277,7 +277,7 @@ function ViewItem() {
                 <Box className="flex gap-x-2">
                   <Typography
                     variant="body1"
-                    className="first-letter:capitalize font-semibold"
+                    className="font-semibold first-letter:capitalize"
                   >
                     Name :{" "}
                   </Typography>
@@ -291,7 +291,7 @@ function ViewItem() {
                 <Box className="flex gap-x-2">
                   <Typography
                     variant="body1"
-                    className="first-letter:capitalize font-semibold"
+                    className="font-semibold first-letter:capitalize"
                   >
                     Collection :{" "}
                   </Typography>
@@ -305,7 +305,7 @@ function ViewItem() {
                 <Box className="flex gap-x-2">
                   <Typography
                     variant="body1"
-                    className="first-letter:capitalize font-semibold"
+                    className="font-semibold first-letter:capitalize"
                   >
                     Author :{" "}
                   </Typography>
@@ -319,11 +319,11 @@ function ViewItem() {
                 <Box className="flex gap-x-2">
                   <Typography
                     variant="body1"
-                    className="first-letter:capitalize font-semibold"
+                    className="font-semibold first-letter:capitalize"
                   >
                     tags :
                   </Typography>
-                  <Box className="flex gap-1 flex-wrap">
+                  <Box className="flex flex-wrap gap-1">
                     {itemData.tags?.map((tag: Tag) => (
                       <Typography key={tag._id} variant="body1">
                         {tag.tag_name}
@@ -351,7 +351,7 @@ function ViewItem() {
               <Box className="flex gap-x-2" key={index}>
                 <Typography
                   variant="body1"
-                  className="first-letter:capitalize font-semibold"
+                  className="font-semibold first-letter:capitalize"
                 >
                   {Object.keys(item)[0]} :
                 </Typography>
@@ -365,7 +365,7 @@ function ViewItem() {
               <Box className="flex gap-x-2" key={index}>
                 <Typography
                   variant="body1"
-                  className="first-letter:capitalize font-semibold"
+                  className="font-semibold first-letter:capitalize"
                 >
                   {Object.keys(item)[0]} :
                 </Typography>
@@ -379,7 +379,7 @@ function ViewItem() {
               <Box className="flex gap-x-2" key={index}>
                 <Typography
                   variant="body1"
-                  className="first-letter:capitalize font-semibold"
+                  className="font-semibold first-letter:capitalize"
                 >
                   {Object.keys(item)[0]} :
                 </Typography>
@@ -393,7 +393,7 @@ function ViewItem() {
               <Box className="flex gap-x-2" key={index}>
                 <Typography
                   variant="body1"
-                  className="first-letter:capitalize font-semibold"
+                  className="font-semibold first-letter:capitalize"
                 >
                   {Object.keys(item)[0]} :
                 </Typography>
@@ -407,7 +407,7 @@ function ViewItem() {
               <Box className="flex gap-x-2" key={index}>
                 <Typography
                   variant="body1"
-                  className="first-letter:capitalize font-semibold"
+                  className="font-semibold first-letter:capitalize"
                 >
                   {Object.keys(item)[0]} :
                 </Typography>
@@ -421,8 +421,8 @@ function ViewItem() {
 
           <Box className="mt-3">
             <Box className="flex gap-x-2">
-              <Avatar className="capitalize self-end cursor-pointer">
-                {isUserExist ? loginUser.user_name.slice(0, 1) : "Z"}
+              <Avatar className="self-end capitalize cursor-pointer">
+                {isUserExist ? loginUser.user_name?.slice(0, 1) : "Z"}
               </Avatar>
               <Box
                 className="flex-1"
@@ -451,7 +451,7 @@ function ViewItem() {
                 />
               </Box>
             </Box>
-            <Box className="flex justify-end gap-x-1 mt-1">
+            <Box className="flex justify-end mt-1 gap-x-1">
               <Button type="reset" form={"comment_form"}>
                 cancel
               </Button>

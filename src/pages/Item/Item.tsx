@@ -1,67 +1,34 @@
-import { useState, useEffect } from "react";
 import { Box, Button, Pagination, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import api from "../../utils/api";
-import CreateItemModal from "../../components/Item/CreateItemModal";
+import CreateItemModal from "./components/CreateItemModal";
 import ItemCard from "../../components/ItemCard/ItemCard";
-import HomeSearch from "../../components/Home/HomeSearch";
+import HomeSearch from "../../components/Search/Search";
 import { useSelector } from "react-redux";
 import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
-import { toastifyMessage } from "../../components/ToastifyNotification/ToastifyNotification";
 import { ToastContainer } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import { ItemList } from "../../types/item.types";
-import { PagenationType } from "../../types/pagenation.types";
+import { useGetitemList } from "../../hooks/useGetItemData";
+import { usePagination } from "./hooks/usePagination";
+import { useModal } from "../../hooks/useModal";
 
 function Item() {
   let { t } = useTranslation();
   const searchData = useSelector((state: any) => state.search);
 
   let loginUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const {
+    visilble: createItemModalVisible,
+    setVisible: setCreateItemModalVisible,
+    handleModalVisible: handleOpenModal,
+  } = useModal();
 
-  const [createItemModalVisible, setCreateItemModalVisible] =
-    useState<boolean>(false);
-
-  const [pagenation, setPagenation] = useState({
-    pageNumber: 1,
-    pageSize: 1,
-    total_page_count: 1,
-  } as PagenationType);
-
-  const [itemList, setItemList] = useState<ItemList | []>([]);
-
-  const [itemListLoading, setItemListLoading] = useState<boolean>(false);
-  const handleOpenModal = () => {
-    setCreateItemModalVisible(true);
-  };
-
-  const getItemListApi = (pageNumber: number, pageSize: number) => {
-    setItemListLoading(true);
-    api
-      .get("item/list", { params: { pageNumber, pageSize } })
-      .then((res) => {
-        setPagenation(res.data.pagenation);
-        setItemList(res.data.item);
-      })
-      .catch((err) => {
-        toastifyMessage({ type: "error", message: err.response.data.error });
-      })
-      .finally(() => {
-        setItemListLoading(false);
-      });
-  };
-
-  const handlePaginationOnChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setPagenation({ ...pagenation, pageNumber: +value });
-    getItemListApi(value, 8);
-  };
-
-  useEffect(() => {
-    getItemListApi(1, 8);
-  }, []);
+  const { pagenation, setPagenation, handlePaginationOnChange } =
+    usePagination();
+  const {
+    data: itemList,
+    isLoading: itemListLoading,
+    refetchData: refetchItemList,
+  } = useGetitemList(pagenation, setPagenation);
 
   if (searchData.item.length > 0 && searchData.url === "/item") {
     return <HomeSearch />;
@@ -85,7 +52,7 @@ function Item() {
       </Box>
       <Grid container spacing={{ xs: 2, md: 3 }} className="min-h-[400px]">
         {!itemListLoading
-          ? itemList.map((item, index) => (
+          ? itemList?.map((item, index) => (
               <Grid xs={12} sm={6} md={4} lg={3} key={item._id}>
                 <ItemCard data={item} key={item._id} />
               </Grid>
@@ -98,7 +65,7 @@ function Item() {
                 </Grid>
               ))}
       </Grid>
-      <Box className="mt-10 flex justify-end">
+      <Box className="flex justify-end mt-10">
         <Pagination
           variant="outlined"
           shape="rounded"
@@ -109,7 +76,7 @@ function Item() {
       </Box>
       {createItemModalVisible ? (
         <CreateItemModal
-          getItemListApi={getItemListApi}
+          getItemListApi={refetchItemList}
           setVisible={setCreateItemModalVisible}
           visible={createItemModalVisible}
         />

@@ -1,8 +1,9 @@
 import axios from "axios";
+import { toastifyMessage } from "../components/ToastifyNotification/ToastifyNotification";
 
 const api = axios.create({
   baseURL:
-    window.location.port === "3000"
+    process.env.NODE_ENV === "development"
       ? process.env.REACT_APP_URL_LOCAL
       : process.env.REACT_APP_URL,
 });
@@ -32,8 +33,12 @@ api.interceptors.response.use(
     return response;
   },
   function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+    if (error.response.status !== 401) {
+      toastifyMessage({ type: "error", message: error.response.data.error });
+    } else {
+      toastifyMessage({ type: "error", message: "unAthenticated" });
+    }
+
     return Promise.reject(error);
   }
 );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { StyledEngineProvider } from "@mui/material";
@@ -17,7 +17,7 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 let fallback = (
-  <div className="h-screen flex justify-center items-center">
+  <div className="flex items-center justify-center h-screen">
     <CircularProgress />
   </div>
 );
@@ -27,11 +27,13 @@ root.render(
     <Provider store={store}>
       <StyledEngineProvider injectFirst>
         <BrowserRouter>
-          <React.Suspense fallback={fallback}>
-            <GoogleOAuthProvider clientId="27936494952-huat9ne9b00mqgkr962sfqj3239f5edv.apps.googleusercontent.com">
+          <Suspense fallback={fallback}>
+            <GoogleOAuthProvider
+              clientId={process.env.REACT_APP_GOOGLE_ID || ""}
+            >
               <App />
             </GoogleOAuthProvider>
-          </React.Suspense>
+          </Suspense>
         </BrowserRouter>
       </StyledEngineProvider>
     </Provider>

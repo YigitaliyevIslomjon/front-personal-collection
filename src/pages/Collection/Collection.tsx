@@ -4,7 +4,7 @@ import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import CreateCollectionModal from "../../components/Collection/СreateCollectionModal";
 import api from "../../utils/api";
 import CollectionCard from "../../components/CollectionCard/CollectionCard";
-import HomeSearch from "../../components/Home/HomeSearch";
+import HomeSearch from "../../components/Search/Search";
 import { useSelector } from "react-redux";
 import CardSkeletion from "../../components/CardSkeleton/CardSkeleton";
 import { ToastContainer } from "react-toastify";
@@ -14,6 +14,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import { CSVLink } from "react-csv";
 import { CollectionList } from "../../types/collection.types";
 import { PagenationType } from "../../types/pagenation.types";
+
 
 function Collection() {
   let { t } = useTranslation();

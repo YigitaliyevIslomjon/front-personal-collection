@@ -37,7 +37,7 @@ function HomeSearch() {
   return (
     <Box className="mb-20 min-h-[400px]">
       {searchCollectionList.length > 0 ? (
-        <Box className="flex justify-between mb-4 mt-5">
+        <Box className="flex justify-between mt-5 mb-4">
           <Typography variant="h6" className="text-base sm:text-xl">
             {t("searchedCollections")}
           </Typography>
@@ -51,13 +51,13 @@ function HomeSearch() {
         ))}
       </Grid>
       {searchItemList.length > 0 ? (
-        <Box className="flex justify-between mb-4 mt-5">
+        <Box className="flex justify-between mt-5 mb-4">
           <Typography variant="h6" className="text-base sm:text-xl">
             {t("searchedItems")}
           </Typography>
           <Button
             variant="contained"
-            className="flex justify-between items-center"
+            className="flex items-center justify-between"
             onClick={clearTagFilter}
           >
             <CloseIcon className="w-[22px] h-[22px]" />
@@ -73,7 +73,7 @@ function HomeSearch() {
         ))}
       </Grid>
       {searchCommentList.length > 0 ? (
-        <Box className="flex justify-between mb-4 mt-5">
+        <Box className="flex justify-between mt-5 mb-4">
           <Typography variant="h6" className="text-base sm:text-xl">
             {t("searchedComments")}
           </Typography>
@@ -82,7 +82,7 @@ function HomeSearch() {
       <Grid container spacing={{ xs: 4, md: 3 }}>
         {searchCommentList.map((item: Comment) => (
           <Grid xs={12} sm={6} md={3} key={item._id}>
-            <Box className="border-2 border-solid border-indigo-100 rounded p-2">
+            <Box className="p-2 border-2 border-indigo-100 border-solid rounded">
               <Card className="h-full">
                 <CardActionArea>
                   <CardContent>
