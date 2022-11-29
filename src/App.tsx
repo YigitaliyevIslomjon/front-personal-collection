@@ -3,7 +3,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Box } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import Root from "./route/Root";
+import Root from "./root/Root";
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
